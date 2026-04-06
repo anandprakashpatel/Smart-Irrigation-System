@@ -2,893 +2,604 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>किसान डैशबोर्ड – खेत निगरानी</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>किसान IoT – खेत निगरानी</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-deep: #060c12;
+      --bg: #060c12;
       --bg-card: #0d1a26;
-      --bg-glass: rgba(13, 26, 38, 0.85);
       --accent-green: #00e676;
       --accent-cyan: #00bcd4;
       --accent-yellow: #ffd600;
       --accent-red: #ff1744;
       --accent-orange: #ff6d00;
-      --text-primary: #e8f5e9;
-      --text-secondary: #80cbc4;
+      --text: #e8f5e9;
+      --text-sec: #80cbc4;
       --text-muted: #546e7a;
-      --border: rgba(0, 230, 118, 0.12);
-      --glow-green: 0 0 24px rgba(0, 230, 118, 0.35);
-      --glow-red: 0 0 30px rgba(255, 23, 68, 0.55);
-      --glow-cyan: 0 0 20px rgba(0, 188, 212, 0.3);
+      --border: rgba(0,230,118,0.12);
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     body {
       font-family: 'Rajdhani', sans-serif;
-      background: var(--bg-deep);
-      color: var(--text-primary);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
     }
-
-    /* ANIMATED BACKGROUND */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      content:'';
+      position:fixed; inset:0;
       background:
         radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,230,118,0.06) 0%, transparent 60%),
         radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,188,212,0.05) 0%, transparent 60%),
-        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,230,118,0.03) 40px),
-        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,230,118,0.02) 40px);
-      pointer-events: none;
-      z-index: 0;
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,230,118,0.025) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,230,118,0.015) 40px);
+      pointer-events:none; z-index:0;
     }
-
-    .app-wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 0 0 100px;
-    }
+    .wrap { position:relative; z-index:1; max-width:480px; margin:0 auto; padding-bottom:80px; }
 
     /* HEADER */
     .header {
-      padding: 28px 20px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 24px 18px 14px;
+      display:flex; align-items:center; justify-content:space-between;
       border-bottom: 1px solid var(--border);
     }
-
-    .header-left .app-name {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--accent-green);
-      text-shadow: var(--glow-green);
+    .app-name { font-size:20px; font-weight:700; letter-spacing:2px; color:var(--accent-green); text-shadow:0 0 20px rgba(0,230,118,0.4); }
+    .app-sub  { font-size:11px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
+    .status-pill {
+      display:flex; align-items:center; gap:6px;
+      background: rgba(255,255,255,0.04);
+      border:1px solid var(--border);
+      border-radius:20px; padding:5px 12px;
+      font-size:12px; color:var(--text-sec);
     }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--accent-green); box-shadow:0 0 8px var(--accent-green); animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-    .header-left .app-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      margin-top: 2px;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 10px var(--accent-green);
-      animation: pulse-dot 2s infinite;
-      display: inline-block;
-      margin-right: 6px;
-    }
-
-    .status-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    /* ALERT BANNER */
+    /* ALERT */
     .alert-banner {
-      display: none;
-      margin: 16px 20px 0;
-      background: linear-gradient(135deg, rgba(255,23,68,0.15), rgba(255,109,0,0.1));
-      border: 1px solid var(--accent-red);
-      border-radius: 14px;
-      padding: 14px 18px;
-      box-shadow: var(--glow-red);
-      animation: alert-pulse 1.5s infinite;
+      display:none; margin:14px 18px 0;
+      background:linear-gradient(135deg,rgba(255,23,68,.15),rgba(255,109,0,.1));
+      border:1px solid var(--accent-red); border-radius:14px; padding:14px 16px;
+      gap:12px; align-items:center;
+      animation:apulse 1.5s infinite;
     }
+    .alert-banner.show { display:flex; }
+    @keyframes apulse { 0%,100%{box-shadow:0 0 20px rgba(255,23,68,.4)} 50%{box-shadow:0 0 40px rgba(255,23,68,.75)} }
+    .alert-icon { font-size:30px; }
+    .alert-title { font-size:17px; font-weight:700; color:var(--accent-red); letter-spacing:1px; }
+    .alert-sub   { font-size:12px; color:var(--accent-orange); margin-top:3px; }
 
-    .alert-banner.show { display: flex; align-items: center; gap: 12px; }
-
-    .alert-icon { font-size: 28px; flex-shrink: 0; }
-
-    .alert-text .alert-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent-red);
-      letter-spacing: 1px;
+    /* FASAL SELECTOR */
+    .fasal-section { padding:20px 18px 0; }
+    .section-label { font-size:11px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px; }
+    .fasal-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .fasal-btn {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:12px; padding:10px 4px;
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
     }
-
-    .alert-text .alert-sub {
-      font-size: 13px;
-      color: var(--accent-orange);
-      margin-top: 2px;
+    .fasal-btn:active { transform:scale(.95); }
+    .fasal-btn.selected {
+      border-color:var(--f-color, var(--accent-green));
+      background:rgba(var(--f-rgb,0,230,118),.1);
+      box-shadow:0 0 12px rgba(var(--f-rgb,0,230,118),.25);
     }
-
-    @keyframes alert-pulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(255,23,68,0.4); }
-      50% { box-shadow: 0 0 40px rgba(255,23,68,0.7); }
+    .fasal-btn::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:var(--f-color,var(--accent-green)); opacity:0; transition:.2s;
     }
+    .fasal-btn.selected::before { opacity:1; }
+    .fasal-emoji { font-size:22px; }
+    .fasal-name  { font-size:11px; color:var(--text-sec); letter-spacing:.5px; }
+    .fasal-range { font-size:10px; color:var(--text-muted); }
+    .fasal-btn.selected .fasal-name { color:var(--f-color,var(--accent-green)); font-weight:600; }
 
-    /* GAUGE SECTION */
-    .gauge-section {
-      padding: 24px 20px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    /* GAUGE */
+    .gauge-section { padding:22px 18px 8px; display:flex; flex-direction:column; align-items:center; }
+    .gauge-title { font-size:11px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; margin-bottom:14px; }
+    .gauge-wrap { position:relative; width:220px; height:220px; }
+    .gauge-svg { width:100%; height:100%; transform:rotate(-225deg); filter:drop-shadow(0 0 18px rgba(0,230,118,.2)); }
+    .g-track { fill:none; stroke:rgba(255,255,255,.05); stroke-width:13; stroke-linecap:round; }
+    .g-fill  { fill:none; stroke:url(#gg); stroke-width:13; stroke-linecap:round; stroke-dasharray:519; stroke-dashoffset:519; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+    .gauge-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .gauge-icon   { font-size:24px; margin-bottom:2px; }
+    .gauge-num    { font-size:48px; font-weight:700; color:var(--accent-green); line-height:1; text-shadow:0 0 24px rgba(0,230,118,.5); transition:color .5s,text-shadow .5s; font-variant-numeric:tabular-nums; }
+    .gauge-sub    { font-size:11px; color:var(--text-muted); letter-spacing:2px; margin-top:2px; }
+    .gauge-fasal  { font-size:12px; color:var(--accent-cyan); margin-top:4px; letter-spacing:1px; text-align:center; }
+    .gauge-status { font-size:14px; font-weight:600; color:var(--accent-green); letter-spacing:1px; margin-top:10px; padding:4px 16px; border-radius:20px; border:1px solid rgba(0,230,118,.2); background:rgba(0,230,118,.07); transition:all .4s; }
+
+    /* CUSTOM MODAL */
+    .custom-modal-bg {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.75);
+      z-index:100; align-items:flex-end; justify-content:center;
     }
-
-    .gauge-label {
-      font-size: 13px;
-      letter-spacing: 3px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      text-transform: uppercase;
+    .custom-modal-bg.show { display:flex; }
+    .custom-modal {
+      width:100%; max-width:480px;
+      background:#0d1e2e; border-radius:24px 24px 0 0;
+      padding:24px 22px 44px; border-top:1px solid var(--border);
+      animation:slideUp .3s ease;
     }
-
-    .gauge-container {
-      position: relative;
-      width: 240px;
-      height: 240px;
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .modal-title { font-size:17px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .modal-sub   { font-size:12px; color:var(--text-muted); margin-bottom:20px; }
+    .slider-row  { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .slider-row label { font-size:13px; color:var(--text-sec); flex:0 0 95px; }
+    input[type=range] {
+      flex:1; -webkit-appearance:none; height:6px;
+      background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan),var(--accent-red));
+      border-radius:10px; outline:none;
     }
-
-    .gauge-svg {
-      width: 100%;
-      height: 100%;
-      transform: rotate(-225deg);
-      filter: drop-shadow(0 0 20px rgba(0,230,118,0.25));
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance:none; width:22px; height:22px;
+      border-radius:50%; background:white;
+      box-shadow:0 0 10px rgba(0,230,118,.7); cursor:pointer;
     }
+    .slider-val { font-size:18px; font-weight:700; color:var(--accent-yellow); min-width:48px; text-align:right; }
+    .range-info { background:rgba(0,0,0,.3); border-radius:12px; padding:12px 14px; margin:4px 0 16px; }
+    .ri-row { display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .ri-row:last-child { margin-bottom:0; }
+    .ri-row span:last-child { color:var(--text-sec); font-weight:600; }
+    .modal-btns { display:flex; gap:10px; }
+    .mbtn-cancel { flex:1; padding:14px; border-radius:12px; border:1px solid var(--border); background:transparent; color:var(--text-muted); font-family:'Rajdhani',sans-serif; font-size:15px; cursor:pointer; }
+    .mbtn-save   { flex:2; padding:14px; border-radius:12px; border:none; background:linear-gradient(135deg,#00e676,#00acc1); color:#060c12; font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; cursor:pointer; }
 
-    .gauge-track {
-      fill: none;
-      stroke: rgba(255,255,255,0.05);
-      stroke-width: 14;
-      stroke-linecap: round;
-    }
-
-    .gauge-fill {
-      fill: none;
-      stroke: url(#gaugeGradient);
-      stroke-width: 14;
-      stroke-linecap: round;
-      stroke-dasharray: 565;
-      stroke-dashoffset: 565;
-      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.6s ease;
-    }
-
-    .gauge-value-group {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .gauge-icon { font-size: 28px; margin-bottom: 4px; }
-
-    .gauge-number {
-      font-size: 52px;
-      font-weight: 700;
-      color: var(--accent-green);
-      line-height: 1;
-      text-shadow: var(--glow-green);
-      transition: color 0.6s ease, text-shadow 0.6s ease;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .gauge-unit {
-      font-size: 13px;
-      color: var(--text-muted);
-      letter-spacing: 2px;
-      margin-top: 4px;
-    }
-
-    .gauge-status-text {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--accent-green);
-      letter-spacing: 1px;
-      margin-top: 8px;
-      padding: 4px 14px;
-      border-radius: 20px;
-      border: 1px solid rgba(0,230,118,0.2);
-      background: rgba(0,230,118,0.07);
-      transition: all 0.5s ease;
-    }
-
-    /* STATS GRID */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 16px 20px 0;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease;
-    }
-
-    .stat-card:active { transform: scale(0.97); }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
-      opacity: 0.6;
-    }
-
-    .stat-card.green { --card-accent: var(--accent-green); }
-    .stat-card.cyan { --card-accent: var(--accent-cyan); }
-    .stat-card.yellow { --card-accent: var(--accent-yellow); }
-    .stat-card.orange { --card-accent: var(--accent-orange); }
-
-    .stat-icon { font-size: 22px; margin-bottom: 8px; }
-
-    .stat-label {
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .stat-value {
-      font-size: 26px;
-      font-weight: 700;
-      margin-top: 4px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .stat-card.green .stat-value { color: var(--accent-green); }
-    .stat-card.cyan .stat-value { color: var(--accent-cyan); }
-    .stat-card.yellow .stat-value { color: var(--accent-yellow); }
-    .stat-card.orange .stat-value { color: var(--accent-orange); }
-
-    /* HISTORY CHART */
-    .section-title {
-      font-size: 13px;
-      letter-spacing: 3px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      padding: 20px 20px 12px;
-    }
-
-    .history-card {
-      margin: 0 20px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .chart-wrap {
-      position: relative;
-      height: 80px;
-      display: flex;
-      align-items: flex-end;
-      gap: 4px;
-    }
-
-    .chart-bar {
-      flex: 1;
-      border-radius: 4px 4px 0 0;
-      background: linear-gradient(to top, var(--accent-green), var(--accent-cyan));
-      opacity: 0.7;
-      transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
-      min-height: 4px;
-    }
-
-    .chart-bar.danger {
-      background: linear-gradient(to top, var(--accent-red), var(--accent-orange));
-    }
-
-    .chart-bar:hover { opacity: 1; }
-
-    .chart-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-
-    .chart-labels span {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
+    /* STATS */
+    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 18px 0; }
+    .stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--ca); opacity:.6; }
+    .stat-icon  { font-size:20px; margin-bottom:6px; }
+    .stat-label { font-size:10px; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; }
+    .stat-val   { font-size:24px; font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums; color:var(--ca); }
 
     /* THRESHOLD BAR */
-    .threshold-section {
-      margin: 16px 20px 0;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+    .tbar-card { margin:14px 18px 0; background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; }
+    .tbar-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .tbar-title { font-size:11px; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; }
+    .tbar-val   { font-size:13px; color:var(--accent-yellow); font-weight:600; }
+    .tbar-wrap  { height:8px; background:rgba(255,255,255,.06); border-radius:10px; overflow:hidden; position:relative; }
+    .tbar-fill  { height:100%; border-radius:10px; background:linear-gradient(90deg,var(--accent-green),var(--accent-yellow),var(--accent-red)); width:0%; transition:width 1.1s cubic-bezier(.4,0,.2,1); }
+    .tbar-marker { position:absolute; top:-2px; width:3px; height:12px; background:var(--accent-yellow); border-radius:2px; transform:translateX(-50%); transition:left .5s; }
+    .tbar-marks { display:flex; justify-content:space-between; margin-top:6px; }
+    .tbar-marks span { font-size:10px; color:var(--text-muted); }
+
+    /* CHART */
+    .section-title { font-size:11px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; padding:18px 18px 10px; }
+    .chart-card { margin:0 18px; background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px; }
+    .chart-wrap { height:72px; display:flex; align-items:flex-end; gap:3px; }
+    .cbar { flex:1; border-radius:3px 3px 0 0; background:linear-gradient(to top,var(--accent-green),var(--accent-cyan)); min-height:3px; transition:height .8s cubic-bezier(.4,0,.2,1); }
+    .cbar.danger { background:linear-gradient(to top,var(--accent-red),var(--accent-orange)); }
+    .chart-lbl { display:flex; justify-content:space-between; margin-top:5px; }
+    .chart-lbl span { font-size:10px; color:var(--text-muted); }
+
+    /* BUTTONS */
+    .btn-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:20px 18px 0; }
+    .btn-start {
+      grid-column:1/-1; padding:17px; border:none; border-radius:14px;
+      background:linear-gradient(135deg,#00e676,#00acc1); color:#060c12;
+      font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700; letter-spacing:2px;
+      cursor:pointer; box-shadow:0 4px 20px rgba(0,230,118,.3);
+      transition:transform .15s,box-shadow .3s;
     }
-
-    .threshold-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+    .btn-start:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,230,118,.5); }
+    .btn-start.active { background:linear-gradient(135deg,#1b2a35,#243040); color:var(--text-sec); box-shadow:none; }
+    .btn-sec {
+      padding:14px; border-radius:14px; border:1px solid var(--accent-cyan);
+      background:rgba(0,188,212,.08); color:var(--accent-cyan);
+      font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; letter-spacing:1px;
+      cursor:pointer; transition:background .2s;
     }
+    .btn-sec:hover { background:rgba(0,188,212,.15); }
 
-    .threshold-title {
-      font-size: 13px;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
+    /* CONFIG */
+    .config-card { margin:14px 18px 0; background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:16px; }
+    .config-title { font-size:11px; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px; }
+    .cfg-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .cfg-row label { font-size:13px; color:var(--text-sec); flex:0 0 90px; }
+    .cfg-input { flex:1; background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:14px; outline:none; transition:border-color .2s; }
+    .cfg-input:focus { border-color:var(--accent-cyan); }
+    .cfg-save { width:100%; margin-top:6px; padding:11px; border-radius:10px; border:1px solid var(--accent-cyan); background:rgba(0,188,212,.1); color:var(--accent-cyan); font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; cursor:pointer; letter-spacing:1px; transition:background .2s; }
+    .cfg-save:hover { background:rgba(0,188,212,.2); }
 
-    .threshold-value {
-      font-size: 13px;
-      color: var(--accent-yellow);
-      font-weight: 600;
-    }
-
-    .threshold-bar-wrap {
-      height: 8px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .threshold-bar-fill {
-      height: 100%;
-      border-radius: 10px;
-      background: linear-gradient(90deg, var(--accent-green), var(--accent-yellow), var(--accent-red));
-      width: 0%;
-      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .threshold-markers {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-
-    .threshold-markers span {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    /* BUTTON */
-    .btn-section {
-      padding: 24px 20px 0;
-    }
-
-    .start-btn {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #00e676, #00acc1);
-      color: #060c12;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.15s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 24px rgba(0,230,118,0.3);
-    }
-
-    .start-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,230,118,0.5);
-    }
-
-    .start-btn:active { transform: scale(0.97); }
-
-    .start-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
-      pointer-events: none;
-    }
-
-    .start-btn.active {
-      background: linear-gradient(135deg, #37474f, #263238);
-      color: var(--text-secondary);
-      box-shadow: none;
-    }
-
-    /* CONFIG SECTION */
-    .config-card {
-      margin: 16px 20px 0;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .config-title {
-      font-size: 13px;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .config-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .config-row label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      flex: 0 0 120px;
-    }
-
-    .config-input {
-      flex: 1;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: var(--text-primary);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .config-input:focus {
-      border-color: var(--accent-cyan);
-    }
-
-    .config-save-btn {
-      width: 100%;
-      margin-top: 8px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--accent-cyan);
-      background: rgba(0,188,212,0.1);
-      color: var(--accent-cyan);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: background 0.2s;
-    }
-
-    .config-save-btn:hover { background: rgba(0,188,212,0.2); }
-
-    /* LAST UPDATED */
-    .last-updated {
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-      padding: 20px;
-      letter-spacing: 1px;
-    }
-
-    /* LOADING SHIMMER */
-    .shimmer {
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    /* RESPONSIVE tweaks */
-    @media (min-width: 480px) {
-      .app-wrapper {
-        border-left: 1px solid var(--border);
-        border-right: 1px solid var(--border);
-      }
-    }
+    .last-upd { text-align:center; font-size:11px; color:var(--text-muted); padding:18px; letter-spacing:1px; }
   </style>
 </head>
 <body>
-
-<div class="app-wrapper">
+<div class="wrap">
 
   <!-- HEADER -->
   <div class="header">
-    <div class="header-left">
+    <div>
       <div class="app-name">🌾 किसान IoT</div>
-      <div class="app-sub">KHET SICHAI NIGRANI SYSTEM</div>
+      <div class="app-sub">KHET NIGRANI SYSTEM</div>
     </div>
-    <div class="status-label" id="statusLabel">
-      <span class="status-dot" id="statusDot"></span>
-      <span id="statusText">जोड़ रहे हैं…</span>
+    <div class="status-pill">
+      <span class="dot" id="sDot"></span>
+      <span id="sTxt">जोड़ रहे हैं…</span>
     </div>
   </div>
 
-  <!-- ALERT BANNER -->
+  <!-- ALERT -->
   <div class="alert-banner" id="alertBanner">
     <div class="alert-icon">🚨</div>
-    <div class="alert-text">
+    <div>
       <div class="alert-title">RED ALERT – खतरा!</div>
-      <div class="alert-sub" id="alertSub">खेत में पानी भर गया है</div>
+      <div class="alert-sub" id="alertSub">खेत में पानी भर गया!</div>
     </div>
+  </div>
+
+  <!-- FASAL SELECTOR -->
+  <div class="fasal-section">
+    <div class="section-label">🌱 अपनी फसल चुनें</div>
+    <div class="fasal-grid" id="fasalGrid"></div>
   </div>
 
   <!-- CIRCULAR GAUGE -->
   <div class="gauge-section">
-    <div class="gauge-label">नमी स्तर (Moisture Level)</div>
-    <div class="gauge-container">
+    <div class="gauge-title">नमी स्तर (Moisture)</div>
+    <div class="gauge-wrap">
       <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#00e676"/>
-            <stop offset="50%" stop-color="#00bcd4"/>
-            <stop offset="100%" stop-color="#ff1744" id="gradEnd"/>
+            <stop offset="60%" stop-color="#00bcd4"/>
+            <stop offset="100%" stop-color="#ff1744"/>
           </linearGradient>
         </defs>
-        <!-- Track (270° arc) -->
-        <circle class="gauge-track" cx="100" cy="100" r="90"
-          stroke-dasharray="565 636" stroke-dashoffset="0"/>
-        <!-- Fill -->
-        <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="90"
-          stroke-dasharray="565 636"/>
+        <circle class="g-track" cx="100" cy="100" r="83" stroke-dasharray="519 590"/>
+        <circle class="g-fill"  id="gFill" cx="100" cy="100" r="83"/>
       </svg>
-      <div class="gauge-value-group">
-        <div class="gauge-icon">💧</div>
-        <div class="gauge-number" id="gaugeNumber">–</div>
-        <div class="gauge-unit">RAW VALUE</div>
+      <div class="gauge-center">
+        <div class="gauge-icon" id="gIcon">💧</div>
+        <div class="gauge-num"  id="gNum">–</div>
+        <div class="gauge-sub">RAW VALUE</div>
+        <div class="gauge-fasal" id="gFasalLabel">फसल चुनें ↑</div>
       </div>
     </div>
-    <div class="gauge-status-text" id="gaugeStatus">डेटा लोड हो रहा है…</div>
+    <div class="gauge-status" id="gStatus">डेटा लोड हो रहा है…</div>
   </div>
 
-  <!-- STATS GRID -->
+  <!-- STATS -->
   <div class="stats-grid">
-    <div class="stat-card green">
-      <div class="stat-icon">🌡️</div>
-      <div class="stat-label">न्यूनतम</div>
-      <div class="stat-value" id="statMin">–</div>
+    <div class="stat-card" style="--ca:var(--accent-green)">
+      <div class="stat-icon">📉</div><div class="stat-label">न्यूनतम</div>
+      <div class="stat-val" id="sMin">–</div>
     </div>
-    <div class="stat-card cyan">
-      <div class="stat-icon">📊</div>
-      <div class="stat-label">अधिकतम</div>
-      <div class="stat-value" id="statMax">–</div>
+    <div class="stat-card" style="--ca:var(--accent-cyan)">
+      <div class="stat-icon">📈</div><div class="stat-label">अधिकतम</div>
+      <div class="stat-val" id="sMax">–</div>
     </div>
-    <div class="stat-card yellow">
-      <div class="stat-icon">📡</div>
-      <div class="stat-label">औसत</div>
-      <div class="stat-value" id="statAvg">–</div>
+    <div class="stat-card" style="--ca:var(--accent-yellow)">
+      <div class="stat-icon">📊</div><div class="stat-label">औसत</div>
+      <div class="stat-val" id="sAvg">–</div>
     </div>
-    <div class="stat-card orange">
-      <div class="stat-icon">⚡</div>
-      <div class="stat-label">अलर्ट</div>
-      <div class="stat-value" id="statAlerts">0</div>
+    <div class="stat-card" style="--ca:var(--accent-red)">
+      <div class="stat-icon">🔔</div><div class="stat-label">अलर्ट</div>
+      <div class="stat-val" id="sAlerts">0</div>
     </div>
   </div>
 
   <!-- THRESHOLD BAR -->
-  <div class="threshold-section">
-    <div class="threshold-header">
-      <span class="threshold-title">खतरा सीमा</span>
-      <span class="threshold-value" id="thresholdLabel">0 / 4095</span>
+  <div class="tbar-card">
+    <div class="tbar-head">
+      <span class="tbar-title">⚠️ खतरा सीमा</span>
+      <span class="tbar-val" id="tVal">– / 4095</span>
     </div>
-    <div class="threshold-bar-wrap">
-      <div class="threshold-bar-fill" id="thresholdFill"></div>
+    <div class="tbar-wrap">
+      <div class="tbar-fill" id="tFill"></div>
+      <div class="tbar-marker" id="tMarker" style="left:53%"></div>
     </div>
-    <div class="threshold-markers">
+    <div class="tbar-marks">
       <span>0 (सूखा)</span>
-      <span>3000 ⚠️</span>
+      <span id="tThreshMark">सीमा ⚠️</span>
       <span>4095 (भरा)</span>
     </div>
   </div>
 
   <!-- HISTORY CHART -->
-  <div class="section-title">पिछले रीडिंग (Last Readings)</div>
-  <div class="history-card">
-    <div class="chart-wrap" id="chartWrap">
-      <!-- bars inserted by JS -->
-    </div>
-    <div class="chart-labels" id="chartLabels"></div>
+  <div class="section-title">📈 पिछले रीडिंग</div>
+  <div class="chart-card">
+    <div class="chart-wrap" id="chartWrap"></div>
+    <div class="chart-lbl"><span>पुराना</span><span>मध्य</span><span>अभी</span></div>
   </div>
 
-  <!-- START MONITORING BUTTON -->
-  <div class="btn-section">
-    <button class="start-btn" id="startBtn" onclick="enableAudio()">
-      🎙️ मॉनिटरिंग शुरू करें
-    </button>
+  <!-- BUTTONS -->
+  <div class="btn-row">
+    <button class="btn-start" id="startBtn" onclick="enableAudio()">🎙️ मॉनिटरिंग शुरू करें</button>
+    <button class="btn-sec" onclick="openCustom()">🎚️ कस्टम सीमा</button>
+    <button class="btn-sec" onclick="document.getElementById('configCard').scrollIntoView({behavior:'smooth'})">⚙️ Blynk सेटिंग</button>
   </div>
 
   <!-- BLYNK CONFIG -->
-  <div class="config-card">
-    <div class="config-title">⚙️ Blynk सेटिंग</div>
-    <div class="config-row">
+  <div class="config-card" id="configCard">
+    <div class="config-title">⚙️ Blynk कनेक्शन</div>
+    <div class="cfg-row">
       <label>Auth Token</label>
-      <input class="config-input" id="cfgToken" type="text" placeholder="आपका Blynk Token" />
+      <input class="cfg-input" id="cfgToken" type="text" placeholder="आपका Blynk Token" />
     </div>
-    <div class="config-row">
+    <div class="cfg-row">
       <label>Virtual Pin</label>
-      <input class="config-input" id="cfgPin" type="text" value="v1" placeholder="v1" />
+      <input class="cfg-input" id="cfgPin" type="text" value="v1" placeholder="v1" />
     </div>
-    <div class="config-row">
-      <label>अलर्ट सीमा</label>
-      <input class="config-input" id="cfgThreshold" type="number" value="3000" />
-    </div>
-    <button class="config-save-btn" onclick="saveConfig()">✅ सेव करें और शुरू करें</button>
+    <button class="cfg-save" onclick="saveConfig()">✅ सेव करें और शुरू करें</button>
   </div>
 
-  <div class="last-updated">
-    अंतिम अपडेट: <span id="lastUpdated">–</span>
-  </div>
+  <div class="last-upd">अंतिम अपडेट: <span id="lastUpd">–</span></div>
+</div>
 
+<!-- CUSTOM THRESHOLD MODAL -->
+<div class="custom-modal-bg" id="customModal">
+  <div class="custom-modal">
+    <div class="modal-title">🎚️ खतरा सीमा सेट करें</div>
+    <div class="modal-sub">अपने खेत और मिट्टी के अनुसार अलर्ट की सीमा बदलें (0 – 4095)</div>
+
+    <div class="slider-row">
+      <label>खतरा सीमा</label>
+      <input type="range" id="slThresh" min="300" max="4000" step="50" value="3000" oninput="onSlide()"/>
+      <span class="slider-val" id="slVal">3000</span>
+    </div>
+
+    <div class="range-info">
+      <div class="ri-row"><span>🌱 चुनी फसल</span><span id="miFasal">–</span></div>
+      <div class="ri-row"><span>📊 फसल की सामान्य सीमा</span><span id="miNormal">–</span></div>
+      <div class="ri-row"><span>⚠️ आपकी सीमा</span><span id="miCustom">–</span></div>
+      <div class="ri-row"><span>💡 स्थिति</span><span id="miTip">–</span></div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="mbtn-cancel" onclick="closeCustom()">रद्द करें</button>
+      <button class="mbtn-save"   onclick="saveCustom()">✅ इस सीमा पर सेट करें</button>
+    </div>
+  </div>
 </div>
 
 <script>
-  // ──────────────────────────────────────────────
-  // CONFIG
-  // ──────────────────────────────────────────────
-  let CONFIG = {
-    token: localStorage.getItem('blynk_token') || '',
-    pin: localStorage.getItem('blynk_pin') || 'v1',
-    threshold: parseInt(localStorage.getItem('blynk_threshold') || '3000'),
-    interval: 2000,
-  };
+// ── FASAL DATA ──
+const FASALS = [
+  { id:'gehu',    name:'गेहूँ',    emoji:'🌾', color:'#ffd600', rgb:'255,214,0',  min:600,  max:2200, alert:2200, tip:'सूखा सहन करता है, ज़्यादा पानी हानिकारक' },
+  { id:'chawal',  name:'चावल',     emoji:'🍚', color:'#00e676', rgb:'0,230,118',  min:2500, max:3800, alert:3800, tip:'भरा खेत चाहिए, ज़्यादा पानी ज़रूरी' },
+  { id:'makka',   name:'मक्का',    emoji:'🌽', color:'#ff9800', rgb:'255,152,0',  min:500,  max:1800, alert:1800, tip:'कम पानी चाहिए, जड़ें सड़ सकती हैं' },
+  { id:'ganna',   name:'गन्ना',    emoji:'🎋', color:'#00bcd4', rgb:'0,188,212',  min:1500, max:3000, alert:3000, tip:'मध्यम नमी सबसे अच्छी है' },
+  { id:'soybean', name:'सोयाबीन',  emoji:'🫘', color:'#8bc34a', rgb:'139,195,74', min:600,  max:2000, alert:2000, tip:'जल-जमाव बिल्कुल नहीं चाहिए' },
+  { id:'tomato',  name:'टमाटर',    emoji:'🍅', color:'#f44336', rgb:'244,67,54',  min:700,  max:2200, alert:2200, tip:'नमी स्थिर रखें, ऊपर-नीचे नहीं' },
+  { id:'sarso',   name:'सरसों',    emoji:'🌼', color:'#ffeb3b', rgb:'255,235,59', min:400,  max:1500, alert:1500, tip:'शुष्क मिट्टी पसंद, कम सिंचाई चाहिए' },
+  { id:'custom',  name:'कस्टम',    emoji:'⚙️', color:'#ce93d8', rgb:'206,147,216',min:0,    max:4095, alert:3000, tip:'अपनी मर्ज़ी से सीमा सेट करें' },
+];
 
-  let audioEnabled = false;
-  let alertCount = 0;
-  let history = [];
-  let pollingTimer = null;
-  let speaking = false;
+// ── STATE ──
+let cfg = {
+  token:     localStorage.getItem('bt')  || '',
+  pin:       localStorage.getItem('bp')  || 'v1',
+  fasalId:   localStorage.getItem('bf')  || 'gehu',
+  threshold: parseInt(localStorage.getItem('bth') || '2200'),
+};
+let audioOn=false, alertCount=0, history=[], pollingTimer=null, speaking=false;
+const MAX_H=14, MAX_S=4095;
 
-  const MAX_HISTORY = 14;
-  const MAX_SENSOR = 4095;
+// ── INIT ──
+window.onload = () => {
+  buildGrid();
+  initChart();
+  document.getElementById('cfgToken').value = cfg.token;
+  document.getElementById('cfgPin').value   = cfg.pin;
+  applyFasal(cfg.fasalId, false);
+  if (cfg.token) startPolling();
+  else setStatus('Token दर्ज करें', false);
+};
 
-  // ──────────────────────────────────────────────
-  // INIT
-  // ──────────────────────────────────────────────
-  window.onload = () => {
-    document.getElementById('cfgToken').value = CONFIG.token;
-    document.getElementById('cfgPin').value = CONFIG.pin;
-    document.getElementById('cfgThreshold').value = CONFIG.threshold;
-    initChartBars();
-    if (CONFIG.token) startPolling();
-    else setStatus('कृपया Token दर्ज करें', false);
-  };
+// ── FASAL GRID ──
+function buildGrid() {
+  const g = document.getElementById('fasalGrid');
+  g.innerHTML = '';
+  FASALS.forEach(f => {
+    const b = document.createElement('button');
+    b.className = 'fasal-btn';
+    b.id = 'fb_'+f.id;
+    b.style.setProperty('--f-color', f.color);
+    b.style.setProperty('--f-rgb',   f.rgb);
+    b.innerHTML = `<span class="fasal-emoji">${f.emoji}</span><span class="fasal-name">${f.name}</span><span class="fasal-range">${f.alert}</span>`;
+    b.onclick = () => applyFasal(f.id, true);
+    g.appendChild(b);
+  });
+}
 
-  // ──────────────────────────────────────────────
-  // SAVE CONFIG
-  // ──────────────────────────────────────────────
-  function saveConfig() {
-    CONFIG.token = document.getElementById('cfgToken').value.trim();
-    CONFIG.pin = document.getElementById('cfgPin').value.trim() || 'v1';
-    CONFIG.threshold = parseInt(document.getElementById('cfgThreshold').value) || 3000;
-    localStorage.setItem('blynk_token', CONFIG.token);
-    localStorage.setItem('blynk_pin', CONFIG.pin);
-    localStorage.setItem('blynk_threshold', CONFIG.threshold);
-    startPolling();
+function applyFasal(id, save) {
+  const f = FASALS.find(x=>x.id===id) || FASALS[0];
+  cfg.fasalId   = f.id;
+  cfg.threshold = (f.id==='custom')
+    ? parseInt(localStorage.getItem('customThresh') || f.alert)
+    : f.alert;
+  if (save) { localStorage.setItem('bf', id); localStorage.setItem('bth', cfg.threshold); }
+
+  document.querySelectorAll('.fasal-btn').forEach(b=>b.classList.remove('selected'));
+  const btn = document.getElementById('fb_'+id);
+  if (btn) btn.classList.add('selected');
+
+  document.getElementById('gFasalLabel').textContent = `${f.emoji} ${f.name}  |  सीमा: ${cfg.threshold}`;
+  document.getElementById('gIcon').textContent = (f.emoji==='⚙️') ? '💧' : f.emoji;
+
+  const mPct = (cfg.threshold/MAX_S*100).toFixed(1)+'%';
+  document.getElementById('tMarker').style.left = mPct;
+  document.getElementById('tThreshMark').textContent = cfg.threshold+' ⚠️';
+
+  if (id==='custom') setTimeout(openCustom, 120);
+}
+
+// ── CUSTOM MODAL ──
+function openCustom() {
+  const f = FASALS.find(x=>x.id===cfg.fasalId) || FASALS[0];
+  const v = parseInt(localStorage.getItem('customThresh') || cfg.threshold);
+  document.getElementById('slThresh').value  = v;
+  document.getElementById('slVal').textContent = v;
+  document.getElementById('miFasal').textContent  = f.emoji+' '+f.name;
+  document.getElementById('miNormal').textContent = f.min+' – '+f.max;
+  document.getElementById('miCustom').textContent = v;
+  document.getElementById('miTip').textContent    = getTip(v);
+  document.getElementById('customModal').classList.add('show');
+}
+function closeCustom() { document.getElementById('customModal').classList.remove('show'); }
+function onSlide() {
+  const v = document.getElementById('slThresh').value;
+  document.getElementById('slVal').textContent    = v;
+  document.getElementById('miCustom').textContent = v;
+  document.getElementById('miTip').textContent    = getTip(v);
+}
+function getTip(v) {
+  v = parseInt(v);
+  if (v < 800)  return '🔴 बहुत कम — सूखे का खतरा';
+  if (v < 1500) return '🟡 कम — हल्की फसल के लिए ठीक';
+  if (v < 2500) return '🟢 सामान्य — अधिकतर फसलों के लिए';
+  if (v < 3500) return '🟠 अधिक — चावल जैसी फसल के लिए';
+  return '🔴 बहुत अधिक — जल-जमाव का खतरा';
+}
+function saveCustom() {
+  const v = parseInt(document.getElementById('slThresh').value);
+  cfg.threshold = v;
+  localStorage.setItem('customThresh', v);
+  localStorage.setItem('bth', v);
+  document.getElementById('tMarker').style.left = (v/MAX_S*100)+'%';
+  document.getElementById('tThreshMark').textContent = v+' ⚠️';
+  document.getElementById('gFasalLabel').textContent = `⚙️ कस्टम  |  सीमा: ${v}`;
+  closeCustom();
+}
+
+// ── BLYNK CONFIG ──
+function saveConfig() {
+  cfg.token = document.getElementById('cfgToken').value.trim();
+  cfg.pin   = document.getElementById('cfgPin').value.trim() || 'v1';
+  localStorage.setItem('bt', cfg.token);
+  localStorage.setItem('bp', cfg.pin);
+  startPolling();
+}
+
+// ── POLLING ──
+function startPolling() {
+  if (pollingTimer) clearInterval(pollingTimer);
+  fetchData();
+  pollingTimer = setInterval(fetchData, 5000);
+}
+async function fetchData() {
+  if (!cfg.token) return;
+  try {
+    setStatus('डेटा आ रहा है…', true);
+    const res = await fetch(`https://blynk.cloud/external/api/get?token=${cfg.token}&${cfg.pin}`);
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const val = parseFloat(await res.text());
+    if (isNaN(val)) throw new Error('invalid');
+    updateUI(Math.round(val));
+    setStatus('लाइव ✓', true);
+  } catch(e) {
+    setStatus('कनेक्शन विफल ✗', false);
+  }
+}
+
+// ── UI UPDATE ──
+function updateUI(val) {
+  const isAlert = val > cfg.threshold;
+  history.push(val);
+  if (history.length > MAX_H) history.shift();
+
+  const mn  = Math.min(...history);
+  const mx  = Math.max(...history);
+  const avg = Math.round(history.reduce((a,b)=>a+b,0)/history.length);
+  if (isAlert) alertCount++;
+
+  document.getElementById('sMin').textContent    = mn;
+  document.getElementById('sMax').textContent    = mx;
+  document.getElementById('sAvg').textContent    = avg;
+  document.getElementById('sAlerts').textContent = alertCount;
+
+  const pct = Math.min(val/MAX_S, 1);
+  document.getElementById('gFill').style.strokeDashoffset = 519 - pct*519;
+
+  const numEl = document.getElementById('gNum');
+  numEl.textContent = val;
+  if (isAlert) {
+    numEl.style.color='var(--accent-red)'; numEl.style.textShadow='0 0 28px rgba(255,23,68,.65)';
+  } else if (val > cfg.threshold*0.75) {
+    numEl.style.color='var(--accent-yellow)'; numEl.style.textShadow='0 0 20px rgba(255,214,0,.4)';
+  } else {
+    numEl.style.color='var(--accent-green)'; numEl.style.textShadow='0 0 24px rgba(0,230,118,.5)';
   }
 
-  // ──────────────────────────────────────────────
-  // POLLING
-  // ──────────────────────────────────────────────
-  function startPolling() {
-    if (pollingTimer) clearInterval(pollingTimer);
-    fetchData();
-    pollingTimer = setInterval(fetchData, CONFIG.interval);
+  const st = document.getElementById('gStatus');
+  if (isAlert) {
+    st.textContent='🚨 खतरा – तुरंत जाँचें!';
+    st.style.cssText='color:var(--accent-red);border-color:rgba(255,23,68,.3);background:rgba(255,23,68,.08)';
+  } else if (val > cfg.threshold*0.75) {
+    st.textContent='⚡ उच्च नमी – सतर्क रहें';
+    st.style.cssText='color:var(--accent-yellow);border-color:rgba(255,214,0,.2);background:rgba(255,214,0,.07)';
+  } else if (val < cfg.threshold*0.2) {
+    st.textContent='🌵 बहुत कम नमी – सिंचाई करें';
+    st.style.cssText='color:var(--accent-orange);border-color:rgba(255,109,0,.2);background:rgba(255,109,0,.07)';
+  } else {
+    st.textContent='✅ नमी सामान्य है';
+    st.style.cssText='color:var(--accent-green);border-color:rgba(0,230,118,.2);background:rgba(0,230,118,.07)';
   }
 
-  async function fetchData() {
-    if (!CONFIG.token) return;
-    const url = `https://blynk.cloud/external/api/get?token=${CONFIG.token}&${CONFIG.pin}`;
-    try {
-      setStatus('डेटा आ रहा है…', true);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const value = parseFloat(text);
-      if (isNaN(value)) throw new Error('Invalid value');
-      updateUI(value);
-      setStatus('लाइव', true);
-    } catch (e) {
-      setStatus('कनेक्शन विफल', false);
-      console.error('Blynk fetch error:', e);
-    }
+  const banner = document.getElementById('alertBanner');
+  if (isAlert) {
+    banner.classList.add('show');
+    const f = FASALS.find(x=>x.id===cfg.fasalId)||{};
+    document.getElementById('alertSub').textContent = `${f.emoji||'🌾'} ${f.name||''} – मूल्य ${val} > सीमा ${cfg.threshold}`;
+    if (audioOn) speakAlert(f.name);
+  } else {
+    banner.classList.remove('show');
   }
 
-  // ──────────────────────────────────────────────
-  // UI UPDATE
-  // ──────────────────────────────────────────────
-  function updateUI(value) {
-    const val = Math.round(value);
-    const isAlert = val > CONFIG.threshold;
+  document.getElementById('tFill').style.width = (pct*100)+'%';
+  document.getElementById('tVal').textContent   = `${val} / 4095`;
+  document.getElementById('tMarker').style.left = (cfg.threshold/MAX_S*100)+'%';
 
-    // Update history
-    history.push(val);
-    if (history.length > MAX_HISTORY) history.shift();
+  updateChart();
+  document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('hi-IN');
+}
 
-    // Stats
-    const mn = Math.min(...history);
-    const mx = Math.max(...history);
-    const avg = Math.round(history.reduce((a,b)=>a+b,0)/history.length);
-    if (isAlert) alertCount++;
-
-    document.getElementById('statMin').textContent = mn;
-    document.getElementById('statMax').textContent = mx;
-    document.getElementById('statAvg').textContent = avg;
-    document.getElementById('statAlerts').textContent = alertCount;
-
-    // Gauge
-    const pct = Math.min(val / MAX_SENSOR, 1);
-    const dashOffset = 565 - pct * 565;
-    const fill = document.getElementById('gaugeFill');
-    fill.style.strokeDashoffset = dashOffset;
-
-    const numEl = document.getElementById('gaugeNumber');
-    numEl.textContent = val;
-
-    if (isAlert) {
-      numEl.style.color = 'var(--accent-red)';
-      numEl.style.textShadow = 'var(--glow-red)';
-      fill.style.stroke = 'url(#gaugeGradient)';
-    } else if (val > CONFIG.threshold * 0.7) {
-      numEl.style.color = 'var(--accent-yellow)';
-      numEl.style.textShadow = '0 0 20px rgba(255,214,0,0.4)';
-    } else {
-      numEl.style.color = 'var(--accent-green)';
-      numEl.style.textShadow = 'var(--glow-green)';
-    }
-
-    // Status text
-    const statusEl = document.getElementById('gaugeStatus');
-    if (isAlert) {
-      statusEl.textContent = '⚠️ खेत भर गया है!';
-      statusEl.style.color = 'var(--accent-red)';
-      statusEl.style.borderColor = 'rgba(255,23,68,0.3)';
-      statusEl.style.background = 'rgba(255,23,68,0.08)';
-    } else if (val > CONFIG.threshold * 0.7) {
-      statusEl.textContent = '⚡ उच्च नमी';
-      statusEl.style.color = 'var(--accent-yellow)';
-      statusEl.style.borderColor = 'rgba(255,214,0,0.2)';
-      statusEl.style.background = 'rgba(255,214,0,0.07)';
-    } else {
-      statusEl.textContent = '✅ सामान्य स्तर';
-      statusEl.style.color = 'var(--accent-green)';
-      statusEl.style.borderColor = 'rgba(0,230,118,0.2)';
-      statusEl.style.background = 'rgba(0,230,118,0.07)';
-    }
-
-    // Alert banner
-    const banner = document.getElementById('alertBanner');
-    if (isAlert) {
-      banner.classList.add('show');
-      document.getElementById('alertSub').textContent =
-        `मूल्य ${val} > सीमा ${CONFIG.threshold} — तुरंत जाँचें!`;
-      if (audioEnabled) speakAlert();
-    } else {
-      banner.classList.remove('show');
-    }
-
-    // Threshold bar
-    document.getElementById('thresholdFill').style.width = (pct * 100) + '%';
-    document.getElementById('thresholdLabel').textContent = `${val} / ${MAX_SENSOR}`;
-
-    // Chart
-    updateChart();
-
-    // Timestamp
-    const now = new Date();
-    document.getElementById('lastUpdated').textContent =
-      now.toLocaleTimeString('hi-IN');
+// ── CHART ──
+function initChart() {
+  const w = document.getElementById('chartWrap');
+  w.innerHTML = '';
+  for (let i=0;i<MAX_H;i++) {
+    const b=document.createElement('div');
+    b.className='cbar'; b.id='cb'+i; b.style.height='3px'; w.appendChild(b);
   }
+}
+function updateChart() {
+  const mx = Math.max(...history, cfg.threshold, 100);
+  history.forEach((v,i) => {
+    const b = document.getElementById('cb'+i);
+    if (!b) return;
+    b.style.height = Math.max((v/mx)*72,3)+'px';
+    v > cfg.threshold ? b.classList.add('danger') : b.classList.remove('danger');
+  });
+}
 
-  // ──────────────────────────────────────────────
-  // CHART
-  // ──────────────────────────────────────────────
-  function initChartBars() {
-    const wrap = document.getElementById('chartWrap');
-    const labels = document.getElementById('chartLabels');
-    wrap.innerHTML = '';
-    labels.innerHTML = '';
-    for (let i = 0; i < MAX_HISTORY; i++) {
-      const bar = document.createElement('div');
-      bar.className = 'chart-bar';
-      bar.style.height = '4px';
-      bar.id = 'bar' + i;
-      wrap.appendChild(bar);
-    }
-    // Labels: first, middle, last
-    ['पुराना', 'मध्य', 'अभी'].forEach(t => {
-      const s = document.createElement('span');
-      s.textContent = t;
-      labels.appendChild(s);
-    });
-  }
-
-  function updateChart() {
-    const max = Math.max(...history, CONFIG.threshold, 100);
-    history.forEach((val, i) => {
-      const bar = document.getElementById('bar' + i);
-      if (!bar) return;
-      const h = Math.max((val / max) * 80, 4);
-      bar.style.height = h + 'px';
-      if (val > CONFIG.threshold) bar.classList.add('danger');
-      else bar.classList.remove('danger');
-      bar.title = val;
-    });
-  }
-
-  // ──────────────────────────────────────────────
-  // AUDIO
-  // ──────────────────────────────────────────────
-  function enableAudio() {
-    audioEnabled = true;
-    const btn = document.getElementById('startBtn');
-    btn.textContent = '🔊 मॉनिटरिंग चालू है';
-    btn.classList.add('active');
-    // Warm up speech synthesis
-    const u = new SpeechSynthesisUtterance('');
-    window.speechSynthesis.speak(u);
-  }
-
-  function speakAlert() {
-    if (speaking || !window.speechSynthesis) return;
-    speaking = true;
-    const msg = new SpeechSynthesisUtterance('खेत भर गया है। water level has crossed the limit');
-    msg.lang = 'hi-IN';
-    msg.rate = 0.9;
-    msg.pitch = 1.1;
-    msg.volume = 1;
-    msg.onend = () => { speaking = false; };
-    msg.onerror = () => { speaking = false; };
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(msg);
-  }
-
-  // ──────────────────────────────────────────────
-  // STATUS
-  // ──────────────────────────────────────────────
-  function setStatus(text, online) {
-    document.getElementById('statusText').textContent = text;
-    const dot = document.getElementById('statusDot');
-    dot.style.background = online ? 'var(--accent-green)' : 'var(--accent-red)';
-    dot.style.boxShadow = online
-      ? '0 0 10px var(--accent-green)'
-      : '0 0 10px var(--accent-red)';
-  }
+// ── AUDIO ──
+function enableAudio() {
+  audioOn=true;
+  const btn=document.getElementById('startBtn');
+  btn.textContent='🔊 मॉनिटरिंग चालू है';
+  btn.classList.add('active');
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+}
+function speakAlert(fasalName) {
+  if (speaking||!window.speechSynthesis) return;
+  speaking=true;
+  const txt = fasalName ? `${fasalName} खेत भर गया है। ${fasalName} खेत भर गया है।` : 'खेत भर गया है। खेत भर गया है।';
+  const msg=new SpeechSynthesisUtterance(txt);
+  msg.lang='hi-IN'; msg.rate=0.88; msg.pitch=1.1; msg.volume=1;
+  msg.onend=msg.onerror=()=>speaking=false;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(msg);
+}
+function setStatus(txt,ok) {
+  document.getElementById('sTxt').textContent=txt;
+  const d=document.getElementById('sDot');
+  d.style.background=ok?'var(--accent-green)':'var(--accent-red)';
+  d.style.boxShadow=ok?'0 0 8px var(--accent-green)':'0 0 8px var(--accent-red)';
+}
 </script>
-
 </body>
 </html>
