@@ -531,7 +531,7 @@
   <div class="header">
     <div class="header-left">
       <div class="app-name">🌾 किसान IoT</div>
-      <div class="app-sub">KHET NIGRANI SYSTEM</div>
+      <div class="app-sub">KHET SICHAI NIGRANI SYSTEM</div>
     </div>
     <div class="status-label" id="statusLabel">
       <span class="status-dot" id="statusDot"></span>
@@ -866,7 +866,7 @@
   function speakAlert() {
     if (speaking || !window.speechSynthesis) return;
     speaking = true;
-    const msg = new SpeechSynthesisUtterance('खेत भर गया है। खेत भर गया है।');
+    const msg = new SpeechSynthesisUtterance('खेत भर गया है। water level has crossed the limit');
     msg.lang = 'hi-IN';
     msg.rate = 0.9;
     msg.pitch = 1.1;
