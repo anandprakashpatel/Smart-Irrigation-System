@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>किसान डैशबोर्ड – खेत निगरानी</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #060c12;
+      --bg-card: #0d1a26;
+      --bg-glass: rgba(13, 26, 38, 0.85);
+      --accent-green: #00e676;
+      --accent-cyan: #00bcd4;
+      --accent-yellow: #ffd600;
+      --accent-red: #ff1744;
+      --accent-orange: #ff6d00;
+      --text-primary: #e8f5e9;
+      --text-secondary: #80cbc4;
+      --text-muted: #546e7a;
+      --border: rgba(0, 230, 118, 0.12);
+      --glow-green: 0 0 24px rgba(0, 230, 118, 0.35);
+      --glow-red: 0 0 30px rgba(255, 23, 68, 0.55);
+      --glow-cyan: 0 0 20px rgba(0, 188, 212, 0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ANIMATED BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,230,118,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,188,212,0.05) 0%, transparent 60%),
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,230,118,0.03) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,230,118,0.02) 40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 0 0 100px;
+    }
+
+    /* HEADER */
+    .header {
+      padding: 28px 20px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-left .app-name {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent-green);
+      text-shadow: var(--glow-green);
+    }
+
+    .header-left .app-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse-dot 2s infinite;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .status-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ALERT BANNER */
+    .alert-banner {
+      display: none;
+      margin: 16px 20px 0;
+      background: linear-gradient(135deg, rgba(255,23,68,0.15), rgba(255,109,0,0.1));
+      border: 1px solid var(--accent-red);
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: var(--glow-red);
+      animation: alert-pulse 1.5s infinite;
+    }
+
+    .alert-banner.show { display: flex; align-items: center; gap: 12px; }
+
+    .alert-icon { font-size: 28px; flex-shrink: 0; }
+
+    .alert-text .alert-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-red);
+      letter-spacing: 1px;
+    }
+
+    .alert-text .alert-sub {
+      font-size: 13px;
+      color: var(--accent-orange);
+      margin-top: 2px;
+    }
+
+    @keyframes alert-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,23,68,0.4); }
+      50% { box-shadow: 0 0 40px rgba(255,23,68,0.7); }
+    }
+
+    /* GAUGE SECTION */
+    .gauge-section {
+      padding: 24px 20px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .gauge-label {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .gauge-container {
+      position: relative;
+      width: 240px;
+      height: 240px;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-225deg);
+      filter: drop-shadow(0 0 20px rgba(0,230,118,0.25));
+    }
+
+    .gauge-track {
+      fill: none;
+      stroke: rgba(255,255,255,0.05);
+      stroke-width: 14;
+      stroke-linecap: round;
+    }
+
+    .gauge-fill {
+      fill: none;
+      stroke: url(#gaugeGradient);
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-dasharray: 565;
+      stroke-dashoffset: 565;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.6s ease;
+    }
+
+    .gauge-value-group {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-icon { font-size: 28px; margin-bottom: 4px; }
+
+    .gauge-number {
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--accent-green);
+      line-height: 1;
+      text-shadow: var(--glow-green);
+      transition: color 0.6s ease, text-shadow 0.6s ease;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .gauge-unit {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+
+    .gauge-status-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-green);
+      letter-spacing: 1px;
+      margin-top: 8px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,230,118,0.2);
+      background: rgba(0,230,118,0.07);
+      transition: all 0.5s ease;
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 16px 20px 0;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:active { transform: scale(0.97); }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+      opacity: 0.6;
+    }
+
+    .stat-card.green { --card-accent: var(--accent-green); }
+    .stat-card.cyan { --card-accent: var(--accent-cyan); }
+    .stat-card.yellow { --card-accent: var(--accent-yellow); }
+    .stat-card.orange { --card-accent: var(--accent-orange); }
+
+    .stat-icon { font-size: 22px; margin-bottom: 8px; }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card.green .stat-value { color: var(--accent-green); }
+    .stat-card.cyan .stat-value { color: var(--accent-cyan); }
+    .stat-card.yellow .stat-value { color: var(--accent-yellow); }
+    .stat-card.orange .stat-value { color: var(--accent-orange); }
+
+    /* HISTORY CHART */
+    .section-title {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding: 20px 20px 12px;
+    }
+
+    .history-card {
+      margin: 0 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 80px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      background: linear-gradient(to top, var(--accent-green), var(--accent-cyan));
+      opacity: 0.7;
+      transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+      min-height: 4px;
+    }
+
+    .chart-bar.danger {
+      background: linear-gradient(to top, var(--accent-red), var(--accent-orange));
+    }
+
+    .chart-bar:hover { opacity: 1; }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .chart-labels span {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* THRESHOLD BAR */
+    .threshold-section {
+      margin: 16px 20px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .threshold-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .threshold-title {
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .threshold-value {
+      font-size: 13px;
+      color: var(--accent-yellow);
+      font-weight: 600;
+    }
+
+    .threshold-bar-wrap {
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .threshold-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--accent-green), var(--accent-yellow), var(--accent-red));
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .threshold-markers {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .threshold-markers span {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* BUTTON */
+    .btn-section {
+      padding: 24px 20px 0;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #00e676, #00acc1);
+      color: #060c12;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 24px rgba(0,230,118,0.3);
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,230,118,0.5);
+    }
+
+    .start-btn:active { transform: scale(0.97); }
+
+    .start-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      pointer-events: none;
+    }
+
+    .start-btn.active {
+      background: linear-gradient(135deg, #37474f, #263238);
+      color: var(--text-secondary);
+      box-shadow: none;
+    }
+
+    /* CONFIG SECTION */
+    .config-card {
+      margin: 16px 20px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .config-title {
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .config-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .config-row label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      flex: 0 0 120px;
+    }
+
+    .config-input {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .config-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .config-save-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--accent-cyan);
+      background: rgba(0,188,212,0.1);
+      color: var(--accent-cyan);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+    }
+
+    .config-save-btn:hover { background: rgba(0,188,212,0.2); }
+
+    /* LAST UPDATED */
+    .last-updated {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* LOADING SHIMMER */
+    .shimmer {
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* RESPONSIVE tweaks */
+    @media (min-width: 480px) {
+      .app-wrapper {
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="app-name">🌾 किसान IoT</div>
+      <div class="app-sub">KHET NIGRANI SYSTEM</div>
+    </div>
+    <div class="status-label" id="statusLabel">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">जोड़ रहे हैं…</span>
+    </div>
+  </div>
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner" id="alertBanner">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-text">
+      <div class="alert-title">RED ALERT – खतरा!</div>
+      <div class="alert-sub" id="alertSub">खेत में पानी भर गया है</div>
+    </div>
+  </div>
+
+  <!-- CIRCULAR GAUGE -->
+  <div class="gauge-section">
+    <div class="gauge-label">नमी स्तर (Moisture Level)</div>
+    <div class="gauge-container">
+      <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00e676"/>
+            <stop offset="50%" stop-color="#00bcd4"/>
+            <stop offset="100%" stop-color="#ff1744" id="gradEnd"/>
+          </linearGradient>
+        </defs>
+        <!-- Track (270° arc) -->
+        <circle class="gauge-track" cx="100" cy="100" r="90"
+          stroke-dasharray="565 636" stroke-dashoffset="0"/>
+        <!-- Fill -->
+        <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="90"
+          stroke-dasharray="565 636"/>
+      </svg>
+      <div class="gauge-value-group">
+        <div class="gauge-icon">💧</div>
+        <div class="gauge-number" id="gaugeNumber">–</div>
+        <div class="gauge-unit">RAW VALUE</div>
+      </div>
+    </div>
+    <div class="gauge-status-text" id="gaugeStatus">डेटा लोड हो रहा है…</div>
+  </div>
+
+  <!-- STATS GRID -->
+  <div class="stats-grid">
+    <div class="stat-card green">
+      <div class="stat-icon">🌡️</div>
+      <div class="stat-label">न्यूनतम</div>
+      <div class="stat-value" id="statMin">–</div>
+    </div>
+    <div class="stat-card cyan">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">अधिकतम</div>
+      <div class="stat-value" id="statMax">–</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-icon">📡</div>
+      <div class="stat-label">औसत</div>
+      <div class="stat-value" id="statAvg">–</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-label">अलर्ट</div>
+      <div class="stat-value" id="statAlerts">0</div>
+    </div>
+  </div>
+
+  <!-- THRESHOLD BAR -->
+  <div class="threshold-section">
+    <div class="threshold-header">
+      <span class="threshold-title">खतरा सीमा</span>
+      <span class="threshold-value" id="thresholdLabel">0 / 4095</span>
+    </div>
+    <div class="threshold-bar-wrap">
+      <div class="threshold-bar-fill" id="thresholdFill"></div>
+    </div>
+    <div class="threshold-markers">
+      <span>0 (सूखा)</span>
+      <span>3000 ⚠️</span>
+      <span>4095 (भरा)</span>
+    </div>
+  </div>
+
+  <!-- HISTORY CHART -->
+  <div class="section-title">पिछले रीडिंग (Last Readings)</div>
+  <div class="history-card">
+    <div class="chart-wrap" id="chartWrap">
+      <!-- bars inserted by JS -->
+    </div>
+    <div class="chart-labels" id="chartLabels"></div>
+  </div>
+
+  <!-- START MONITORING BUTTON -->
+  <div class="btn-section">
+    <button class="start-btn" id="startBtn" onclick="enableAudio()">
+      🎙️ मॉनिटरिंग शुरू करें
+    </button>
+  </div>
+
+  <!-- BLYNK CONFIG -->
+  <div class="config-card">
+    <div class="config-title">⚙️ Blynk सेटिंग</div>
+    <div class="config-row">
+      <label>Auth Token</label>
+      <input class="config-input" id="cfgToken" type="text" placeholder="आपका Blynk Token" />
+    </div>
+    <div class="config-row">
+      <label>Virtual Pin</label>
+      <input class="config-input" id="cfgPin" type="text" value="v1" placeholder="v1" />
+    </div>
+    <div class="config-row">
+      <label>अलर्ट सीमा</label>
+      <input class="config-input" id="cfgThreshold" type="number" value="3000" />
+    </div>
+    <button class="config-save-btn" onclick="saveConfig()">✅ सेव करें और शुरू करें</button>
+  </div>
+
+  <div class="last-updated">
+    अंतिम अपडेट: <span id="lastUpdated">–</span>
+  </div>
+
+</div>
+
+<script>
+  // ──────────────────────────────────────────────
+  // CONFIG
+  // ──────────────────────────────────────────────
+  let CONFIG = {
+    token: localStorage.getItem('blynk_token') || '',
+    pin: localStorage.getItem('blynk_pin') || 'v1',
+    threshold: parseInt(localStorage.getItem('blynk_threshold') || '3000'),
+    interval: 5000,
+  };
+
+  let audioEnabled = false;
+  let alertCount = 0;
+  let history = [];
+  let pollingTimer = null;
+  let speaking = false;
+
+  const MAX_HISTORY = 14;
+  const MAX_SENSOR = 4095;
+
+  // ──────────────────────────────────────────────
+  // INIT
+  // ──────────────────────────────────────────────
+  window.onload = () => {
+    document.getElementById('cfgToken').value = CONFIG.token;
+    document.getElementById('cfgPin').value = CONFIG.pin;
+    document.getElementById('cfgThreshold').value = CONFIG.threshold;
+    initChartBars();
+    if (CONFIG.token) startPolling();
+    else setStatus('कृपया Token दर्ज करें', false);
+  };
+
+  // ──────────────────────────────────────────────
+  // SAVE CONFIG
+  // ──────────────────────────────────────────────
+  function saveConfig() {
+    CONFIG.token = document.getElementById('cfgToken').value.trim();
+    CONFIG.pin = document.getElementById('cfgPin').value.trim() || 'v1';
+    CONFIG.threshold = parseInt(document.getElementById('cfgThreshold').value) || 3000;
+    localStorage.setItem('blynk_token', CONFIG.token);
+    localStorage.setItem('blynk_pin', CONFIG.pin);
+    localStorage.setItem('blynk_threshold', CONFIG.threshold);
+    startPolling();
+  }
+
+  // ──────────────────────────────────────────────
+  // POLLING
+  // ──────────────────────────────────────────────
+  function startPolling() {
+    if (pollingTimer) clearInterval(pollingTimer);
+    fetchData();
+    pollingTimer = setInterval(fetchData, CONFIG.interval);
+  }
+
+  async function fetchData() {
+    if (!CONFIG.token) return;
+    const url = `https://blynk.cloud/external/api/get?token=${CONFIG.token}&${CONFIG.pin}`;
+    try {
+      setStatus('डेटा आ रहा है…', true);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const value = parseFloat(text);
+      if (isNaN(value)) throw new Error('Invalid value');
+      updateUI(value);
+      setStatus('लाइव', true);
+    } catch (e) {
+      setStatus('कनेक्शन विफल', false);
+      console.error('Blynk fetch error:', e);
+    }
+  }
+
+  // ──────────────────────────────────────────────
+  // UI UPDATE
+  // ──────────────────────────────────────────────
+  function updateUI(value) {
+    const val = Math.round(value);
+    const isAlert = val > CONFIG.threshold;
+
+    // Update history
+    history.push(val);
+    if (history.length > MAX_HISTORY) history.shift();
+
+    // Stats
+    const mn = Math.min(...history);
+    const mx = Math.max(...history);
+    const avg = Math.round(history.reduce((a,b)=>a+b,0)/history.length);
+    if (isAlert) alertCount++;
+
+    document.getElementById('statMin').textContent = mn;
+    document.getElementById('statMax').textContent = mx;
+    document.getElementById('statAvg').textContent = avg;
+    document.getElementById('statAlerts').textContent = alertCount;
+
+    // Gauge
+    const pct = Math.min(val / MAX_SENSOR, 1);
+    const dashOffset = 565 - pct * 565;
+    const fill = document.getElementById('gaugeFill');
+    fill.style.strokeDashoffset = dashOffset;
+
+    const numEl = document.getElementById('gaugeNumber');
+    numEl.textContent = val;
+
+    if (isAlert) {
+      numEl.style.color = 'var(--accent-red)';
+      numEl.style.textShadow = 'var(--glow-red)';
+      fill.style.stroke = 'url(#gaugeGradient)';
+    } else if (val > CONFIG.threshold * 0.7) {
+      numEl.style.color = 'var(--accent-yellow)';
+      numEl.style.textShadow = '0 0 20px rgba(255,214,0,0.4)';
+    } else {
+      numEl.style.color = 'var(--accent-green)';
+      numEl.style.textShadow = 'var(--glow-green)';
+    }
+
+    // Status text
+    const statusEl = document.getElementById('gaugeStatus');
+    if (isAlert) {
+      statusEl.textContent = '⚠️ खेत भर गया है!';
+      statusEl.style.color = 'var(--accent-red)';
+      statusEl.style.borderColor = 'rgba(255,23,68,0.3)';
+      statusEl.style.background = 'rgba(255,23,68,0.08)';
+    } else if (val > CONFIG.threshold * 0.7) {
+      statusEl.textContent = '⚡ उच्च नमी';
+      statusEl.style.color = 'var(--accent-yellow)';
+      statusEl.style.borderColor = 'rgba(255,214,0,0.2)';
+      statusEl.style.background = 'rgba(255,214,0,0.07)';
+    } else {
+      statusEl.textContent = '✅ सामान्य स्तर';
+      statusEl.style.color = 'var(--accent-green)';
+      statusEl.style.borderColor = 'rgba(0,230,118,0.2)';
+      statusEl.style.background = 'rgba(0,230,118,0.07)';
+    }
+
+    // Alert banner
+    const banner = document.getElementById('alertBanner');
+    if (isAlert) {
+      banner.classList.add('show');
+      document.getElementById('alertSub').textContent =
+        `मूल्य ${val} > सीमा ${CONFIG.threshold} — तुरंत जाँचें!`;
+      if (audioEnabled) speakAlert();
+    } else {
+      banner.classList.remove('show');
+    }
+
+    // Threshold bar
+    document.getElementById('thresholdFill').style.width = (pct * 100) + '%';
+    document.getElementById('thresholdLabel').textContent = `${val} / ${MAX_SENSOR}`;
+
+    // Chart
+    updateChart();
+
+    // Timestamp
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent =
+      now.toLocaleTimeString('hi-IN');
+  }
+
+  // ──────────────────────────────────────────────
+  // CHART
+  // ──────────────────────────────────────────────
+  function initChartBars() {
+    const wrap = document.getElementById('chartWrap');
+    const labels = document.getElementById('chartLabels');
+    wrap.innerHTML = '';
+    labels.innerHTML = '';
+    for (let i = 0; i < MAX_HISTORY; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+      bar.style.height = '4px';
+      bar.id = 'bar' + i;
+      wrap.appendChild(bar);
+    }
+    // Labels: first, middle, last
+    ['पुराना', 'मध्य', 'अभी'].forEach(t => {
+      const s = document.createElement('span');
+      s.textContent = t;
+      labels.appendChild(s);
+    });
+  }
+
+  function updateChart() {
+    const max = Math.max(...history, CONFIG.threshold, 100);
+    history.forEach((val, i) => {
+      const bar = document.getElementById('bar' + i);
+      if (!bar) return;
+      const h = Math.max((val / max) * 80, 4);
+      bar.style.height = h + 'px';
+      if (val > CONFIG.threshold) bar.classList.add('danger');
+      else bar.classList.remove('danger');
+      bar.title = val;
+    });
+  }
+
+  // ──────────────────────────────────────────────
+  // AUDIO
+  // ──────────────────────────────────────────────
+  function enableAudio() {
+    audioEnabled = true;
+    const btn = document.getElementById('startBtn');
+    btn.textContent = '🔊 मॉनिटरिंग चालू है';
+    btn.classList.add('active');
+    // Warm up speech synthesis
+    const u = new SpeechSynthesisUtterance('');
+    window.speechSynthesis.speak(u);
+  }
+
+  function speakAlert() {
+    if (speaking || !window.speechSynthesis) return;
+    speaking = true;
+    const msg = new SpeechSynthesisUtterance('खेत भर गया है। खेत भर गया है।');
+    msg.lang = 'hi-IN';
+    msg.rate = 0.9;
+    msg.pitch = 1.1;
+    msg.volume = 1;
+    msg.onend = () => { speaking = false; };
+    msg.onerror = () => { speaking = false; };
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(msg);
+  }
+
+  // ──────────────────────────────────────────────
+  // STATUS
+  // ──────────────────────────────────────────────
+  function setStatus(text, online) {
+    document.getElementById('statusText').textContent = text;
+    const dot = document.getElementById('statusDot');
+    dot.style.background = online ? 'var(--accent-green)' : 'var(--accent-red)';
+    dot.style.boxShadow = online
+      ? '0 0 10px var(--accent-green)'
+      : '0 0 10px var(--accent-red)';
+  }
+</script>
+
+</body>
+</html>
