@@ -7,525 +7,503 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root {
-  --bg:       #070d1a;
-  --bg2:      #0c1526;
-  --bg3:      #111e35;
-  --card:     #0d1a2e;
-  --card2:    #0a1628;
-  --green:    #00e676;
-  --green2:   #00c853;
-  --cyan:     #00e5ff;
-  --cyan2:    #00b0cc;
-  --yellow:   #ffd600;
-  --orange:   #ff9100;
-  --red:      #ff1744;
-  --red2:     #d50000;
-  --text:     #e8f4ff;
-  --text2:    #8baabb;
-  --border:   rgba(0,230,118,0.15);
-  --border2:  rgba(0,229,255,0.12);
-  --glow-g:   rgba(0,230,118,0.25);
-  --glow-c:   rgba(0,229,255,0.2);
-  --glow-r:   rgba(255,23,68,0.25);
+:root{
+  --bg:#070d1a;--bg2:#0c1526;--bg3:#111e35;
+  --card:#0d1a2e;--card2:#0a1628;
+  --green:#00e676;--green2:#00c853;
+  --cyan:#00e5ff;--cyan2:#00b0cc;
+  --yellow:#ffd600;--orange:#ff9100;
+  --red:#ff1744;--red2:#d50000;
+  --purple:#e040fb;--blue:#448aff;
+  --text:#e8f4ff;--text2:#8baabb;
+  --border:rgba(0,230,118,0.15);--border2:rgba(0,229,255,0.12);
+  --glow-g:rgba(0,230,118,0.25);--glow-c:rgba(0,229,255,0.2);
+  --glow-r:rgba(255,23,68,0.25);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  background:var(--bg);
-  color:var(--text);
+  background:var(--bg);color:var(--text);
   font-family:'Noto Sans Devanagari',sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
+  min-height:100vh;overflow-x:hidden;
 }
 body::before{
-  content:'';
-  position:fixed;inset:0;
+  content:'';position:fixed;inset:0;
   background:
-    radial-gradient(ellipse 60% 40% at 10% 20%, rgba(0,230,118,0.04) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 50% at 90% 80%, rgba(0,229,255,0.04) 0%,transparent 60%),
-    repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,229,255,0.015) 40px,rgba(0,229,255,0.015) 41px),
-    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,229,255,0.015) 40px,rgba(0,229,255,0.015) 41px);
+    radial-gradient(ellipse 60% 40% at 10% 20%,rgba(0,230,118,0.04) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 80%,rgba(0,229,255,0.04) 0%,transparent 60%),
+    repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,229,255,0.012) 40px,rgba(0,229,255,0.012) 41px),
+    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,229,255,0.012) 40px,rgba(0,229,255,0.012) 41px);
   pointer-events:none;z-index:0;
 }
-.wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 14px 80px}
+.wrap{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:0 12px 100px}
 
-/* ── HEADER ── */
+/* HEADER */
 header{
-  position:sticky;top:0;z-index:200;
-  background:rgba(7,13,26,0.95);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  padding:12px 16px;
+  position:sticky;top:0;z-index:500;
+  background:rgba(7,13,26,0.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);padding:10px 14px;
 }
-.hdr{display:flex;align-items:center;justify-content:space-between}
-.hdr-left{display:flex;align-items:center;gap:10px}
-.logo-icon{
-  width:38px;height:38px;border-radius:10px;
-  background:linear-gradient(135deg,#1a3a1a,#0d2d0d);
-  border:1px solid rgba(0,230,118,0.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;
-  box-shadow:0 0 16px var(--glow-g);
+.hdr{display:flex;align-items:center;justify-content:space-between;max-width:500px;margin:0 auto}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-box{
+  width:36px;height:36px;border-radius:9px;
+  background:linear-gradient(135deg,#0d2d0d,#1a3a1a);
+  border:1px solid rgba(0,230,118,0.35);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 0 14px var(--glow-g);
 }
 .logo-text h1{
-  font-family:'Orbitron',monospace;
-  font-size:16px;font-weight:700;
+  font-family:'Orbitron',monospace;font-size:15px;font-weight:700;
   color:var(--green);letter-spacing:1px;
 }
-.logo-text span{
-  font-size:9px;color:var(--text2);
-  letter-spacing:2px;text-transform:uppercase;
-  font-family:'JetBrains Mono',monospace;
+.logo-text p{font-size:8px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);
+  border-radius:20px;padding:4px 10px;
+  font-size:10px;color:var(--green);font-weight:600;
+  font-family:'JetBrains Mono',monospace;letter-spacing:1px;
 }
-.hdr-right{display:flex;align-items:center;gap:10px}
-.live-badge{
-  display:flex;align-items:center;gap:6px;
-  background:rgba(0,230,118,0.08);
-  border:1px solid rgba(0,230,118,0.25);
-  border-radius:20px;padding:5px 12px;
-  font-size:11px;color:var(--green);font-weight:600;
-  letter-spacing:1px;
-  font-family:'JetBrains Mono',monospace;
-}
-.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse2 1.5s infinite}
-@keyframes pulse2{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--glow-g)}50%{opacity:0.6;box-shadow:0 0 0 4px transparent}}
+.ldot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:ldotAnim 1.5s infinite}
+@keyframes ldotAnim{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--glow-g)}50%{opacity:.5;box-shadow:0 0 0 4px transparent}}
 
-/* Language selector */
+/* LANGUAGE */
 .lang-btn{
   background:var(--card);border:1px solid var(--border2);
-  border-radius:8px;padding:5px 10px;
-  color:var(--cyan);font-size:12px;cursor:pointer;
-  display:flex;align-items:center;gap:4px;
-  font-family:'Noto Sans Devanagari',sans-serif;
+  border-radius:8px;padding:4px 9px;color:var(--cyan);
+  font-size:13px;cursor:pointer;display:flex;align-items:center;gap:3px;
 }
-.lang-dropdown{
-  position:absolute;top:60px;right:14px;
-  background:var(--card);border:1px solid var(--border2);
-  border-radius:12px;min-width:180px;
-  z-index:300;overflow:hidden;
-  box-shadow:0 8px 30px rgba(0,0,0,0.5);
-  display:none;
+.lang-dd{
+  position:fixed;top:58px;right:14px;
+  background:#0d1a2e;border:1px solid var(--border2);
+  border-radius:12px;min-width:190px;z-index:600;
+  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  display:none;max-height:70vh;overflow-y:auto;
 }
-.lang-dropdown.open{display:block;animation:fadeDown 0.2s ease}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.lang-dd.open{display:block;animation:ddSlide .18s ease}
+@keyframes ddSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .lang-opt{
-  padding:11px 16px;font-size:13px;cursor:pointer;
-  border-bottom:1px solid rgba(0,229,255,0.08);
-  transition:background 0.15s;
-  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;font-size:13px;cursor:pointer;
+  border-bottom:1px solid rgba(0,229,255,0.07);
+  display:flex;align-items:center;gap:10px;transition:background .15s;
 }
-.lang-opt:last-child{border-bottom:none}
+.lang-opt:last-child{border:none}
 .lang-opt:hover{background:rgba(0,229,255,0.08);color:var(--cyan)}
 .lang-opt.active{color:var(--green);background:rgba(0,230,118,0.06)}
-.lang-code{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);min-width:24px}
+.lcode{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);min-width:22px}
 
-/* ── SECTIONS ── */
-.section{padding:18px 0 0}
+/* NOTIFICATION TOAST */
+.toast{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%);
+  background:rgba(13,26,46,0.98);border:1px solid var(--green);
+  border-radius:12px;padding:12px 20px;z-index:700;
+  font-size:14px;font-weight:600;color:var(--green);
+  box-shadow:0 4px 20px var(--glow-g);
+  display:none;text-align:center;max-width:320px;
+  animation:toastIn .3s ease;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.toast.warn{border-color:var(--red);color:var(--red);box-shadow:0 4px 20px var(--glow-r)}
+.toast.info{border-color:var(--cyan);color:var(--cyan)}
+
+/* ALARM BANNER */
+.alarm-banner{
+  display:none;background:rgba(213,0,0,0.15);
+  border:2px solid var(--red);border-radius:10px;
+  padding:10px 16px;margin-bottom:8px;
+  text-align:center;font-size:14px;font-weight:700;color:var(--red);
+  animation:alarmFlash 1s infinite;
+}
+@keyframes alarmFlash{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 20px var(--glow-r)}}
+
+/* SECTION */
+.section{padding:16px 0 0}
 .sec-title{
-  font-size:12px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--text2);margin-bottom:12px;
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text2);margin-bottom:10px;
   display:flex;align-items:center;gap:8px;
   font-family:'JetBrains Mono',monospace;
 }
 .sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
-.sec-title-icon{font-size:14px}
 
-/* ── BLYNK PANEL ── */
-.blynk-panel{
-  background:var(--card);border:1px solid var(--border2);
-  border-radius:14px;overflow:hidden;margin-bottom:4px;
+/* WEATHER WIDGET */
+.weather-card{
+  background:linear-gradient(135deg,#0a1a2e,#0d2240);
+  border:1px solid rgba(68,138,255,0.25);border-radius:16px;
+  overflow:hidden;position:relative;
 }
-.blynk-header{
-  padding:14px 16px;cursor:pointer;
+.weather-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),transparent);
+}
+.wx-main{padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.wx-left{display:flex;align-items:center;gap:12px}
+.wx-emoji{font-size:40px;filter:drop-shadow(0 0 8px rgba(68,138,255,0.4))}
+.wx-temp{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;color:#fff}
+.wx-temp span{font-size:16px;color:var(--text2)}
+.wx-info{flex:1}
+.wx-desc{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.wx-loc{font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.wx-right{text-align:right}
+.wx-feels{font-size:10px;color:var(--text2)}
+.wx-feels span{color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.wx-humidity{font-size:10px;color:var(--text2);margin-top:2px}
+.wx-humidity span{color:var(--blue);font-family:'JetBrains Mono',monospace}
+.wx-forecast{
+  display:flex;overflow-x:auto;gap:0;
+  border-top:1px solid rgba(68,138,255,0.15);
+  scrollbar-width:none;
+}
+.wx-forecast::-webkit-scrollbar{display:none}
+.wx-day{
+  flex:0 0 auto;min-width:72px;padding:10px 8px;text-align:center;
+  border-right:1px solid rgba(68,138,255,0.1);
+}
+.wx-day:last-child{border:none}
+.wx-day-name{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.wx-day-icon{font-size:20px;margin-bottom:4px}
+.wx-day-temp{font-size:11px;font-family:'JetBrains Mono',monospace}
+.wx-day-temp .hi{color:var(--orange)}
+.wx-day-temp .lo{color:var(--blue)}
+.wx-day-rain{font-size:9px;color:var(--cyan);margin-top:2px}
+.wx-loading{padding:24px;text-align:center;color:var(--text2);font-size:12px}
+.wx-error{padding:14px;text-align:center;color:var(--text2);font-size:12px;cursor:pointer}
+.wx-error span{color:var(--cyan)}
+
+/* BLYNK PANEL */
+.blynk-panel{background:var(--card);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
+.blynk-hdr{
+  padding:13px 16px;cursor:pointer;
   display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(0,229,255,0.08);
+  border-bottom:1px solid rgba(0,229,255,0.07);
 }
-.blynk-title{
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;font-weight:600;color:var(--cyan);
-  font-family:'JetBrains Mono',monospace;letter-spacing:1px;
-}
-.blynk-status-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:#666;transition:all 0.3s;
-}
-.blynk-status-dot.connected{background:var(--green);box-shadow:0 0 8px var(--glow-g)}
-.blynk-status-dot.error{background:var(--red);box-shadow:0 0 8px var(--glow-r)}
-.chevron{color:var(--text2);font-size:12px;transition:transform 0.2s}
-.chevron.open{transform:rotate(180deg)}
-.blynk-body{padding:16px;display:none}
-.blynk-body.open{display:block;animation:fadeDown 0.2s ease}
-.field-lbl{
-  font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--text2);margin-bottom:6px;
-  font-family:'JetBrains Mono',monospace;
-}
+.blynk-title{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--cyan);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.bsdot{width:8px;height:8px;border-radius:50%;background:#555;transition:all .3s}
+.bsdot.on{background:var(--green);box-shadow:0 0 8px var(--glow-g)}
+.bsdot.err{background:var(--red);box-shadow:0 0 8px var(--glow-r)}
+.chev{color:var(--text2);font-size:11px;transition:transform .2s}
+.chev.open{transform:rotate(180deg)}
+.blynk-body{padding:14px 16px;display:none}
+.blynk-body.open{display:block;animation:ddSlide .2s ease}
+.flbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:5px;font-family:'JetBrains Mono',monospace}
 .inp{
-  width:100%;background:var(--bg2);
-  border:1px solid rgba(0,229,255,0.15);border-radius:8px;
-  color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;
-  padding:10px 14px;outline:none;margin-bottom:12px;
-  transition:border-color 0.2s,box-shadow 0.2s;
+  width:100%;background:var(--bg2);border:1px solid rgba(0,229,255,0.15);
+  border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;
+  font-size:13px;padding:9px 12px;outline:none;margin-bottom:10px;
+  transition:border-color .2s,box-shadow .2s;
 }
 .inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--glow-c)}
-.inp::placeholder{color:rgba(139,170,187,0.4)}
-.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.blynk-msg{
-  font-size:11px;padding:8px 12px;border-radius:6px;
-  margin-bottom:12px;font-family:'JetBrains Mono',monospace;
-  display:none;
-}
-.blynk-msg.ok{display:block;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);color:var(--green)}
-.blynk-msg.err{display:block;background:rgba(255,23,68,0.1);border:1px solid rgba(255,23,68,0.25);color:var(--red)}
-.btn-teal{
+.inp::placeholder{color:rgba(139,170,187,0.35)}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bmsg{font-size:11px;padding:7px 10px;border-radius:6px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;display:none}
+.bmsg.ok{display:block;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);color:var(--green)}
+.bmsg.err{display:block;background:rgba(255,23,68,0.1);border:1px solid rgba(255,23,68,0.25);color:var(--red)}
+.btn-save{
   width:100%;background:linear-gradient(135deg,#00897b,#00695c);
-  border:none;border-radius:10px;color:#fff;
-  font-family:'Noto Sans Devanagari',sans-serif;font-size:15px;font-weight:700;
-  padding:13px;cursor:pointer;transition:all 0.25s;
-  box-shadow:0 4px 16px rgba(0,137,123,0.3);
+  border:none;border-radius:9px;color:#fff;
+  font-family:'Noto Sans Devanagari',sans-serif;font-size:14px;font-weight:700;
+  padding:11px;cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 14px rgba(0,137,123,.3);
 }
-.btn-teal:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,137,123,0.4)}
-.poll-info{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  font-size:11px;color:var(--text2);margin-top:10px;
-  font-family:'JetBrains Mono',monospace;
-}
-.poll-dot{width:5px;height:5px;border-radius:50%;background:var(--text2)}
-.poll-dot.active{background:var(--green);animation:pulse2 1s infinite}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,137,123,.4)}
+.poll-row{display:flex;align-items:center;justify-content:center;gap:8px;font-size:10px;color:var(--text2);margin-top:8px;font-family:'JetBrains Mono',monospace}
+.pdot{width:5px;height:5px;border-radius:50%;background:var(--text2)}
+.pdot.on{background:var(--green);animation:ldotAnim 1s infinite}
 
-/* ── FASAL GRID ── */
-.fasal-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
-.fasal-card{
+/* FASAL GRID */
+.fasal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fc{
   background:var(--card);border:1.5px solid rgba(0,230,118,0.1);
-  border-radius:12px;padding:12px 8px;
-  text-align:center;cursor:pointer;transition:all 0.2s;
-  position:relative;overflow:hidden;
+  border-radius:11px;padding:10px 6px;text-align:center;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
 }
-.fasal-card:hover{border-color:rgba(0,230,118,0.3);background:var(--bg3)}
-.fasal-card.active{
-  border-color:var(--yellow);background:rgba(255,214,0,0.06);
-  box-shadow:0 0 16px rgba(255,214,0,0.15);
-}
-.fasal-card.active::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--yellow);
-}
-.fasal-emoji{font-size:24px;margin-bottom:4px;display:block}
-.fasal-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.2}
-.fasal-threshold{font-size:10px;color:var(--text2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.fc:hover{border-color:rgba(0,230,118,0.3);background:var(--bg3)}
+.fc.active{border-color:var(--yellow);background:rgba(255,214,0,0.06);box-shadow:0 0 14px rgba(255,214,0,.15)}
+.fc.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow)}
+.fc-emoji{font-size:22px;margin-bottom:3px;display:block}
+.fc-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.2}
 
-/* ── MITTI GRID ── */
-.mitti-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.mitti-card{
+/* MITTI */
+.mitti-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mc{
   background:var(--card);border:1.5px solid rgba(0,229,255,0.1);
-  border-radius:12px;padding:14px 10px;
-  text-align:center;cursor:pointer;transition:all 0.2s;
+  border-radius:11px;padding:12px 8px;text-align:center;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.mc:hover{border-color:rgba(0,229,255,0.3);background:var(--bg3)}
+.mc.active{border-color:var(--cyan);background:rgba(0,229,255,0.05);box-shadow:0 0 14px var(--glow-c)}
+.mc.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan)}
+.mc-icon{font-size:24px;margin-bottom:5px;display:block}
+.mc-name{font-size:12px;font-weight:700}
+.mc-fc{font-size:9px;color:var(--text2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+/* GAUGE */
+.gauge-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:20px 14px 16px;text-align:center;
   position:relative;overflow:hidden;
 }
-.mitti-card:hover{border-color:rgba(0,229,255,0.3);background:var(--bg3)}
-.mitti-card.active{
-  border-color:var(--cyan);background:rgba(0,229,255,0.05);
-  box-shadow:0 0 16px var(--glow-c);
-}
-.mitti-card.active::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--cyan),transparent);
-}
-.mitti-icon{font-size:26px;margin-bottom:6px;display:block}
-.mitti-name{font-size:13px;font-weight:700}
-.mitti-fc{font-size:10px;color:var(--text2);margin-top:3px;font-family:'JetBrains Mono',monospace}
-
-/* ── GAUGE ── */
-.gauge-wrap{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:24px 16px 18px;
-  text-align:center;position:relative;overflow:hidden;
-}
-.gauge-wrap::before{
-  content:'';position:absolute;
-  top:-40px;left:50%;transform:translateX(-50%);
-  width:200px;height:200px;border-radius:50%;
+.gauge-card::before{
+  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:240px;height:240px;border-radius:50%;
   background:radial-gradient(circle,rgba(0,230,118,0.05) 0%,transparent 70%);
   pointer-events:none;
 }
-.gauge-svg-wrap{position:relative;width:200px;height:200px;margin:0 auto 16px}
+.gauge-wrap{position:relative;width:200px;height:200px;margin:0 auto 14px}
 .gauge-svg{width:100%;height:100%}
 .gauge-center{
   position:absolute;inset:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
-.gauge-emoji{font-size:28px;margin-bottom:4px}
-.gauge-pct{
-  font-family:'Orbitron',monospace;font-size:42px;font-weight:900;
-  line-height:1;
-  background:linear-gradient(180deg,#ffffff,var(--green));
+.g-emoji{font-size:26px;margin-bottom:2px}
+.g-pct{
+  font-family:'Orbitron',monospace;font-size:44px;font-weight:900;line-height:1;
+  background:linear-gradient(180deg,#fff,var(--green));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 10px var(--glow-g));
+  filter:drop-shadow(0 0 12px var(--glow-g));
 }
-.gauge-pct-unit{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--text2)}
-.gauge-raw{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);margin-top:2px}
-.gauge-fasal{font-size:11px;color:var(--yellow);margin-top:4px;font-weight:600}
+.g-unit{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--text2)}
+.g-status-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.g-fasal{font-size:11px;color:var(--yellow);margin-top:3px;font-weight:600}
 
-/* Status banner */
-.status-banner{
-  margin:14px 0 0;padding:12px 16px;
-  border-radius:10px;text-align:center;
-  font-size:15px;font-weight:700;
-  transition:all 0.4s;
-  border:1px solid;
-  display:flex;align-items:center;justify-content:center;gap:10px;
+/* STATUS BANNER */
+.sbanner{
+  margin:12px 0 0;padding:11px 14px;border-radius:9px;
+  text-align:center;font-size:14px;font-weight:700;
+  border:1px solid;transition:all .4s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
 }
-.st-green{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.3);color:var(--green)}
-.st-cyan{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.25);color:var(--cyan)}
-.st-yellow{background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.3);color:var(--yellow)}
-.st-orange{background:rgba(255,145,0,0.1);border-color:rgba(255,145,0,0.3);color:var(--orange)}
-.st-red{background:rgba(255,23,68,0.12);border-color:rgba(255,23,68,0.35);color:var(--red);animation:flashRed 1.5s infinite}
+.sg{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--green)}
+.sc{background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.25);color:var(--cyan)}
+.sy{background:rgba(255,214,0,.1);border-color:rgba(255,214,0,.3);color:var(--yellow)}
+.so{background:rgba(255,145,0,.1);border-color:rgba(255,145,0,.3);color:var(--orange)}
+.sr{background:rgba(255,23,68,.12);border-color:rgba(255,23,68,.35);color:var(--red);animation:flashRed 1.5s infinite}
+.sb{background:rgba(0,229,255,.12);border-color:rgba(0,229,255,.35);color:var(--cyan)}
 @keyframes flashRed{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 20px var(--glow-r)}}
-.st-blue{background:rgba(0,229,255,0.12);border-color:rgba(0,229,255,0.35);color:var(--cyan)}
 
-/* ── KHATRA SEEMA ── */
+/* KHATRA SLIDER */
 .seema-box{
-  background:var(--card);border:1px solid rgba(255,214,0,0.15);
-  border-radius:12px;padding:14px 16px;
+  background:var(--card);border:1px solid rgba(255,214,0,.15);
+  border-radius:12px;padding:12px 14px;
 }
-.seema-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.seema-label{font-size:12px;color:var(--yellow);font-weight:600;display:flex;align-items:center;gap:6px}
-.seema-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)}
-.seema-bar-wrap{
-  height:8px;background:rgba(255,255,255,0.06);
-  border-radius:4px;position:relative;overflow:visible;
-  margin-bottom:8px;
-}
-.seema-fill{
-  height:100%;border-radius:4px;
-  background:linear-gradient(90deg,var(--green),var(--cyan));
-  transition:width 0.5s ease;
-  position:relative;
-}
-.seema-marker{
-  position:absolute;top:50%;transform:translate(-50%,-50%);
-  width:12px;height:18px;background:var(--yellow);
-  border-radius:2px;border:2px solid #000;
-  cursor:pointer;
-}
-.seema-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace}
-.seema-range-input{
-  width:100%;margin-top:8px;accent-color:var(--yellow);
-  cursor:pointer;
-}
+.seema-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.seema-lbl{font-size:11px;color:var(--yellow);font-weight:600;display:flex;align-items:center;gap:5px}
+.seema-v{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2)}
+.sbar{height:7px;background:rgba(255,255,255,.05);border-radius:4px;position:relative;overflow:visible;margin-bottom:6px}
+.sfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .5s}
+.smarker{position:absolute;top:50%;transform:translate(-50%,-50%);width:11px;height:16px;background:var(--yellow);border-radius:2px;border:1.5px solid #000;cursor:pointer}
+.slabels{display:flex;justify-content:space-between;font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace}
+input[type=range].srange{width:100%;margin-top:6px;accent-color:var(--yellow);cursor:pointer}
 
-/* ── ANALYTICS ── */
-.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ana-card{
+/* ANALYTICS */
+.ana-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ana{
   background:var(--card);border:1px solid var(--border);
-  border-radius:12px;padding:14px;
-  position:relative;overflow:hidden;
+  border-radius:11px;padding:12px 14px;position:relative;overflow:hidden;
 }
-.ana-card::after{
-  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
-  background:var(--green);border-radius:0 2px 2px 0;
-}
-.ana-card.c-cyan::after{background:var(--cyan)}
-.ana-card.c-yellow::after{background:var(--yellow)}
-.ana-card.c-orange::after{background:var(--orange)}
-.ana-card.c-red::after{background:var(--red)}
-.ana-card.c-purple::after{background:#e040fb}
-.ana-lbl{font-size:10px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:'JetBrains Mono',monospace}
-.ana-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);line-height:1}
-.ana-val .unit{font-size:12px;color:var(--text2);margin-left:2px}
-.ana-sub{font-size:10px;color:var(--text2);margin-top:4px}
-.trend-up{color:var(--green)}
-.trend-down{color:var(--red)}
-.trend-stable{color:var(--yellow)}
+.ana::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--green);border-radius:0 2px 2px 0}
+.ana.cc::after{background:var(--cyan)}.ana.cy::after{background:var(--yellow)}
+.ana.co::after{background:var(--orange)}.ana.cr::after{background:var(--red)}
+.ana.cp::after{background:var(--purple)}.ana.cb::after{background:var(--blue)}
+.albl{font-size:9px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-family:'JetBrains Mono',monospace}
+.aval{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1}
+.aval .unit{font-size:11px;color:var(--text2);margin-left:2px}
+.asub{font-size:10px;color:var(--text2);margin-top:3px}
+.tup{color:var(--green)}.tdn{color:var(--red)}.tst{color:var(--yellow)}
 
-/* ── GRAPH ── */
+/* GRAPHS */
 .graph-box{
   background:var(--card);border:1px solid var(--border2);
-  border-radius:16px;padding:16px;
-  position:relative;overflow:hidden;
+  border-radius:14px;padding:14px;position:relative;overflow:hidden;
 }
-.graph-box::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--green),var(--cyan),transparent);
-}
-.graph-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.graph-title{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px}
-.graph-controls{display:flex;gap:6px}
-.graph-btn{
+.graph-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--cyan),transparent)}
+.gh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.gt{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px}
+.gc{display:flex;gap:5px}
+.gbtn{
   background:var(--bg2);border:1px solid var(--border2);
-  border-radius:6px;padding:4px 8px;font-size:10px;
-  color:var(--text2);cursor:pointer;transition:all 0.15s;
+  border-radius:5px;padding:3px 7px;font-size:9px;
+  color:var(--text2);cursor:pointer;transition:all .15s;
   font-family:'JetBrains Mono',monospace;
 }
-.graph-btn:hover,.graph-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,0.06)}
-.chart-container{position:relative;height:180px}
-.no-data-msg{
-  height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+.gbtn:hover,.gbtn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06)}
+.chart-c{position:relative;height:160px}
+.nodata{
+  height:160px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
   color:var(--text2);font-size:12px;gap:8px;
 }
-.no-data-msg .icon{font-size:32px;opacity:0.4}
+.nodata-icon{font-size:30px;opacity:.35}
+.graph-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;text-align:center}
+.gs-item .gv{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.gs-item .gl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 
-/* ── MONITORING BTN ── */
-.monitor-btn{
-  width:100%;padding:18px;border:none;border-radius:14px;
-  font-family:'Noto Sans Devanagari',sans-serif;font-size:18px;font-weight:800;
+/* MONITOR BTN */
+.mon-btn{
+  width:100%;padding:16px;border:none;border-radius:13px;
+  font-family:'Noto Sans Devanagari',sans-serif;font-size:17px;font-weight:800;
   cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:all 0.3s;position:relative;overflow:hidden;
-  letter-spacing:0.5px;
+  transition:all .3s;position:relative;overflow:hidden;
 }
-.monitor-btn.start{
-  background:linear-gradient(135deg,#00c853,#00897b);
-  color:#fff;box-shadow:0 6px 24px rgba(0,200,83,0.35);
-}
-.monitor-btn.stop{
-  background:linear-gradient(135deg,#d50000,#b71c1c);
-  color:#fff;box-shadow:0 6px 24px rgba(213,0,0,0.35);
-  animation:btnPulse 2s infinite;
-}
-@keyframes btnPulse{0%,100%{box-shadow:0 6px 24px rgba(213,0,0,0.35)}50%{box-shadow:0 6px 30px rgba(213,0,0,0.55)}}
-.monitor-btn::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
-  transform:translateX(-100%);
-}
-.monitor-btn:hover::after{animation:shimmer 0.8s ease}
-@keyframes shimmer{to{transform:translateX(100%)}}
-.session-info{
+.mon-btn.start{background:linear-gradient(135deg,#00c853,#00897b);color:#fff;box-shadow:0 5px 20px rgba(0,200,83,.35)}
+.mon-btn.stop{background:linear-gradient(135deg,#d50000,#b71c1c);color:#fff;box-shadow:0 5px 20px rgba(213,0,0,.35);animation:mbPulse 2s infinite}
+@keyframes mbPulse{0%,100%{box-shadow:0 5px 20px rgba(213,0,0,.35)}50%{box-shadow:0 5px 28px rgba(213,0,0,.55)}}
+.sess-row{
   display:flex;justify-content:space-around;
   background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:10px;margin-top:10px;
+  border-radius:9px;padding:9px;margin-top:8px;
 }
 .sess-item{text-align:center}
-.sess-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--green)}
-.sess-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.sv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--green)}
+.sl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 
-/* ── PUMP ── */
+/* PUMP */
 .pump-card{
-  background:var(--card);border-radius:14px;padding:16px;
+  background:var(--card);border-radius:13px;padding:14px;
   display:flex;align-items:center;justify-content:space-between;
-  border:1px solid;transition:all 0.4s;
+  border:1px solid;transition:all .4s;
 }
-.pump-card.on{
-  border-color:rgba(255,23,68,0.4);
-  background:rgba(255,23,68,0.06);
-  box-shadow:0 0 20px rgba(255,23,68,0.12);
+.pump-card.on{border-color:rgba(255,23,68,.4);background:rgba(255,23,68,.06);box-shadow:0 0 18px rgba(255,23,68,.12)}
+.pump-card.off{border-color:rgba(0,230,118,.25);background:rgba(0,230,118,.04)}
+.p-status{font-size:17px;font-weight:800;margin-bottom:3px}
+.p-sub{font-size:11px;color:var(--text2)}
+.p-icon{font-size:34px}
+.ptoggle{
+  background:none;border:1.5px solid;border-radius:7px;
+  padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s;
 }
-.pump-card.off{
-  border-color:rgba(0,230,118,0.25);
-  background:rgba(0,230,118,0.04);
-}
-.pump-info .pump-status{
-  font-size:18px;font-weight:800;margin-bottom:4px;
-}
-.pump-info .pump-sub{font-size:12px;color:var(--text2)}
-.pump-icon{font-size:36px}
-.pump-toggle{
-  background:none;border:1.5px solid;border-radius:8px;
-  padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;
-  font-family:'Noto Sans Devanagari',sans-serif;transition:all 0.2s;
-}
-.pump-toggle.on{border-color:var(--red);color:var(--red)}
-.pump-toggle.off{border-color:var(--green);color:var(--green)}
+.ptoggle.on{border-color:var(--red);color:var(--red)}
+.ptoggle.off{border-color:var(--green);color:var(--green)}
 
-/* ── AI ANALYSIS ── */
-.ai-box{
-  background:linear-gradient(135deg,rgba(13,26,46,0.9),rgba(10,22,40,0.9));
-  border:1px solid rgba(0,229,255,0.2);
-  border-radius:14px;padding:16px;
+/* CALIBRATION */
+.calib-card{
+  background:linear-gradient(135deg,rgba(13,26,46,.95),rgba(10,22,40,.95));
+  border:1px solid rgba(224,64,251,.2);border-radius:14px;padding:16px;
   position:relative;overflow:hidden;
 }
-.ai-box::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--cyan),#e040fb,var(--green));
+.calib-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan),transparent)}
+.calib-steps{margin-top:10px}
+.calib-step{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(224,64,251,.1);
 }
-.ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.ai-title{
-  font-size:12px;font-family:'JetBrains Mono',monospace;
-  color:var(--cyan);letter-spacing:1px;
-  display:flex;align-items:center;gap:8px;
+.calib-step:last-child{border:none}
+.step-num{
+  width:24px;height:24px;border-radius:50%;
+  background:rgba(224,64,251,.15);border:1px solid rgba(224,64,251,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--purple);flex-shrink:0;
 }
-.btn-ai{
-  background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(224,64,251,0.15));
-  border:1px solid rgba(0,229,255,0.3);border-radius:8px;
-  color:var(--cyan);font-size:13px;font-weight:700;
-  padding:8px 16px;cursor:pointer;transition:all 0.2s;
-  font-family:'Noto Sans Devanagari',sans-serif;
+.step-text{font-size:13px;line-height:1.5;color:var(--text2)}
+.step-text strong{color:var(--text)}
+.calib-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.btn-calib{
+  padding:10px;border:1px solid rgba(224,64,251,.3);
+  border-radius:9px;background:rgba(224,64,251,.08);
+  color:var(--purple);font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s;
 }
-.btn-ai:hover{border-color:var(--cyan);box-shadow:0 0 12px var(--glow-c)}
-.btn-ai:disabled{opacity:0.5;cursor:not-allowed}
-.ai-result{
-  font-size:13px;line-height:1.8;color:rgba(232,244,255,0.85);
+.btn-calib:hover{background:rgba(224,64,251,.15);border-color:var(--purple)}
+.btn-calib.set{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--green)}
+.calib-result{
+  margin-top:10px;padding:10px 12px;
+  background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
+  border-radius:8px;font-size:12px;color:var(--green);
   display:none;
 }
-.ai-result.show{display:block;animation:fadeDown 0.3s ease}
-.ai-loader{
-  display:none;align-items:center;justify-content:center;
-  gap:10px;padding:20px;color:var(--cyan);font-size:12px;
-  font-family:'JetBrains Mono',monospace;
+.calib-result.show{display:block}
+.calib-live{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:10px;padding:10px;
+  background:rgba(0,0,0,.3);border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
 }
-.ai-loader.show{display:flex}
-.spinner{
-  width:20px;height:20px;border:2px solid rgba(0,229,255,0.2);
-  border-top-color:var(--cyan);border-radius:50%;
-  animation:spin 0.7s linear infinite;
+.calib-bar-wrap{margin-top:8px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.calib-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:3px;transition:width .5s}
+.calib-compare{margin-top:8px;font-size:11px;text-align:center;color:var(--text2)}
+
+/* AI BOX */
+.ai-box{
+  background:linear-gradient(135deg,rgba(13,26,46,.9),rgba(10,22,40,.9));
+  border:1px solid rgba(0,229,255,.2);border-radius:14px;padding:14px;
+  position:relative;overflow:hidden;
 }
+.ai-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--green))}
+.ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ai-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px;display:flex;align-items:center;gap:7px}
+.btn-ai{
+  background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(224,64,251,.15));
+  border:1px solid rgba(0,229,255,.3);border-radius:7px;
+  color:var(--cyan);font-size:12px;font-weight:700;
+  padding:7px 13px;cursor:pointer;transition:all .2s;
+  font-family:'Noto Sans Devanagari',sans-serif;
+}
+.btn-ai:hover{border-color:var(--cyan);box-shadow:0 0 10px var(--glow-c)}
+.btn-ai:disabled{opacity:.5;cursor:not-allowed}
+.aiload{display:none;align-items:center;justify-content:center;gap:10px;padding:18px;color:var(--cyan);font-size:11px;font-family:'JetBrains Mono',monospace}
+.aiload.show{display:flex}
+.spinner{width:18px;height:18px;border:2px solid rgba(0,229,255,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.ai-res{font-size:13px;line-height:1.8;color:rgba(232,244,255,.85);display:none}
+.ai-res.show{display:block;animation:ddSlide .3s ease}
 
-/* ── LAST UPDATE ── */
-.last-update{
-  text-align:center;font-family:'JetBrains Mono',monospace;
-  font-size:10px;color:var(--text2);padding:6px 0;
-  display:flex;align-items:center;justify-content:center;gap:6px;
+/* VOICE */
+.voice-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:800;
+  background:rgba(7,13,26,.97);border-top:1px solid var(--border2);
+  padding:10px 16px;display:flex;align-items:center;justify-content:space-between;
+  max-width:500px;margin:0 auto;
+}
+.vb-info{font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace}
+.vb-info span{color:var(--green)}
+.vb-btn{
+  background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);
+  border-radius:7px;padding:5px 12px;
+  color:var(--green);font-size:11px;cursor:pointer;
+  font-family:'Noto Sans Devanagari',sans-serif;font-weight:600;
 }
 
-/* ── RESPONSIVE ── */
-@media(max-width:380px){
-  .fasal-grid{grid-template-columns:1fr 1fr 1fr 1fr}
-  .fasal-emoji{font-size:20px}
-  .fasal-name{font-size:10px}
-  .gauge-pct{font-size:36px}
-}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* FOOTER */
+.last-up{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);padding:8px 0;display:flex;align-items:center;justify-content:center;gap:5px}
 </style>
 </head>
 <body>
 
-<!-- LANGUAGE DROPDOWN -->
-<div class="lang-dropdown" id="langDD">
-  <div class="lang-opt active" data-lang="hi" onclick="setLang('hi',this)"><span class="lang-code">HI</span> हिंदी</div>
-  <div class="lang-opt" data-lang="mr" onclick="setLang('mr',this)"><span class="lang-code">MR</span> मराठी</div>
-  <div class="lang-opt" data-lang="bn" onclick="setLang('bn',this)"><span class="lang-code">BN</span> বাংলা</div>
-  <div class="lang-opt" data-lang="te" onclick="setLang('te',this)"><span class="lang-code">TE</span> తెలుగు</div>
-  <div class="lang-opt" data-lang="ta" onclick="setLang('ta',this)"><span class="lang-code">TA</span> தமிழ்</div>
-  <div class="lang-opt" data-lang="gu" onclick="setLang('gu',this)"><span class="lang-code">GU</span> ગુજરાતી</div>
-  <div class="lang-opt" data-lang="pa" onclick="setLang('pa',this)"><span class="lang-code">PA</span> ਪੰਜਾਬੀ</div>
-  <div class="lang-opt" data-lang="kn" onclick="setLang('kn',this)"><span class="lang-code">KN</span> ಕನ್ನಡ</div>
-  <div class="lang-opt" data-lang="ml" onclick="setLang('ml',this)"><span class="lang-code">ML</span> മലയാളം</div>
-  <div class="lang-opt" data-lang="or" onclick="setLang('or',this)"><span class="lang-code">OR</span> ଓଡ଼ିଆ</div>
-  <div class="lang-opt" data-lang="ur" onclick="setLang('ur',this)"><span class="lang-code">UR</span> اردو</div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LANG DROPDOWN -->
+<div class="lang-dd" id="langDD">
+  <div class="lang-opt active" onclick="setLang('hi',this)" data-l="hi"><span class="lcode">HI</span>हिंदी</div>
+  <div class="lang-opt" onclick="setLang('en',this)" data-l="en"><span class="lcode">EN</span>English</div>
+  <div class="lang-opt" onclick="setLang('mr',this)" data-l="mr"><span class="lcode">MR</span>मराठी</div>
+  <div class="lang-opt" onclick="setLang('bn',this)" data-l="bn"><span class="lcode">BN</span>বাংলা</div>
+  <div class="lang-opt" onclick="setLang('te',this)" data-l="te"><span class="lcode">TE</span>తెలుగు</div>
+  <div class="lang-opt" onclick="setLang('ta',this)" data-l="ta"><span class="lcode">TA</span>தமிழ்</div>
+  <div class="lang-opt" onclick="setLang('gu',this)" data-l="gu"><span class="lcode">GU</span>ગુજરાતી</div>
+  <div class="lang-opt" onclick="setLang('pa',this)" data-l="pa"><span class="lcode">PA</span>ਪੰਜਾਬੀ</div>
+  <div class="lang-opt" onclick="setLang('kn',this)" data-l="kn"><span class="lcode">KN</span>ಕನ್ನಡ</div>
+  <div class="lang-opt" onclick="setLang('ml',this)" data-l="ml"><span class="lcode">ML</span>മലയാളം</div>
+  <div class="lang-opt" onclick="setLang('or',this)" data-l="or"><span class="lcode">OR</span>ଓଡ଼ିଆ</div>
+  <div class="lang-opt" onclick="setLang('ur',this)" data-l="ur"><span class="lcode">UR</span>اردو</div>
 </div>
 
 <header>
-  <div class="hdr" style="max-width:480px;margin:0 auto">
-    <div class="hdr-left">
-      <div class="logo-icon">🌾</div>
+  <div class="hdr">
+    <div class="logo-wrap">
+      <div class="logo-box">🌾</div>
       <div class="logo-text">
         <h1>किसान IoT</h1>
-        <span>KHET NIGRANI SYSTEM</span>
+        <p>KHET NIGRANI SYSTEM</p>
       </div>
     </div>
     <div class="hdr-right">
-      <div class="live-badge" id="liveBadge">
-        <div class="live-dot"></div>
-        <span id="liveText">लाइव ✓</span>
-      </div>
-      <div class="lang-btn" onclick="toggleLangDD()" id="langBtn">
-        <span id="langLabel">हि</span> ▾
+      <div class="live-pill"><div class="ldot"></div><span id="liveTxt">लाइव ✓</span></div>
+      <div class="lang-btn" id="langBtn" onclick="toggleLang()">
+        <span id="langLbl">हि</span>▾
       </div>
     </div>
   </div>
@@ -533,956 +511,943 @@ header{
 
 <div class="wrap">
 
-  <!-- ── BLYNK CONNECTION ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">⚙</span> <span data-t="blynk_conn">BLYNK कनेक्शन</span></div>
-    <div class="blynk-panel">
-      <div class="blynk-header" onclick="toggleBlynk()">
-        <div class="blynk-title">
-          <div class="blynk-status-dot" id="blynkDot"></div>
-          <span data-t="blynk_conn">⚡ Blynk IoT सेटिंग</span>
-        </div>
-        <span class="chevron" id="blynkChevron">▼</span>
+<!-- ALARM BANNER -->
+<div class="alarm-banner" id="alarmBanner">
+  🚨 <span id="alarmText">खेत में पानी भर गया है! पंप तुरंत बंद करें!</span> 🚨
+</div>
+
+<!-- WEATHER -->
+<div class="section">
+  <div class="sec-title">🌤 <span data-k="mausam">मौसम पूर्वानुमान</span></div>
+  <div class="weather-card" id="wxCard">
+    <div class="wx-loading" id="wxLoad">📡 आपका स्थान पता कर रहे हैं...</div>
+  </div>
+</div>
+
+<!-- BLYNK -->
+<div class="section">
+  <div class="sec-title">⚙ <span data-k="blynk_conn">BLYNK कनेक्शन</span></div>
+  <div class="blynk-panel">
+    <div class="blynk-hdr" onclick="toggleBlynk()">
+      <div class="blynk-title">
+        <div class="bsdot" id="bsdot"></div>
+        ⚡ Blynk IoT सेटिंग
       </div>
-      <div class="blynk-body" id="blynkBody">
-        <div class="blynk-msg" id="blynkMsg"></div>
-        <div class="field-lbl">Auth Token</div>
-        <input class="inp" id="authToken" type="text" placeholder="i-tqVg06uA3dsm..." autocomplete="off" spellcheck="false">
-        <div class="inp-row">
-          <div>
-            <div class="field-lbl" data-t="vpin">Virtual Pin</div>
-            <input class="inp" id="vPin" type="text" placeholder="V2" value="V2">
-          </div>
-          <div>
-            <div class="field-lbl" data-t="poll_interval">Poll हर (सेकंड)</div>
-            <input class="inp" id="pollSec" type="number" placeholder="5" value="5" min="3" max="60">
-          </div>
+      <span class="chev" id="bchev">▼</span>
+    </div>
+    <div class="blynk-body open" id="bbody">
+      <div class="bmsg" id="bmsg"></div>
+      <div class="flbl">Auth Token</div>
+      <input class="inp" id="authTok" type="text" placeholder="i-tqVg06uA3dsm..." spellcheck="false">
+      <div class="inp-row">
+        <div>
+          <div class="flbl">Virtual Pin</div>
+          <input class="inp" id="vpin" value="V2" style="margin-bottom:0">
         </div>
-        <div class="field-lbl" data-t="blynk_server">Blynk Server</div>
-        <input class="inp" id="blynkServer" type="text" placeholder="blynk.cloud" value="blynk.cloud">
-        <button class="btn-teal" onclick="saveBlynk()" data-t="save_start">✅ सेव करें और शुरू करें</button>
-        <div class="poll-info" id="pollInfo">
-          <div class="poll-dot" id="pollDot"></div>
-          <span id="pollInfoText" data-t="not_connected">कनेक्ट नहीं है</span>
+        <div>
+          <div class="flbl">Poll (सेकंड)</div>
+          <input class="inp" id="pollS" type="number" value="5" min="3" max="60" style="margin-bottom:0">
         </div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="flbl">Blynk Server</div>
+      <input class="inp" id="bserver" value="blynk.cloud">
+      <button class="btn-save" onclick="saveBlynk()" data-k="save_conn">✅ सेव करें और शुरू करें</button>
+      <div class="poll-row">
+        <div class="pdot" id="pdot"></div>
+        <span id="pollTxt" data-k="not_conn">कनेक्ट नहीं है</span>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ── FASAL ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">🌱</span> <span data-t="apni_fasal">अपनी फसल चुनें</span></div>
-    <div class="fasal-grid" id="fasalGrid">
-      <div class="fasal-card active" data-fasal="गेहूँ" data-thresh="2200" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🌿</span>
-        <div class="fasal-name" data-t="gehun">गेहूँ</div>
-        <div class="fasal-threshold">2200</div>
-      </div>
-      <div class="fasal-card" data-fasal="चावल" data-thresh="1400" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🍚</span>
-        <div class="fasal-name" data-t="chawal">चावल</div>
-        <div class="fasal-threshold">1400</div>
-      </div>
-      <div class="fasal-card" data-fasal="मक्का" data-thresh="1800" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🌽</span>
-        <div class="fasal-name" data-t="makka">मक्का</div>
-        <div class="fasal-threshold">1800</div>
-      </div>
-      <div class="fasal-card" data-fasal="गन्ना" data-thresh="1600" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🎋</span>
-        <div class="fasal-name" data-t="ganna">गन्ना</div>
-        <div class="fasal-threshold">3000</div>
-      </div>
-      <div class="fasal-card" data-fasal="सोयाबीन" data-thresh="2000" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🫘</span>
-        <div class="fasal-name" data-t="soya">सोयाबीन</div>
-        <div class="fasal-threshold">2000</div>
-      </div>
-      <div class="fasal-card" data-fasal="टमाटर" data-thresh="2200" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🍅</span>
-        <div class="fasal-name" data-t="tamatar">टमाटर</div>
-        <div class="fasal-threshold">2200</div>
-      </div>
-      <div class="fasal-card" data-fasal="सरसों" data-thresh="1500" onclick="selectFasal(this)">
-        <span class="fasal-emoji">🌻</span>
-        <div class="fasal-name" data-t="sarson">सरसों</div>
-        <div class="fasal-threshold">1500</div>
-      </div>
-      <div class="fasal-card" data-fasal="कस्टम" data-thresh="3000" onclick="selectFasal(this)">
-        <span class="fasal-emoji">⚙️</span>
-        <div class="fasal-name" data-t="custom">कस्टम</div>
-        <div class="fasal-threshold" id="customThreshDisplay">3000</div>
-      </div>
+<!-- FASAL -->
+<div class="section">
+  <div class="sec-title">🌱 <span data-k="apni_fasal">अपनी फसल चुनें</span></div>
+  <div class="fasal-grid" id="fasalGrid">
+    <div class="fc active" data-f="गेहूँ" data-th="2200" onclick="pickFasal(this)"><span class="fc-emoji">🌿</span><div class="fc-name">गेहूँ</div></div>
+    <div class="fc" data-f="चावल" data-th="1400" onclick="pickFasal(this)"><span class="fc-emoji">🍚</span><div class="fc-name">चावल</div></div>
+    <div class="fc" data-f="मक्का" data-th="1800" onclick="pickFasal(this)"><span class="fc-emoji">🌽</span><div class="fc-name">मक्का</div></div>
+    <div class="fc" data-f="गन्ना" data-th="1600" onclick="pickFasal(this)"><span class="fc-emoji">🎋</span><div class="fc-name">गन्ना</div></div>
+    <div class="fc" data-f="सोयाबीन" data-th="2000" onclick="pickFasal(this)"><span class="fc-emoji">🫘</span><div class="fc-name">सोयाबीन</div></div>
+    <div class="fc" data-f="टमाटर" data-th="2200" onclick="pickFasal(this)"><span class="fc-emoji">🍅</span><div class="fc-name">टमाटर</div></div>
+    <div class="fc" data-f="सरसों" data-th="1500" onclick="pickFasal(this)"><span class="fc-emoji">🌻</span><div class="fc-name">सरसों</div></div>
+    <div class="fc" data-f="कस्टम" data-th="2500" onclick="pickFasal(this)"><span class="fc-emoji">⚙️</span><div class="fc-name">कस्टम</div></div>
+  </div>
+  <div id="customWrap" style="display:none;margin-top:8px">
+    <div class="flbl">कस्टम सीमा (Raw ADC)</div>
+    <input class="inp" id="customTh" type="number" placeholder="2500" min="1271" max="4095" oninput="updateCustomTh()">
+  </div>
+</div>
+
+<!-- MITTI -->
+<div class="section">
+  <div class="sec-title">🏔 <span data-k="mitti_prakar">मिट्टी का प्रकार</span></div>
+  <div class="mitti-grid">
+    <div class="mc active" data-m="बालुई मिट्टी" data-fc="2000" onclick="pickMitti(this)">
+      <span class="mc-icon">🏜️</span>
+      <div class="mc-name">बालुई मिट्टी</div>
+      <div class="mc-fc">FC≈2000 | Sandy</div>
     </div>
-    <div id="customThreshWrap" style="display:none;margin-top:10px">
-      <div class="field-lbl" data-t="custom_thresh">कस्टम खतरा सीमा (Raw ADC)</div>
-      <input class="inp" id="customThreshInp" type="number" placeholder="2500" min="1271" max="4095" onchange="updateCustomThresh()">
+    <div class="mc" data-m="दोमट मिट्टी" data-fc="1700" onclick="pickMitti(this)">
+      <span class="mc-icon">🌱</span>
+      <div class="mc-name">दोमट मिट्टी</div>
+      <div class="mc-fc">FC≈1700 | Loamy</div>
+    </div>
+    <div class="mc" data-m="चिकनी मिट्टी" data-fc="1450" onclick="pickMitti(this)">
+      <span class="mc-icon">🧱</span>
+      <div class="mc-name">चिकनी मिट्टी</div>
+      <div class="mc-fc">FC≈1450 | Clay</div>
     </div>
   </div>
+</div>
 
-  <!-- ── MITTI ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">🏔</span> <span data-t="mitti_prakar">मिट्टी का प्रकार</span></div>
-    <div class="mitti-grid">
-      <div class="mitti-card active" data-mitti="बालुई मिट्टी" data-fc="2000" onclick="selectMitti(this)">
-        <span class="mitti-icon">🏜️</span>
-        <div class="mitti-name" data-t="balui">बालुई मिट्टी</div>
-        <div class="mitti-fc">FC ≈ 2000</div>
-      </div>
-      <div class="mitti-card" data-mitti="दोमट मिट्टी" data-fc="1700" onclick="selectMitti(this)">
-        <span class="mitti-icon">🌱</span>
-        <div class="mitti-name" data-t="domat">दोमट मिट्टी</div>
-        <div class="mitti-fc">FC ≈ 1700</div>
-      </div>
-      <div class="mitti-card" data-mitti="चिकनी मिट्टी" data-fc="1450" onclick="selectMitti(this)">
-        <span class="mitti-icon">🧱</span>
-        <div class="mitti-name" data-t="chikni">चिकनी मिट्टी</div>
-        <div class="mitti-fc">FC ≈ 1450</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── MOISTURE GAUGE ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">💧</span> <span data-t="nami_star">नमी स्तर (MOISTURE)</span></div>
+<!-- GAUGE -->
+<div class="section">
+  <div class="sec-title">💧 <span data-k="nami_star">नमी स्तर (MOISTURE)</span></div>
+  <div class="gauge-card">
     <div class="gauge-wrap">
-      <div class="gauge-svg-wrap">
-        <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <!-- Background ring -->
-          <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="14"/>
-          <!-- Track -->
-          <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,230,118,0.08)" stroke-width="14"
-            stroke-dasharray="440" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 100 100)"/>
-          <!-- Progress arc -->
-          <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gaugeGrad)" stroke-width="14"
-            stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round"
-            transform="rotate(-90 100 100)" id="gaugeArc" style="transition:stroke-dashoffset 0.8s ease"/>
-          <!-- Glow arc -->
-          <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gaugeGrad)" stroke-width="4"
-            stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" opacity="0.3"
-            transform="rotate(-90 100 100)" id="gaugeGlow" filter="url(#blur)" style="transition:stroke-dashoffset 0.8s ease"/>
-          <defs>
-            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#00e676"/>
-              <stop offset="50%" stop-color="#00e5ff"/>
-              <stop offset="100%" stop-color="#e040fb"/>
-            </linearGradient>
-            <filter id="blur"><feGaussianBlur stdDeviation="3"/></filter>
-          </defs>
-          <!-- Tick marks -->
-          <g id="ticks"></g>
-        </svg>
-        <div class="gauge-center">
-          <div class="gauge-emoji" id="gaugeEmoji">🌿</div>
-          <div class="gauge-pct" id="gaugePct">--</div>
-          <div class="gauge-pct-unit">%</div>
-          <div class="gauge-raw" id="gaugeRaw">RAW: ---</div>
-          <div class="gauge-fasal" id="gaugeFasal">गेहूँ | सीमा: 2200</div>
-        </div>
-      </div>
-      <div class="status-banner st-yellow" id="statusBanner">
-        <span id="statusIcon">⏳</span>
-        <span id="statusText" data-t="waiting">डेटा का इंतज़ार है...</span>
+      <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="13"/>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,230,118,0.07)" stroke-width="13" stroke-dasharray="440" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gg)" stroke-width="13" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 100 100)" id="garc" style="transition:stroke-dashoffset .8s ease,stroke .5s"/>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gg)" stroke-width="3" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" opacity=".25" transform="rotate(-90 100 100)" id="glow" filter="url(#gblur)" style="transition:stroke-dashoffset .8s ease"/>
+        <defs>
+          <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00e676"/>
+            <stop offset="50%" stop-color="#00e5ff"/>
+            <stop offset="100%" stop-color="#e040fb"/>
+          </linearGradient>
+          <filter id="gblur"><feGaussianBlur stdDeviation="3"/></filter>
+        </defs>
+        <g id="ticks"></g>
+      </svg>
+      <div class="gauge-center">
+        <div class="g-emoji" id="gEmoji">🌿</div>
+        <div class="g-pct" id="gPct">--</div>
+        <div class="g-unit">%</div>
+        <div class="g-status-sub" id="gSub" data-k="waiting">प्रतीक्षा...</div>
+        <div class="g-fasal" id="gFasal">गेहूँ | सीमा: 2200</div>
       </div>
     </div>
-  </div>
-
-  <!-- ── KHATRA SEEMA ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">⚠</span> <span data-t="khatra_seema">खतरा सीमा</span></div>
-    <div class="seema-box">
-      <div class="seema-top">
-        <div class="seema-label">⚠️ <span data-t="khatra_seema">खतरा सीमा</span></div>
-        <div class="seema-val" id="seemaValDisplay">0 / 4095</div>
-      </div>
-      <div class="seema-bar-wrap">
-        <div class="seema-fill" id="seemaFill" style="width:0%"></div>
-        <div class="seema-marker" id="seemaMarker" style="left:53%"></div>
-      </div>
-      <div class="seema-labels">
-        <span data-t="dry">0 (सूखा)</span>
-        <span id="seemaWarningLbl">2200 ⚠️</span>
-        <span data-t="wet">4095 (भरा)</span>
-      </div>
-      <input type="range" class="seema-range-input" id="seemaRange" min="1271" max="4095" value="2200" oninput="updateSeema(this.value)">
+    <div class="sbanner sy" id="sbanner">
+      <span id="sIcon">⏳</span>
+      <span id="sTxt" data-k="waiting">डेटा का इंतज़ार है...</span>
     </div>
   </div>
+</div>
 
-  <!-- ── ANALYTICS GRID ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">📊</span> <span data-t="field_analytics">खेत विश्लेषण</span></div>
-    <div class="analytics-grid">
-      <div class="ana-card c-cyan">
-        <div class="ana-lbl" data-t="current_nami">वर्तमान नमी</div>
-        <div class="ana-val"><span id="ana_cur">--</span><span class="unit">%</span></div>
-        <div class="ana-sub" id="ana_cur_sub">अभी तक कोई डेटा नहीं</div>
-      </div>
-      <div class="ana-card">
-        <div class="ana-lbl" data-t="min_nami">न्यूनतम नमी</div>
-        <div class="ana-val"><span id="ana_min">--</span><span class="unit">%</span></div>
-        <div class="ana-sub" id="ana_min_sub">सत्र न्यूनतम</div>
-      </div>
-      <div class="ana-card">
-        <div class="ana-lbl" data-t="max_nami">अधिकतम नमी</div>
-        <div class="ana-val"><span id="ana_max">--</span><span class="unit">%</span></div>
-        <div class="ana-sub" id="ana_max_sub">सत्र अधिकतम</div>
-      </div>
-      <div class="ana-card c-yellow">
-        <div class="ana-lbl" data-t="avg_nami">औसत नमी</div>
-        <div class="ana-val"><span id="ana_avg">--</span><span class="unit">%</span></div>
-        <div class="ana-sub" id="ana_avg_sub">सत्र औसत</div>
-      </div>
-      <div class="ana-card c-orange">
-        <div class="ana-lbl" data-t="change_rate">परिवर्तन दर</div>
-        <div class="ana-val"><span id="ana_rate">--</span><span class="unit">%/मिनट</span></div>
-        <div class="ana-sub" id="ana_trend_text">-</div>
-      </div>
-      <div class="ana-card c-purple">
-        <div class="ana-lbl" data-t="fc_deficit">FC की कमी</div>
-        <div class="ana-val"><span id="ana_deficit">--</span><span class="unit">%</span></div>
-        <div class="ana-sub" id="ana_deficit_sub">खेत क्षमता तक</div>
-      </div>
-      <div class="ana-card">
-        <div class="ana-lbl" data-t="readings_count">कुल रीडिंग</div>
-        <div class="ana-val"><span id="ana_count">0</span></div>
-        <div class="ana-sub" id="ana_count_sub">इस सत्र में</div>
-      </div>
-      <div class="ana-card c-red">
-        <div class="ana-lbl" data-t="eta_fc">FC पहुँचने में</div>
-        <div class="ana-val" style="font-size:16px"><span id="ana_eta">--</span></div>
-        <div class="ana-sub" data-t="estimated">अनुमानित समय</div>
-      </div>
+<!-- KHATRA SEEMA -->
+<div class="section">
+  <div class="sec-title">⚠ <span data-k="khatra">खतरा सीमा</span></div>
+  <div class="seema-box">
+    <div class="seema-top">
+      <div class="seema-lbl">⚠️ <span data-k="khatra">खतरा सीमा</span></div>
+      <div class="seema-v" id="seemaDisp">0 / 4095</div>
+    </div>
+    <div class="sbar">
+      <div class="sfill" id="sfill" style="width:0%"></div>
+      <div class="smarker" id="smarker" style="left:53%"></div>
+    </div>
+    <div class="slabels">
+      <span data-k="sookha">0 (सूखा)</span>
+      <span id="sWarnLbl">2200 ⚠️</span>
+      <span data-k="bhara">4095 (भरा)</span>
+    </div>
+    <input type="range" class="srange" id="seemaR" min="1271" max="4095" value="2200" oninput="updateSeema(this.value)">
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="section">
+  <div class="sec-title">📊 <span data-k="khet_vishleshan">खेत विश्लेषण</span></div>
+  <div class="ana-grid">
+    <div class="ana cc">
+      <div class="albl" data-k="vartman_nami">वर्तमान नमी</div>
+      <div class="aval"><span id="a_cur">--</span><span class="unit">%</span></div>
+      <div class="asub" id="a_cur_s">ICAR अंशांकित</div>
+    </div>
+    <div class="ana">
+      <div class="albl" data-k="nyuntam">न्यूनतम</div>
+      <div class="aval"><span id="a_min">--</span><span class="unit">%</span></div>
+      <div class="asub">सत्र न्यूनतम</div>
+    </div>
+    <div class="ana">
+      <div class="albl" data-k="adhiktam">अधिकतम</div>
+      <div class="aval"><span id="a_max">--</span><span class="unit">%</span></div>
+      <div class="asub">सत्र अधिकतम</div>
+    </div>
+    <div class="ana cy">
+      <div class="albl" data-k="ausat">औसत</div>
+      <div class="aval"><span id="a_avg">--</span><span class="unit">%</span></div>
+      <div class="asub">सत्र औसत</div>
+    </div>
+    <div class="ana co">
+      <div class="albl" data-k="parivartan_dar">परिवर्तन दर</div>
+      <div class="aval"><span id="a_rate">--</span><span class="unit">%/मि</span></div>
+      <div class="asub" id="a_trend">-</div>
+    </div>
+    <div class="ana cp">
+      <div class="albl" data-k="fc_kami">FC की कमी</div>
+      <div class="aval"><span id="a_def">--</span><span class="unit">%</span></div>
+      <div class="asub" id="a_def_s">खेत क्षमता तक</div>
+    </div>
+    <div class="ana">
+      <div class="albl" data-k="total_reading">कुल रीडिंग</div>
+      <div class="aval"><span id="a_cnt">0</span></div>
+      <div class="asub">इस सत्र में</div>
+    </div>
+    <div class="ana cr">
+      <div class="albl" data-k="fc_time">FC पहुँचने में</div>
+      <div class="aval" style="font-size:15px"><span id="a_eta">--</span></div>
+      <div class="asub" data-k="anumaan">अनुमानित समय</div>
+    </div>
+    <div class="ana cb">
+      <div class="albl" data-k="barish_probability">वर्षा संभावना</div>
+      <div class="aval"><span id="a_rain">--</span><span class="unit">mm</span></div>
+      <div class="asub" id="a_rain_s">अगले 24 घंटे</div>
+    </div>
+    <div class="ana">
+      <div class="albl" data-k="temp">तापमान</div>
+      <div class="aval"><span id="a_temp">--</span><span class="unit">°C</span></div>
+      <div class="asub" id="a_temp_s">वर्तमान</div>
+    </div>
+    <div class="ana cc">
+      <div class="albl" data-k="target_nami">लक्ष्य नमी</div>
+      <div class="aval"><span id="a_target">--</span><span class="unit">%</span></div>
+      <div class="asub" id="a_target_s">अंशांकन से</div>
+    </div>
+    <div class="ana cy">
+      <div class="albl" data-k="pani_ki_kami">पानी की कमी</div>
+      <div class="aval"><span id="a_gap">--</span><span class="unit">%</span></div>
+      <div class="asub" id="a_gap_s">लक्ष्य तक</div>
     </div>
   </div>
+</div>
 
-  <!-- ── LIVE GRAPH ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">📈</span> <span data-t="live_graph">पिछले रीडिंग — सत्र ग्राफ</span></div>
-    <div class="graph-box">
-      <div class="graph-header">
-        <div class="graph-title">💧 नमी % vs समय</div>
-        <div class="graph-controls">
-          <button class="graph-btn active" onclick="setGraphView('all',this)" data-t="all">सभी</button>
-          <button class="graph-btn" onclick="setGraphView('last20',this)">Last 20</button>
-          <button class="graph-btn" onclick="clearGraph()" data-t="clear">🗑</button>
-        </div>
-      </div>
-      <div id="chartWrap">
-        <div class="no-data-msg" id="noDataMsg">
-          <div class="icon">📡</div>
-          <div data-t="monitoring_start_msg">मॉनिटरिंग शुरू करें</div>
-        </div>
-        <div class="chart-container" id="chartContainer" style="display:none">
-          <canvas id="moistureChart"></canvas>
-        </div>
-      </div>
-      <!-- Mini stats below graph -->
-      <div id="graphStats" style="display:none;margin-top:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green)" id="gs_start">--</div>
-            <div style="font-size:9px;color:var(--text2);text-transform:uppercase;margin-top:2px" data-t="start_val">शुरुआत</div>
-          </div>
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cyan)" id="gs_cur">--</div>
-            <div style="font-size:9px;color:var(--text2);text-transform:uppercase;margin-top:2px" data-t="current">अभी</div>
-          </div>
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--yellow)" id="gs_diff">--</div>
-            <div style="font-size:9px;color:var(--text2);text-transform:uppercase;margin-top:2px" data-t="total_change">कुल बदलाव</div>
-          </div>
-        </div>
+<!-- MOISTURE GRAPH -->
+<div class="section">
+  <div class="sec-title">📈 <span data-k="nami_graph">नमी % — सत्र ग्राफ</span></div>
+  <div class="graph-box">
+    <div class="gh">
+      <div class="gt">💧 नमी % बनाम समय</div>
+      <div class="gc">
+        <button class="gbtn active" onclick="setView('all',this)">सभी</button>
+        <button class="gbtn" onclick="setView('20',this)">20</button>
+        <button class="gbtn" onclick="clearGraph()">🗑</button>
       </div>
     </div>
-  </div>
-
-  <!-- ── RAW ADC GRAPH ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">🔢</span> <span data-t="raw_graph">Raw ADC ग्राफ</span></div>
-    <div class="graph-box">
-      <div class="graph-header">
-        <div class="graph-title">📟 RAW ADC vs TIME</div>
-        <div class="graph-controls">
-          <div class="blynk-status-dot" id="rawDot" style="width:8px;height:8px"></div>
-        </div>
-      </div>
-      <div class="chart-container" id="rawChartContainer" style="display:none">
-        <canvas id="rawChart"></canvas>
-      </div>
-      <div class="no-data-msg" id="noRawMsg">
-        <div class="icon">🔢</div>
-        <div data-t="raw_waiting">Raw ADC डेटा का इंतज़ार है</div>
-      </div>
+    <div class="nodata" id="nd1"><div class="nodata-icon">📡</div><span data-k="start_monitor">मॉनिटरिंग शुरू करें</span></div>
+    <div class="chart-c" id="cc1" style="display:none"><canvas id="mc"></canvas></div>
+    <div class="graph-stats" id="gs1" style="display:none">
+      <div class="gs-item"><div class="gv" id="gss" style="color:var(--green)">--</div><div class="gl" data-k="shuruat">शुरुआत</div></div>
+      <div class="gs-item"><div class="gv" id="gsc" style="color:var(--cyan)">--</div><div class="gl" data-k="abhi">अभी</div></div>
+      <div class="gs-item"><div class="gv" id="gsd" style="color:var(--yellow)">--</div><div class="gl" data-k="kul_badlav">कुल बदलाव</div></div>
     </div>
   </div>
+</div>
 
-  <!-- ── MONITORING BUTTON ── -->
-  <div class="section">
-    <button class="monitor-btn start" id="monitorBtn" onclick="toggleMonitoring()">
-      <span>🎙️</span> <span id="monBtnText" data-t="start_monitoring">मॉनिटरिंग शुरू करें</span>
-    </button>
-    <div class="session-info" id="sessionInfo">
-      <div class="sess-item">
-        <div class="sess-val" id="sessTime">00:00</div>
-        <div class="sess-lbl" data-t="duration">अवधि</div>
+<!-- RAW ADC GRAPH -->
+<div class="section">
+  <div class="sec-title">🔢 <span data-k="raw_graph">Raw ADC ग्राफ</span></div>
+  <div class="graph-box">
+    <div class="gh">
+      <div class="gt">📟 RAW ADC बनाम समय</div>
+      <div class="gc"><div class="bsdot" id="rawdot" style="width:8px;height:8px"></div></div>
+    </div>
+    <div class="nodata" id="nd2"><div class="nodata-icon">🔢</div><span data-k="raw_wait">Raw ADC इंतज़ार है</span></div>
+    <div class="chart-c" id="cc2" style="display:none"><canvas id="rc"></canvas></div>
+  </div>
+</div>
+
+<!-- MONITOR BUTTON -->
+<div class="section">
+  <button class="mon-btn start" id="monBtn" onclick="toggleMonitor()">
+    <span>🎙️</span><span id="monTxt" data-k="start_monitor">मॉनिटरिंग शुरू करें</span>
+  </button>
+  <div class="sess-row">
+    <div class="sess-item"><div class="sv" id="sTime">00:00</div><div class="sl" data-k="avadhi">अवधि</div></div>
+    <div class="sess-item"><div class="sv" id="sRead">0</div><div class="sl" data-k="readings">रीडिंग</div></div>
+    <div class="sess-item"><div class="sv" id="sAvg">--%</div><div class="sl" data-k="ausat">औसत</div></div>
+  </div>
+</div>
+
+<!-- PUMP -->
+<div class="section">
+  <div class="sec-title">⚙ <span data-k="pump">पंप नियंत्रण</span></div>
+  <div class="pump-card off" id="pCard">
+    <div>
+      <div class="p-status" id="pSt" style="color:var(--green)">⛽ पंप: बंद</div>
+      <div class="p-sub" id="pSub" data-k="nami_thik">नमी पर्याप्त है</div>
+    </div>
+    <button class="ptoggle off" id="pToggle" onclick="manualPump()" data-k="chalu_karo">चालू करें</button>
+    <div class="p-icon" id="pIcon">💧</div>
+  </div>
+</div>
+
+<!-- CALIBRATION -->
+<div class="section">
+  <div class="sec-title">🎯 <span data-k="anshankaran">लक्ष्य नमी अंशांकन</span></div>
+  <div class="calib-card">
+    <div style="font-size:12px;color:var(--text2);line-height:1.6" data-k="calib_desc">
+      अपने खेत के लिए उपयुक्त नमी स्तर स्वयं निर्धारित करें। जितना पानी चाहिए उतना डालें, सेंसर लगाएं और जांचें।
+    </div>
+    <div class="calib-live" id="calibLive">
+      <span style="color:var(--text2);font-size:11px">वर्तमान रीडिंग:</span>
+      <span style="color:var(--cyan)" id="calibCur">-- %</span>
+      <span style="color:var(--text2);font-size:10px" id="calibRawDisp">Raw: ---</span>
+    </div>
+    <div class="calib-bar-wrap">
+      <div class="calib-bar" id="calibBar" style="width:0%"></div>
+    </div>
+    <div class="calib-compare" id="calibComp">लक्ष्य सेट नहीं है</div>
+    <div class="calib-steps">
+      <div class="calib-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>पानी डालें</strong> — जितना आपका खेत चाहता है उतना पानी डालें</div>
       </div>
-      <div class="sess-item">
-        <div class="sess-val" id="sessReadings">0</div>
-        <div class="sess-lbl" data-t="readings">रीडिंग</div>
+      <div class="calib-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>सेंसर लगाएं</strong> — ESP32 सेंसर मिट्टी में डालें और रीडिंग स्थिर होने दें</div>
       </div>
-      <div class="sess-item">
-        <div class="sess-val" id="sessAvg">--%</div>
-        <div class="sess-lbl" data-t="avg">औसत</div>
+      <div class="calib-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>लक्ष्य सेट करें</strong> — नीचे बटन दबाकर इस नमी को अपना लक्ष्य बनाएं</div>
       </div>
     </div>
-  </div>
-
-  <!-- ── PUMP ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">⚙</span> <span data-t="pump_control">पंप नियंत्रण</span></div>
-    <div class="pump-card off" id="pumpCard">
-      <div class="pump-info">
-        <div class="pump-status" id="pumpStatus" style="color:var(--green)">⛽ पंप: बंद</div>
-        <div class="pump-sub" id="pumpSub" data-t="pump_off_sub">नमी पर्याप्त है</div>
-      </div>
-      <div>
-        <button class="pump-toggle off" id="pumpToggle" onclick="manualPump()">चालू करें</button>
-      </div>
-      <div class="pump-icon" id="pumpIcon">💧</div>
+    <div class="calib-actions">
+      <button class="btn-calib set" onclick="setCalibTarget()" data-k="set_target">🎯 यही नमी चाहिए — सेट करें</button>
+      <button class="btn-calib" onclick="clearCalib()" data-k="clear_target">🗑 लक्ष्य हटाएं</button>
     </div>
+    <div class="calib-result" id="calibResult"></div>
   </div>
+</div>
 
-  <!-- ── AI ANALYSIS ── -->
-  <div class="section">
-    <div class="sec-title"><span class="sec-title-icon">🧠</span> <span data-t="ai_analysis">AI खेत विश्लेषण</span></div>
-    <div class="ai-box">
-      <div class="ai-header">
-        <div class="ai-title">🤖 <span data-t="icar_ai">ICAR-आधारित AI सलाह</span></div>
-        <button class="btn-ai" id="aiBtn" onclick="runAI()" data-t="analyze">विश्लेषण करें</button>
-      </div>
-      <div class="ai-loader" id="aiLoader">
-        <div class="spinner"></div>
-        <span data-t="analyzing">विश्लेषण हो रहा है...</span>
-      </div>
-      <div class="ai-result" id="aiResult"></div>
+<!-- AI ANALYSIS -->
+<div class="section">
+  <div class="sec-title">🧠 <span data-k="ai_salaah">AI खेत सलाह</span></div>
+  <div class="ai-box">
+    <div class="ai-hdr">
+      <div class="ai-title">🤖 <span data-k="icar_ai">ICAR-आधारित AI विश्लेषण</span></div>
+      <button class="btn-ai" id="aiBtn" onclick="runAI()" data-k="vishleshan">विश्लेषण करें</button>
     </div>
+    <div class="aiload" id="aiLoad"><div class="spinner"></div><span data-k="vishleshan_ho_raha">विश्लेषण हो रहा है...</span></div>
+    <div class="ai-res" id="aiRes"></div>
   </div>
+</div>
 
-  <!-- ── LAST UPDATE ── -->
-  <div class="last-update">
-    <span>🕐</span>
-    <span data-t="last_update">अंतिम अपडेट:</span>
-    <span id="lastUpdate" style="color:var(--cyan)">--:--</span>
-  </div>
+<!-- LAST UPDATE -->
+<div class="last-up">
+  <span>🕐</span>
+  <span data-k="antim">अंतिम अपडेट:</span>
+  <span id="lastUpd" style="color:var(--cyan)">--:--</span>
+</div>
 
 </div><!-- /wrap -->
 
+<!-- VOICE BAR -->
+<div class="voice-bar" style="max-width:500px;left:50%;transform:translateX(-50%);right:auto;width:100%">
+  <div class="vb-info"><span>🔊</span> <span data-k="voice_alert">आवाज़ अलार्म</span></div>
+  <button class="vb-btn" id="voiceBtn" onclick="toggleVoice()">🔔 चालू करें</button>
+</div>
+
 <script>
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // TRANSLATIONS
-// ═══════════════════════════════════════════
-const T = {
-  hi:{ apni_fasal:'अपनी फसल चुनें', mitti_prakar:'मिट्टी का प्रकार', nami_star:'नमी स्तर (MOISTURE)', blynk_conn:'BLYNK कनेक्शन', save_start:'✅ सेव करें और शुरू करें', start_monitoring:'मॉनिटरिंग शुरू करें', stop_monitoring:'मॉनिटरिंग बंद करें', khatra_seema:'खतरा सीमा', field_analytics:'खेत विश्लेषण', live_graph:'पिछले रीडिंग — सत्र ग्राफ', pump_control:'पंप नियंत्रण', ai_analysis:'AI खेत विश्लेषण', analyze:'विश्लेषण करें', last_update:'अंतिम अपडेट:', not_connected:'कनेक्ट नहीं है', waiting:'डेटा का इंतज़ार है...', duration:'अवधि', readings:'रीडिंग', avg:'औसत', current_nami:'वर्तमान नमी', min_nami:'न्यूनतम नमी', max_nami:'अधिकतम नमी', avg_nami:'औसत नमी', change_rate:'परिवर्तन दर', fc_deficit:'FC की कमी', readings_count:'कुल रीडिंग', eta_fc:'FC पहुँचने में', estimated:'अनुमानित समय', dry:'0 (सूखा)', wet:'4095 (भरा)', gehun:'गेहूँ', chawal:'चावल', makka:'मक्का', ganna:'गन्ना', soya:'सोयाबीन', tamatar:'टमाटर', sarson:'सरसों', custom:'कस्टम', balui:'बालुई मिट्टी', domat:'दोमट मिट्टी', chikni:'चिकनी मिट्टी', analyzing:'विश्लेषण हो रहा है...', icar_ai:'ICAR-आधारित AI सलाह', raw_graph:'Raw ADC ग्राफ', monitoring_start_msg:'मॉनिटरिंग शुरू करें', raw_waiting:'Raw ADC डेटा का इंतज़ार है', pump_off_sub:'नमी पर्याप्त है', all:'सभी', clear:'🗑', start_val:'शुरुआत', current:'अभी', total_change:'कुल बदलाव', vpin:'Virtual Pin', poll_interval:'Poll हर (सेकंड)', blynk_server:'Blynk Server', custom_thresh:'कस्टम खतरा सीमा (Raw ADC)', livetext:'लाइव ✓' },
-  mr:{ apni_fasal:'आपली पिके निवडा', mitti_prakar:'मातीचा प्रकार', nami_star:'ओलावा पातळी', blynk_conn:'BLYNK कनेक्शन', save_start:'✅ जतन करा आणि सुरू करा', start_monitoring:'देखरेख सुरू करा', stop_monitoring:'देखरेख थांबवा', khatra_seema:'धोक्याची मर्यादा', field_analytics:'शेत विश्लेषण', live_graph:'मागील रीडिंग', pump_control:'पंप नियंत्रण', ai_analysis:'AI शेत विश्लेषण', analyze:'विश्लेषण करा', last_update:'शेवटचे अपडेट:', not_connected:'कनेक्ट नाही', waiting:'डेटाची वाट पाहत आहे...', duration:'कालावधी', readings:'रीडिंग', avg:'सरासरी', current_nami:'सध्याचा ओलावा', min_nami:'किमान ओलावा', max_nami:'कमाल ओलावा', avg_nami:'सरासरी ओलावा', change_rate:'बदल दर', fc_deficit:'FC कमतरता', readings_count:'एकूण रीडिंग', eta_fc:'FC पोहोचण्याची वेळ', estimated:'अंदाजित वेळ', dry:'0 (कोरडे)', wet:'4095 (भरलेले)', analyzing:'विश्लेषण होत आहे...', icar_ai:'ICAR-आधारित AI सल्ला', livetext:'लाइव्ह ✓' },
-  bn:{ apni_fasal:'আপনার ফসল বেছে নিন', mitti_prakar:'মাটির ধরন', nami_star:'আর্দ্রতার স্তর', blynk_conn:'BLYNK সংযোগ', save_start:'✅ সংরক্ষণ করুন এবং শুরু করুন', start_monitoring:'পর্যবেক্ষণ শুরু করুন', stop_monitoring:'পর্যবেক্ষণ বন্ধ করুন', khatra_seema:'বিপদ সীমা', field_analytics:'মাঠ বিশ্লেষণ', pump_control:'পাম্প নিয়ন্ত্রণ', ai_analysis:'AI মাঠ বিশ্লেষণ', analyze:'বিশ্লেষণ করুন', last_update:'শেষ আপডেট:', not_connected:'সংযুক্ত নয়', waiting:'ডেটার অপেক্ষা...', livetext:'লাইভ ✓' },
-  te:{ apni_fasal:'మీ పంటను ఎంచుకోండి', mitti_prakar:'నేల రకం', nami_star:'తేమ స్థాయి', blynk_conn:'BLYNK కనెక్షన్', save_start:'✅ సేవ్ చేయండి', start_monitoring:'పర్యవేక్షణ ప్రారంభించండి', stop_monitoring:'పర్యవేక్షణ ఆపండి', last_update:'చివరి నవీకరణ:', livetext:'లైవ్ ✓' },
-  ta:{ apni_fasal:'உங்கள் பயிரை தேர்வுசெய்க', mitti_prakar:'மண் வகை', nami_star:'ஈரப்பதம் நிலை', blynk_conn:'BLYNK இணைப்பு', save_start:'✅ சேமிக்கவும்', start_monitoring:'கண்காணிப்பை தொடங்கு', stop_monitoring:'கண்காணிப்பை நிறுத்து', last_update:'கடைசி புதுப்பிப்பு:', livetext:'நேரடி ✓' },
-  gu:{ apni_fasal:'તમારો પાક પસંદ કરો', mitti_prakar:'જમીનનો પ્રકાર', nami_star:'ભેજ સ્તર', blynk_conn:'BLYNK કનેક્શન', save_start:'✅ સેવ કરો', start_monitoring:'મોનિટરિંગ શરૂ કરો', stop_monitoring:'મોનિટરિંગ બંધ કરો', last_update:'છેલ્લો અપડેટ:', livetext:'લાઇવ ✓' },
-  pa:{ apni_fasal:'ਆਪਣੀ ਫਸਲ ਚੁਣੋ', mitti_prakar:'ਮਿੱਟੀ ਦੀ ਕਿਸਮ', nami_star:'ਨਮੀ ਪੱਧਰ', blynk_conn:'BLYNK ਕੁਨੈਕਸ਼ਨ', save_start:'✅ ਸੇਵ ਕਰੋ', start_monitoring:'ਨਿਗਰਾਨੀ ਸ਼ੁਰੂ ਕਰੋ', stop_monitoring:'ਨਿਗਰਾਨੀ ਬੰਦ ਕਰੋ', last_update:'ਆਖਰੀ ਅੱਪਡੇਟ:', livetext:'ਲਾਈਵ ✓' },
-  kn:{ apni_fasal:'ನಿಮ್ಮ ಬೆಳೆ ಆರಿಸಿ', mitti_prakar:'ಮಣ್ಣಿನ ಪ್ರಕಾರ', nami_star:'ತೇವಾಂಶ ಮಟ್ಟ', blynk_conn:'BLYNK ಸಂಪರ್ಕ', save_start:'✅ ಉಳಿಸಿ', start_monitoring:'ಮೇಲ್ವಿಚಾರಣೆ ಪ್ರಾರಂಭಿಸಿ', stop_monitoring:'ಮೇಲ್ವಿಚಾರಣೆ ನಿಲ್ಲಿಸಿ', last_update:'ಕೊನೆಯ ನವೀಕರಣ:', livetext:'ಲೈವ್ ✓' },
-  ml:{ apni_fasal:'നിങ്ങളുടെ വിള തിരഞ്ഞെടുക്കുക', mitti_prakar:'മണ്ണിന്റെ തരം', nami_star:'ഈർപ്പ നില', blynk_conn:'BLYNK കണക്ഷൻ', save_start:'✅ സേവ് ചെയ്യുക', start_monitoring:'നിരീക്ഷണം ആരംഭിക്കുക', stop_monitoring:'നിരീക്ഷണം നിർത്തുക', last_update:'അവസാന അപ്ഡേറ്റ്:', livetext:'ലൈവ് ✓' },
-  or:{ apni_fasal:'ଆପଣଙ୍କ ଫସଲ ବାଛନ୍ତୁ', mitti_prakar:'ମାଟି ପ୍ରକାର', nami_star:'ଆର୍ଦ୍ରତା ସ୍ତର', blynk_conn:'BLYNK ସଂଯୋଗ', save_start:'✅ ସେଭ କରନ୍ତୁ', start_monitoring:'ନଜରଦାରି ଆରମ୍ଭ କରନ୍ତୁ', stop_monitoring:'ନଜରଦାରି ବନ୍ଦ କରନ୍ତୁ', last_update:'ଶେଷ ଅଦ୍ୟତନ:', livetext:'ଲାଇଭ ✓' },
-  ur:{ apni_fasal:'اپنی فصل چنیں', mitti_prakar:'مٹی کی قسم', nami_star:'نمی کی سطح', blynk_conn:'BLYNK کنکشن', save_start:'✅ محفوظ کریں', start_monitoring:'نگرانی شروع کریں', stop_monitoring:'نگرانی بند کریں', last_update:'آخری اپڈیٹ:', livetext:'لائیو ✓' }
+// ══════════════════════════════════════════════
+const TR={
+  hi:{mausam:'मौसम पूर्वानुमान',blynk_conn:'BLYNK कनेक्शन',save_conn:'✅ सेव करें और शुरू करें',not_conn:'कनेक्ट नहीं है',apni_fasal:'अपनी फसल चुनें',mitti_prakar:'मिट्टी का प्रकार',nami_star:'नमी स्तर (MOISTURE)',khatra:'खतरा सीमा',khet_vishleshan:'खेत विश्लेषण',nami_graph:'नमी % — सत्र ग्राफ',raw_graph:'Raw ADC ग्राफ',start_monitor:'मॉनिटरिंग शुरू करें',stop_monitor:'मॉनिटरिंग बंद करें',avadhi:'अवधि',readings:'रीडिंग',ausat:'औसत',pump:'पंप नियंत्रण',nami_thik:'नमी पर्याप्त है',chalu_karo:'चालू करें',band_karo:'बंद करें',anshankaran:'लक्ष्य नमी अंशांकन',calib_desc:'अपने खेत के लिए उपयुक्त नमी स्तर स्वयं निर्धारित करें।',set_target:'🎯 यही नमी चाहिए — सेट करें',clear_target:'🗑 लक्ष्य हटाएं',ai_salaah:'AI खेत सलाह',icar_ai:'ICAR-आधारित AI विश्लेषण',vishleshan:'विश्लेषण करें',vishleshan_ho_raha:'विश्लेषण हो रहा है...',antim:'अंतिम अपडेट:',voice_alert:'आवाज़ अलार्म',waiting:'डेटा का इंतज़ार है...',vartman_nami:'वर्तमान नमी',nyuntam:'न्यूनतम',adhiktam:'अधिकतम',parivartan_dar:'परिवर्तन दर',fc_kami:'FC की कमी',total_reading:'कुल रीडिंग',fc_time:'FC पहुँचने में',barish_probability:'वर्षा संभावना',temp:'तापमान',target_nami:'लक्ष्य नमी',pani_ki_kami:'पानी की कमी',anumaan:'अनुमानित समय',sookha:'0 (सूखा)',bhara:'4095 (भरा)',shuruat:'शुरुआत',abhi:'अभी',kul_badlav:'कुल बदलाव',raw_wait:'Raw ADC इंतज़ार है',start_monitor_msg:'मॉनिटरिंग शुरू करें',liveTxt:'लाइव ✓',
+    voice:{ok:'खेत में नमी पर्याप्त है। पंप बंद रखें।',low:'ध्यान दें! खेत में नमी कम है। सिंचाई की आवश्यकता है।',critical:'चेतावनी! खेत बहुत सूखा है। तुरंत सिंचाई करें।',flood:'खतरा! खेत में पानी भर गया है। पंप तुरंत बंद करें।'},
+    status:{ok:'खेत में नमी सही है ✓',low:'नमी कम — सिंचाई करें',critical:'बहुत कम नमी — तुरंत सिंचाई!',flood:'अत्यधिक नमी — पानी भर गया!',vgood:'नमी बहुत अच्छी है 🌱'}
+  },
+  en:{mausam:'Weather Forecast',blynk_conn:'BLYNK Connection',save_conn:'✅ Save & Start',not_conn:'Not connected',apni_fasal:'Select Your Crop',mitti_prakar:'Soil Type',nami_star:'Moisture Level',khatra:'Danger Threshold',khet_vishleshan:'Field Analytics',nami_graph:'Moisture % — Session Graph',raw_graph:'Raw ADC Graph',start_monitor:'Start Monitoring',stop_monitor:'Stop Monitoring',avadhi:'Duration',readings:'Readings',ausat:'Average',pump:'Pump Control',nami_thik:'Moisture adequate',chalu_karo:'Turn ON',band_karo:'Turn OFF',anshankaran:'Target Moisture Calibration',calib_desc:'Set the optimal moisture level for your field.',set_target:'🎯 Set This as Target',clear_target:'🗑 Clear Target',ai_salaah:'AI Field Advice',icar_ai:'ICAR-based AI Analysis',vishleshan:'Analyze',vishleshan_ho_raha:'Analyzing...',antim:'Last Update:',voice_alert:'Voice Alert',waiting:'Waiting for data...',vartman_nami:'Current Moisture',nyuntam:'Minimum',adhiktam:'Maximum',parivartan_dar:'Rate of Change',fc_kami:'FC Deficit',total_reading:'Total Readings',fc_time:'Time to FC',barish_probability:'Rainfall',temp:'Temperature',target_nami:'Target Moisture',pani_ki_kami:'Water Deficit',anumaan:'Estimated time',sookha:'0 (Dry)',bhara:'4095 (Full)',shuruat:'Start',abhi:'Now',kul_badlav:'Total Change',raw_wait:'Waiting for Raw ADC',liveTxt:'Live ✓',
+    voice:{ok:'Field moisture is adequate. Keep pump off.',low:'Alert! Field moisture is low. Irrigation needed.',critical:'Warning! Field is very dry. Irrigate immediately.',flood:'Danger! Field is waterlogged. Stop pump immediately.'},
+    status:{ok:'Moisture is good ✓',low:'Low moisture — irrigate',critical:'Very low — irrigate now!',flood:'Waterlogged — stop pump!',vgood:'Excellent moisture 🌱'}
+  },
+  mr:{mausam:'हवामान अंदाज',blynk_conn:'BLYNK कनेक्शन',save_conn:'✅ जतन करा',not_conn:'कनेक्ट नाही',apni_fasal:'तुमची पीक निवडा',mitti_prakar:'मातीचा प्रकार',nami_star:'ओलावा पातळी',khatra:'धोक्याची मर्यादा',khet_vishleshan:'शेत विश्लेषण',start_monitor:'देखरेख सुरू करा',stop_monitor:'देखरेख थांबवा',voice:{ok:'शेतात पुरेसा ओलावा आहे.',low:'सावधान! शेतात ओलावा कमी आहे.',critical:'इशारा! शेत खूप कोरडे आहे.',flood:'धोका! शेतात पूर आला आहे.'},status:{ok:'ओलावा योग्य आहे ✓',low:'कमी ओलावा — सिंचन करा',critical:'खूप कमी — आत्ता सिंचन करा!',flood:'जास्त पाणी — पंप बंद करा!',vgood:'उत्कृष्ट ओलावा 🌱'},liveTxt:'लाइव्ह ✓',waiting:'डेटाची वाट पाहत आहे...',antim:'शेवटचे अपडेट:',ausat:'सरासरी',avadhi:'कालावधी',readings:'रीडिंग'},
+  bn:{mausam:'আবহাওয়ার পূর্বাভাস',blynk_conn:'BLYNK সংযোগ',save_conn:'✅ সেভ করুন',not_conn:'সংযুক্ত নয়',apni_fasal:'আপনার ফসল বেছে নিন',mitti_prakar:'মাটির ধরন',nami_star:'আর্দ্রতার স্তর',khatra:'বিপদ সীমা',start_monitor:'পর্যবেক্ষণ শুরু করুন',stop_monitor:'পর্যবেক্ষণ বন্ধ করুন',voice:{ok:'মাঠে পর্যাপ্ত আর্দ্রতা আছে।',low:'সতর্কতা! মাঠে আর্দ্রতা কম।',critical:'সতর্কতা! মাঠ খুব শুকনো।',flood:'বিপদ! মাঠে জল জমেছে।'},status:{ok:'আর্দ্রতা ঠিক আছে ✓',low:'কম আর্দ্রতা',critical:'খুব কম — এখনই সেচ দিন!',flood:'জলাবদ্ধ!',vgood:'চমৎকার আর্দ্রতা 🌱'},liveTxt:'লাইভ ✓',waiting:'ডেটার অপেক্ষা...',antim:'শেষ আপডেট:',ausat:'গড়',avadhi:'সময়কাল',readings:'রিডিং'},
+  te:{mausam:'వాతావరణ సూచన',start_monitor:'పర్యవేక్షణ ప్రారంభించండి',stop_monitor:'పర్యవేక్షణ ఆపండి',voice:{ok:'పొలంలో తగినంత తేమ ఉంది.',low:'హెచ్చరిక! తేమ తక్కువగా ఉంది.',critical:'అత్యవసరం! పొలం చాలా పొడిగా ఉంది.',flood:'ప్రమాదం! పొలంలో నీరు నిండింది.'},status:{ok:'తేమ సరిగా ఉంది ✓',low:'తక్కువ తేమ',critical:'చాలా తక్కువ!',flood:'నీరు నిండింది!',vgood:'అద్భుతమైన తేమ 🌱'},liveTxt:'లైవ్ ✓',waiting:'డేటా కోసం వేచి...',antim:'చివరి నవీకరణ:'},
+  ta:{mausam:'வானிலை முன்னறிவிப்பு',start_monitor:'கண்காணிப்பை தொடங்கு',stop_monitor:'கண்காணிப்பை நிறுத்து',voice:{ok:'வயலில் போதுமான ஈரப்பதம் உள்ளது.',low:'எச்சரிக்கை! ஈரப்பதம் குறைவு.',critical:'அவசரம்! வயல் மிகவும் வறண்டது.',flood:'ஆபத்து! வயலில் வெள்ளம்.'},status:{ok:'ஈரப்பதம் சரி ✓',low:'குறைவான ஈரப்பதம்',critical:'மிகவும் குறைவு!',flood:'வெள்ளம்!',vgood:'சிறந்த ஈரப்பதம் 🌱'},liveTxt:'நேரடி ✓',waiting:'தரவுக்கு காத்திருக்கிறோம்...',antim:'கடைசி புதுப்பிப்பு:'},
+  gu:{mausam:'હવામાન આગાહી',start_monitor:'મોનિટરિંગ શરૂ કરો',stop_monitor:'મોનિટરિંગ બંધ કરો',voice:{ok:'ખેતરમાં પૂરતો ભેજ છે.',low:'ધ્યાન! ભેજ ઓછો છે.',critical:'ચેતવણી! ખેતર ખૂબ સૂકું છે.',flood:'ખતરો! ખેતર ડૂબ્યું.'},status:{ok:'ભેજ સારો છે ✓',low:'ઓછો ભેજ',critical:'ખૂબ ઓછો!',flood:'ડૂબ્યું!',vgood:'ઉત્તમ ભેજ 🌱'},liveTxt:'લાઇવ ✓',waiting:'ડેટાની રાહ...',antim:'છેલ્લો અપડેટ:'},
+  pa:{mausam:'ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ',start_monitor:'ਨਿਗਰਾਨੀ ਸ਼ੁਰੂ ਕਰੋ',stop_monitor:'ਨਿਗਰਾਨੀ ਬੰਦ ਕਰੋ',voice:{ok:'ਖੇਤ ਵਿੱਚ ਕਾਫ਼ੀ ਨਮੀ ਹੈ।',low:'ਧਿਆਨ! ਨਮੀ ਘੱਟ ਹੈ।',critical:'ਚੇਤਾਵਨੀ! ਖੇਤ ਬਹੁਤ ਸੁੱਕਾ ਹੈ।',flood:'ਖ਼ਤਰਾ! ਖੇਤ ਵਿੱਚ ਹੜ੍ਹ।'},status:{ok:'ਨਮੀ ਸਹੀ ਹੈ ✓',low:'ਘੱਟ ਨਮੀ',critical:'ਬਹੁਤ ਘੱਟ!',flood:'ਹੜ੍ਹ!',vgood:'ਸ਼ਾਨਦਾਰ ਨਮੀ 🌱'},liveTxt:'ਲਾਈਵ ✓',waiting:'ਡੇਟਾ ਦੀ ਉਡੀਕ...',antim:'ਆਖਰੀ ਅਪਡੇਟ:'},
+  kn:{start_monitor:'ಮೇಲ್ವಿಚಾರಣೆ ಪ್ರಾರಂಭಿಸಿ',stop_monitor:'ಮೇಲ್ವಿಚಾರಣೆ ನಿಲ್ಲಿಸಿ',voice:{ok:'ಜಮೀನಿನಲ್ಲಿ ಸಾಕಷ್ಟು ತೇವಾಂಶ ಇದೆ.',low:'ಎಚ್ಚರಿಕೆ! ತೇವಾಂಶ ಕಡಿಮೆ.',critical:'ತಕ್ಷಣ ನೀರಾವರಿ ಮಾಡಿ.',flood:'ಅಪಾಯ! ಜಮೀನು ಮುಳುಗಿದೆ.'},status:{ok:'ತೇವಾಂಶ ಸರಿ ✓',low:'ಕಡಿಮೆ ತೇವಾಂಶ',critical:'ತುಂಬಾ ಕಡಿಮೆ!',flood:'ಪ್ರವಾಹ!',vgood:'ಅದ್ಭುತ ತೇವಾಂಶ 🌱'},liveTxt:'ಲೈವ್ ✓',waiting:'ಡೇಟಾ ನಿರೀಕ್ಷೆ...'},
+  ml:{start_monitor:'നിരീക്ഷണം ആരംഭിക്കുക',stop_monitor:'നിരീക്ഷണം നിർത്തുക',voice:{ok:'വയലിൽ മതിയായ ഈർപ്പം ഉണ്ട്.',low:'ശ്രദ്ധ! ഈർപ്പം കുറവ്.',critical:'മുന്നറിയിപ്പ്! ഉടൻ നനയ്ക്കുക.',flood:'അപകടം! വയൽ വെള്ളത്തിൽ.'},status:{ok:'ഈർപ്പം ശരി ✓',low:'കുറഞ്ഞ ഈർപ്പം',critical:'വളരെ കുറവ്!',flood:'വെള്ളപ്പൊക്കം!',vgood:'മികച്ച ഈർപ്പം 🌱'},liveTxt:'ലൈവ് ✓',waiting:'ഡേറ്റ കാത്തിരിക്കുന്നു...'},
+  or:{start_monitor:'ନଜରଦାରି ଆରଂଭ କରନ୍ତୁ',stop_monitor:'ନଜରଦାରି ବନ୍ଦ କରନ୍ତୁ',voice:{ok:'ଜମିରେ ଯଥେଷ୍ଟ ଆର୍ଦ୍ରତା ଅଛି।',low:'ଧ୍ୟାନ! ଆର୍ଦ୍ରତା କମ।',critical:'ଚେତାବନୀ! ଜମି ଖୁବ ଶୁଖିଲା।',flood:'ବିପଦ! ଜମିରେ ବନ୍ୟା।'},status:{ok:'ଆର୍ଦ୍ରତା ଠିକ ✓',low:'କମ ଆର୍ଦ୍ରତା',critical:'ଖୁବ କମ!',flood:'ବନ୍ୟା!',vgood:'ଉତ୍ତମ ଆର୍ଦ୍ରତା 🌱'},liveTxt:'ଲାଇଭ ✓',waiting:'ଡାଟା ଅପେକ୍ଷା...'},
+  ur:{mausam:'موسم کی پیشگوئی',start_monitor:'نگرانی شروع کریں',stop_monitor:'نگرانی بند کریں',voice:{ok:'کھیت میں نمی کافی ہے۔',low:'خبردار! نمی کم ہے۔',critical:'فوری آبپاشی کریں۔',flood:'خطرہ! کھیت میں پانی بھر گیا۔'},status:{ok:'نمی ٹھیک ہے ✓',low:'کم نمی',critical:'بہت کم!',flood:'پانی بھرا!',vgood:'بہترین نمی 🌱'},liveTxt:'لائیو ✓',waiting:'ڈیٹا کا انتظار...',antim:'آخری اپڈیٹ:'}
 };
 
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-let curLang = 'hi';
-let blynkToken = '', blynkPin = 'V2', blynkServer = 'blynk.cloud';
-let pollInterval = 5000, pollTimer = null;
-let isMonitoring = false, sessionStart = null, sessionTimer = null;
-let rawHistory = [], moistHistory = [], timeLabels = [];
-let curRaw = null, curMoist = null;
-let sessionReadings = 0;
-let curFasal = 'गेहूँ', fasalThresh = 2200;
-let curMitti = 'बालुई मिट्टी', mittiFC = 2000;
-let seemaThresh = 2200;
-let moistChart = null, rawChartObj = null;
-let graphView = 'all';
-let pumpManual = false;
+function t(key,fallback){return (TR[curLang]&&TR[curLang][key])||(TR.hi[key])||fallback||key}
+function tv(key){return (TR[curLang]&&TR[curLang].voice&&TR[curLang].voice[key])||(TR.hi.voice[key])}
+function ts(key){return (TR[curLang]&&TR[curLang].status&&TR[curLang].status[key])||(TR.hi.status[key])}
 
-// ═══════════════════════════════════════════
-// LANGUAGE
-// ═══════════════════════════════════════════
-function toggleLangDD(){
-  document.getElementById('langDD').classList.toggle('open');
-}
-function setLang(lang, el){
-  curLang = lang;
-  document.getElementById('langLabel').textContent = el.querySelector(':not(.lang-code)').textContent.trim().charAt(0)+el.querySelector(':not(.lang-code)').textContent.trim().charAt(1);
-  document.getElementById('langDD').classList.remove('open');
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let curLang='hi',curRaw=null,curMoist=null;
+let fasalName='गेहूँ',fasalTh=2200,mittiName='बालुई मिट्टी',mittiFC=2000;
+let seemaTh=2200;
+let rawHist=[],moistHist=[],timeLabels=[];
+let sessStart=null,sessTimer=null,pollTimer=null;
+let monitoring=false,sessRead=0;
+let mChart=null,rChart=null;
+let blynkToken='',blynkPin='V2',blynkSrv='blynk.cloud';
+let pollMs=5000;
+let voiceOn=false,alarmTimer=null,firstRead=true;
+let pumpManual=false,pumpOn=false;
+let calibTarget=null,calibMode=false;
+let wxData=null,userLat=null,userLon=null;
+let graphView='all';
+
+// ══════════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════════
+function toggleLang(){document.getElementById('langDD').classList.toggle('open')}
+function setLang(l,el){
+  curLang=l;
   document.querySelectorAll('.lang-opt').forEach(o=>o.classList.remove('active'));
   el.classList.add('active');
-  applyTranslations();
+  document.getElementById('langDD').classList.remove('open');
+  const lbl=el.childNodes[1]?el.childNodes[1].textContent.trim():'';
+  document.getElementById('langLbl').textContent=lbl.substring(0,2)||l.toUpperCase();
+  applyTrans();
 }
-function applyTranslations(){
-  const t = T[curLang] || T.hi;
-  document.querySelectorAll('[data-t]').forEach(el=>{
-    const key = el.getAttribute('data-t');
-    if(t[key]) el.textContent = t[key];
+function applyTrans(){
+  document.querySelectorAll('[data-k]').forEach(el=>{
+    const k=el.getAttribute('data-k'),v=t(k);
+    if(v&&v!==k)el.textContent=v;
   });
-  if(t.livetext) document.getElementById('liveText').textContent = t.livetext;
+  document.getElementById('liveTxt').textContent=t('liveTxt','लाइव ✓');
+  const monTxt=document.getElementById('monTxt');
+  if(monTxt)monTxt.textContent=monitoring?t('stop_monitor'):t('start_monitor');
 }
-document.addEventListener('click',e=>{
-  if(!e.target.closest('#langBtn') && !e.target.closest('#langDD'))
-    document.getElementById('langDD').classList.remove('open');
-});
+document.addEventListener('click',e=>{if(!e.target.closest('#langBtn')&&!e.target.closest('#langDD'))document.getElementById('langDD').classList.remove('open')});
 
-// ═══════════════════════════════════════════
-// BLYNK PANEL
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
+// BLYNK
+// ══════════════════════════════════════════════
 function toggleBlynk(){
-  const body = document.getElementById('blynkBody');
-  const chev = document.getElementById('blynkChevron');
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
+  const b=document.getElementById('bbody'),c=document.getElementById('bchev');
+  b.classList.toggle('open');c.classList.toggle('open');
 }
 function saveBlynk(){
-  blynkToken = document.getElementById('authToken').value.trim();
-  blynkPin   = document.getElementById('vPin').value.trim().toUpperCase();
-  blynkServer= document.getElementById('blynkServer').value.trim() || 'blynk.cloud';
-  pollInterval = parseInt(document.getElementById('pollSec').value||'5') * 1000;
-  if(pollInterval < 3000) pollInterval = 3000;
-  if(!blynkToken){
-    showBlynkMsg('Auth Token डालें!','err'); return;
-  }
-  showBlynkMsg('सेव हो गया! पहला डेटा आने दो...','ok');
-  // test fetch
+  blynkToken=document.getElementById('authTok').value.trim();
+  blynkPin=document.getElementById('vpin').value.trim().toUpperCase()||'V2';
+  blynkSrv=document.getElementById('bserver').value.trim()||'blynk.cloud';
+  pollMs=Math.max(3000,parseInt(document.getElementById('pollS').value||'5')*1000);
+  if(!blynkToken){setMsg('err','Auth Token डालें!');return}
+  setMsg('ok','सेव हो गया — कनेक्ट हो रहे हैं...');
   fetchBlynk(true);
 }
-function showBlynkMsg(msg, type){
-  const el = document.getElementById('blynkMsg');
-  el.textContent = msg;
-  el.className = 'blynk-msg '+(type||'ok');
-}
+function setMsg(type,txt){const m=document.getElementById('bmsg');m.textContent=txt;m.className='bmsg '+type}
+function setBDot(s){document.getElementById('bsdot').className='bsdot '+(s==='on'?'on':s==='err'?'err':'')}
 
-// ═══════════════════════════════════════════
-// BLYNK FETCH
-// ═══════════════════════════════════════════
 async function fetchBlynk(initial=false){
-  if(!blynkToken) return;
-  const pin = blynkPin.startsWith('V') ? blynkPin.toLowerCase() : 'v'+blynkPin;
-  const url = `https://${blynkServer}/external/api/get?token=${blynkToken}&${pin}`;
+  if(!blynkToken)return;
+  const pin=blynkPin.startsWith('V')?blynkPin.toLowerCase():'v'+blynkPin;
+  const url=`https://${blynkSrv}/external/api/get?token=${blynkToken}&${pin}`;
   try{
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const val = parseFloat(await res.text());
-    if(isNaN(val)) throw new Error('Invalid data');
-    onNewReading(val);
-    if(initial){ showBlynkMsg(`✅ कनेक्टेड! Raw: ${val}`,'ok'); setBlynkDot('connected'); }
-  } catch(e){
-    if(initial){ showBlynkMsg('❌ Error: '+e.message,'err'); setBlynkDot('error'); }
-    console.warn('Blynk fetch error:',e);
+    const r=await fetch(url);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const v=parseFloat(await r.text());
+    if(isNaN(v))throw new Error('Invalid');
+    onReading(v);
+    setBDot('on');
+    document.getElementById('rawdot').className='bsdot on';
+    if(initial){setMsg('ok',`✅ कनेक्टेड! Raw: ${Math.round(v)}`)}
+    document.getElementById('pdot').className='pdot on';
+    document.getElementById('pollTxt').textContent=`हर ${pollMs/1000}s पर अपडेट`;
+  }catch(e){
+    setBDot('err');
+    document.getElementById('rawdot').className='bsdot err';
+    if(initial){setMsg('err','❌ Error: '+e.message)}
   }
 }
-function setBlynkDot(state){
-  const d = document.getElementById('blynkDot');
-  d.className = 'blynk-status-dot '+state;
-  const rd = document.getElementById('rawDot');
-  if(state==='connected'){rd.className='blynk-status-dot connected';}
+
+// ══════════════════════════════════════════════
+// READING
+// ══════════════════════════════════════════════
+function calcM(raw){
+  const pct=((4095-raw)/(4095-mittiFC))*100;
+  return Math.max(0,Math.min(130,Math.round(pct*10)/10));
 }
 
-// ═══════════════════════════════════════════
-// READING PROCESSING
-// ═══════════════════════════════════════════
-function calcMoisture(raw){
-  const DRY = 4095, FC = mittiFC, SAT = 1271;
-  let pct = ((DRY - raw) / (DRY - FC)) * 100;
-  return Math.max(0, Math.min(130, Math.round(pct*10)/10));
+function onReading(raw){
+  const wasFirst=firstRead&&curRaw===null;
+  curRaw=Math.round(raw);
+  curMoist=calcM(curRaw);
+  const now=new Date();
+  const ts=now.toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  if(monitoring){rawHist.push(curRaw);moistHist.push(curMoist);timeLabels.push(ts);sessRead++}
+  updateGauge();updateStatus();updateAna();updateGraph();updatePump();updateCalibLive();
+  document.getElementById('lastUpd').textContent=ts;
+  // First reading voice notification
+  if(wasFirst&&voiceOn){firstRead=false;setTimeout(()=>firstNotify(),800)}
 }
 
-function onNewReading(raw){
-  curRaw = Math.round(raw);
-  curMoist = calcMoisture(curRaw);
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  
-  if(isMonitoring){
-    rawHistory.push(curRaw);
-    moistHistory.push(curMoist);
-    timeLabels.push(timeStr);
-    sessionReadings++;
-  }
-
-  updateGauge();
-  updateStatus();
-  updateAnalytics();
-  updateGraph();
-  updatePump();
-  updateLastUpdate(timeStr);
-  document.getElementById('rawDot').className = 'blynk-status-dot connected';
-  if(isMonitoring){ document.getElementById('pollDot').className='poll-dot active'; }
-}
-
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // GAUGE
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 function updateGauge(){
-  const pct = curMoist !== null ? curMoist : 0;
-  const displayed = Math.min(100, pct);
-  // SVG arc: circumference 440, dashoffset = 440*(1-pct/100)
-  const offset = 440 * (1 - displayed/100);
-  document.getElementById('gaugeArc').style.strokeDashoffset = offset;
-  document.getElementById('gaugeGlow').style.strokeDashoffset = offset;
-  document.getElementById('gaugePct').textContent = curMoist !== null ? Math.round(curMoist) : '--';
-  document.getElementById('gaugeRaw').textContent = 'RAW: '+(curRaw !== null ? curRaw : '---');
-  document.getElementById('gaugeFasal').textContent = curFasal+' | सीमा: '+fasalThresh;
-  
-  // Emoji based on moisture
-  const emoji = curMoist < 20 ? '🏜️' : curMoist < 40 ? '🌵' : curMoist < 60 ? '🌿' : curMoist < 85 ? '🌱' : '💧';
-  document.getElementById('gaugeEmoji').textContent = emoji;
-  
-  // Update gauge color via stroke
-  const arc = document.getElementById('gaugeArc');
-  if(pct < 20) arc.setAttribute('stroke','#ff1744');
-  else if(pct < 40) arc.setAttribute('stroke','#ff9100');
-  else if(pct < 60) arc.setAttribute('stroke','#ffd600');
-  else arc.setAttribute('stroke','url(#gaugeGrad)');
+  if(curMoist===null)return;
+  const d=Math.min(100,curMoist);
+  const off=440*(1-d/100);
+  document.getElementById('garc').style.strokeDashoffset=off;
+  document.getElementById('glow').style.strokeDashoffset=off;
+  // Color
+  const arc=document.getElementById('garc');
+  if(curMoist<20)arc.setAttribute('stroke','#ff1744');
+  else if(curMoist<40)arc.setAttribute('stroke','#ff9100');
+  else if(curMoist<60)arc.setAttribute('stroke','#ffd600');
+  else arc.setAttribute('stroke','url(#gg)');
+  document.getElementById('gPct').textContent=Math.round(curMoist);
+  const emoji=curMoist<15?'🏜️':curMoist<35?'🌵':curMoist<55?'🌿':curMoist<80?'🌱':curMoist<105?'💧':'🌊';
+  document.getElementById('gEmoji').textContent=emoji;
+  document.getElementById('gSub').textContent='ICAR अंशांकित';
+  document.getElementById('gFasal').textContent=fasalName+' | सीमा: '+fasalTh;
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // STATUS
-// ═══════════════════════════════════════════
-const statusLevels = [
-  {thresh:15, cls:'st-red',    icon:'🏜️', text:'बहुत कम नमी — तुरंत सिंचाई करें!', pump:true},
-  {thresh:30, cls:'st-orange', icon:'🌵', text:'सिंचाई की सख्त जरूरत है', pump:true},
-  {thresh:50, cls:'st-yellow', icon:'⚠️', text:'नमी कम हो रही है — सिंचाई करें', pump:true},
-  {thresh:70, cls:'st-cyan',   icon:'✅', text:'नमी सही है', pump:false},
-  {thresh:90, cls:'st-green',  icon:'🌱', text:'नमी बहुत अच्छी है', pump:false},
-  {thresh:999,cls:'st-blue',   icon:'💧', text:'अत्यधिक नमी — पंप बंद रखें', pump:false},
+// ══════════════════════════════════════════════
+const stLevels=[
+  {max:15,cls:'sr',icon:'🏜️',key:'critical',pump:true},
+  {max:35,cls:'so',icon:'🌵',key:'low',pump:true},
+  {max:55,cls:'sy',icon:'⚠️',key:'low',pump:true},
+  {max:75,cls:'sg',icon:'✅',key:'ok',pump:false},
+  {max:95,cls:'sg',icon:'🌱',key:'vgood',pump:false},
+  {max:999,cls:'sb',icon:'🌊',key:'flood',pump:false}
 ];
+let lastStatusKey='';
 function updateStatus(){
-  if(curMoist === null) return;
-  const banner = document.getElementById('statusBanner');
-  let level = statusLevels[statusLevels.length-1];
-  for(let l of statusLevels){ if(curMoist < l.thresh){level=l;break;} }
-  banner.className = 'status-banner '+level.cls;
-  document.getElementById('statusIcon').textContent = level.icon;
-  document.getElementById('statusText').textContent = level.text;
-  
-  // Seema fill
-  const fillPct = ((curRaw !== null ? curRaw : 4095) / 4095) * 100;
-  document.getElementById('seemaFill').style.width = (100-fillPct)+'%';
-  document.getElementById('seemaValDisplay').textContent = (curRaw||0)+' / 4095';
+  if(curMoist===null)return;
+  let lv=stLevels[stLevels.length-1];
+  for(const l of stLevels){if(curMoist<l.max){lv=l;break}}
+  document.getElementById('sbanner').className='sbanner '+lv.cls;
+  document.getElementById('sIcon').textContent=lv.icon;
+  document.getElementById('sTxt').textContent=ts(lv.key);
+  // Seema
+  const fp=((4095-(curRaw||4095))/4095)*100;
+  document.getElementById('sfill').style.width=fp+'%';
+  document.getElementById('seemaDisp').textContent=(curRaw||0)+' / 4095';
+  // Flood alarm
+  if(lv.key==='flood'){startFloodAlarm()}else{stopFloodAlarm()}
+  // Voice on status change
+  if(lv.key!==lastStatusKey&&voiceOn&&!firstRead){
+    speak(tv(lv.key));
+    lastStatusKey=lv.key;
+  }
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // ANALYTICS
-// ═══════════════════════════════════════════
-function updateAnalytics(){
-  const pct = curMoist;
-  if(pct === null) return;
-  document.getElementById('ana_cur').textContent = Math.round(pct);
-  document.getElementById('ana_cur_sub').textContent = 'ICAR कैलिब्रेटेड';
-
-  if(moistHistory.length > 0){
-    const min = Math.min(...moistHistory);
-    const max = Math.max(...moistHistory);
-    const avg = moistHistory.reduce((a,b)=>a+b,0)/moistHistory.length;
-    document.getElementById('ana_min').textContent = Math.round(min);
-    document.getElementById('ana_max').textContent = Math.round(max);
-    document.getElementById('ana_avg').textContent = Math.round(avg*10)/10;
-    document.getElementById('sessAvg').textContent = Math.round(avg)+'%';
-
-    // Rate of change (last 5 readings or all)
-    if(moistHistory.length >= 2){
-      const recent = moistHistory.slice(-6);
-      const rate = (recent[recent.length-1] - recent[0]) / Math.max(1,(recent.length-1)*(pollInterval/60000));
-      const rateRnd = Math.round(rate*100)/100;
-      document.getElementById('ana_rate').textContent = (rateRnd>=0?'+':'')+rateRnd;
-      const trendEl = document.getElementById('ana_trend_text');
-      if(Math.abs(rateRnd)<0.1){trendEl.textContent='→ स्थिर';trendEl.className='ana-sub trend-stable';}
-      else if(rateRnd>0){trendEl.textContent='↑ बढ़ रहा है';trendEl.className='ana-sub trend-up';}
-      else{trendEl.textContent='↓ घट रहा है';trendEl.className='ana-sub trend-down';}
-      
-      // ETA to field capacity (100%)
-      if(rate > 0.05){
-        const remaining = 100 - pct;
-        const etaMin = Math.round(remaining / rate);
-        document.getElementById('ana_eta').textContent = etaMin > 60 ? Math.round(etaMin/60)+'h '+( etaMin%60)+'m' : etaMin+'m';
-      } else if(rate < -0.05){
-        document.getElementById('ana_eta').textContent = '↓ सूख रहा';
-      } else {
-        document.getElementById('ana_eta').textContent = '~स्थिर';
-      }
+// ══════════════════════════════════════════════
+function updateAna(){
+  if(curMoist===null)return;
+  document.getElementById('a_cur').textContent=Math.round(curMoist);
+  if(moistHist.length>0){
+    const mn=Math.min(...moistHist),mx=Math.max(...moistHist);
+    const avg=moistHist.reduce((a,b)=>a+b,0)/moistHist.length;
+    document.getElementById('a_min').textContent=Math.round(mn);
+    document.getElementById('a_max').textContent=Math.round(mx);
+    document.getElementById('a_avg').textContent=Math.round(avg*10)/10;
+    document.getElementById('sAvg').textContent=Math.round(avg)+'%';
+    document.getElementById('sRead').textContent=sessRead;
+    document.getElementById('a_cnt').textContent=sessRead;
+    if(moistHist.length>=2){
+      const rc=moistHist.slice(-8);
+      const rate=(rc[rc.length-1]-rc[0])/Math.max(1,(rc.length-1)*(pollMs/60000));
+      const rr=Math.round(rate*100)/100;
+      document.getElementById('a_rate').textContent=(rr>=0?'+':'')+rr;
+      const te=document.getElementById('a_trend');
+      if(Math.abs(rr)<0.05){te.textContent='→ स्थिर';te.className='asub tst'}
+      else if(rr>0){te.textContent='↑ बढ़ रहा है';te.className='asub tup'}
+      else{te.textContent='↓ घट रहा है';te.className='asub tdn'}
+      // ETA
+      if(rate>0.05){const rem=100-curMoist;const etaM=Math.round(rem/rate);document.getElementById('a_eta').textContent=etaM>60?Math.floor(etaM/60)+'ह '+(etaM%60)+'म':etaM+'म'}
+      else if(rate<-0.05)document.getElementById('a_eta').textContent='↓ सूख रहा';
+      else document.getElementById('a_eta').textContent='~स्थिर';
     }
   }
-
-  // Deficit to FC
-  const deficit = Math.max(0, 100 - pct);
-  document.getElementById('ana_deficit').textContent = Math.round(deficit);
-  document.getElementById('ana_deficit_sub').textContent = deficit < 5 ? '✅ FC पर है' : deficit+'% और चाहिए';
-
-  // Count
-  document.getElementById('ana_count').textContent = sessionReadings;
-  document.getElementById('ana_count_sub').textContent = 'इस सत्र में';
-  document.getElementById('sessReadings').textContent = sessionReadings;
+  const def=Math.max(0,100-curMoist);
+  document.getElementById('a_def').textContent=Math.round(def);
+  document.getElementById('a_def_s').textContent=def<3?'✅ FC पर है':Math.round(def)+'% और चाहिए';
+  // Calibration comparison
+  if(calibTarget!==null){
+    document.getElementById('a_target').textContent=Math.round(calibTarget);
+    const gap=Math.max(0,calibTarget-curMoist);
+    document.getElementById('a_gap').textContent=Math.round(gap);
+    document.getElementById('a_gap_s').textContent=gap<2?'✅ लक्ष्य पर!':Math.round(gap)+'% और चाहिए';
+  }
+  // Weather data
+  if(wxData){
+    document.getElementById('a_temp').textContent=Math.round(wxData.temp);
+    document.getElementById('a_temp_s').textContent=wxData.city||'वर्तमान';
+    document.getElementById('a_rain').textContent=wxData.rain24||'0';
+    document.getElementById('a_rain_s').textContent=wxData.rain24>5?'🌧 वर्षा संभव!':'अगले 24 घंटे';
+  }
 }
 
-// ═══════════════════════════════════════════
-// CHART
-// ═══════════════════════════════════════════
-function initChart(){
-  if(moistChart) moistChart.destroy();
-  const ctx = document.getElementById('moistureChart').getContext('2d');
-  const grad = ctx.createLinearGradient(0,0,0,180);
-  grad.addColorStop(0,'rgba(0,230,118,0.3)');
-  grad.addColorStop(1,'rgba(0,230,118,0)');
-  moistChart = new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:[],
-      datasets:[{
-        label:'नमी %',
-        data:[],
-        borderColor:'#00e676',
-        backgroundColor:grad,
-        borderWidth:2,
-        fill:true,
-        tension:0.4,
-        pointRadius:3,
-        pointHoverRadius:6,
-        pointBackgroundColor:'#00e676',
-        pointBorderColor:'#070d1a',
-        pointBorderWidth:2,
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      animation:{duration:400},
-      scales:{
-        x:{
-          ticks:{color:'#8baabb',font:{size:9},maxTicksLimit:6,maxRotation:0},
-          grid:{color:'rgba(0,229,255,0.05)'},
-          border:{color:'rgba(0,229,255,0.1)'}
-        },
-        y:{
-          min:0,max:110,
-          ticks:{color:'#8baabb',font:{size:9},callback:v=>v+'%'},
-          grid:{color:'rgba(0,229,255,0.06)'},
-          border:{color:'rgba(0,229,255,0.1)'}
-        }
-      },
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'rgba(10,22,40,0.95)',
-          borderColor:'rgba(0,230,118,0.3)',borderWidth:1,
-          titleColor:'#00e676',bodyColor:'#e8f4ff',
-          callbacks:{label:c=>' '+c.raw+'% नमी'}
-        }
-      }
-    }
-  });
+// ══════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════
+function initCharts(){
+  if(mChart)mChart.destroy();
+  const mc=document.getElementById('mc').getContext('2d');
+  const g1=mc.createLinearGradient(0,0,0,160);
+  g1.addColorStop(0,'rgba(0,230,118,0.28)');g1.addColorStop(1,'rgba(0,230,118,0)');
+  mChart=new Chart(mc,{type:'line',data:{labels:[],datasets:[{label:'नमी %',data:[],borderColor:'#00e676',backgroundColor:g1,borderWidth:2,fill:true,tension:0.4,pointRadius:2,pointHoverRadius:5,pointBackgroundColor:'#00e676',pointBorderColor:'#070d1a',pointBorderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      scales:{x:{ticks:{color:'#8baabb',font:{size:8},maxTicksLimit:6,maxRotation:0},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}},
+        y:{min:0,max:110,ticks:{color:'#8baabb',font:{size:8},callback:v=>v+'%'},grid:{color:'rgba(0,229,255,0.05)'},border:{color:'rgba(0,229,255,0.08)'}}},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,22,40,.95)',borderColor:'rgba(0,230,118,.3)',borderWidth:1,titleColor:'#00e676',bodyColor:'#e8f4ff'}}}});
 
-  // Raw chart
-  if(rawChartObj) rawChartObj.destroy();
-  const ctx2 = document.getElementById('rawChart').getContext('2d');
-  const grad2 = ctx2.createLinearGradient(0,0,0,180);
-  grad2.addColorStop(0,'rgba(0,229,255,0.25)');
-  grad2.addColorStop(1,'rgba(0,229,255,0)');
-  rawChartObj = new Chart(ctx2,{
-    type:'line',
-    data:{
-      labels:[],
-      datasets:[{
-        label:'Raw ADC',
-        data:[],
-        borderColor:'#00e5ff',
-        backgroundColor:grad2,
-        borderWidth:2,fill:true,tension:0.4,
-        pointRadius:2,pointHoverRadius:5,
-        pointBackgroundColor:'#00e5ff',
-        pointBorderColor:'#070d1a',pointBorderWidth:1,
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      animation:{duration:300},
-      scales:{
-        x:{ticks:{color:'#8baabb',font:{size:9},maxTicksLimit:5,maxRotation:0},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}},
-        y:{min:1271,max:4095,ticks:{color:'#8baabb',font:{size:9},maxTicksLimit:5},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}}
-      },
-      plugins:{
-        legend:{display:false},
-        tooltip:{backgroundColor:'rgba(10,22,40,0.95)',borderColor:'rgba(0,229,255,0.3)',borderWidth:1,titleColor:'#00e5ff',bodyColor:'#e8f4ff',callbacks:{label:c=>' Raw: '+c.raw}}
-      }
-    }
-  });
+  if(rChart)rChart.destroy();
+  const rc=document.getElementById('rc').getContext('2d');
+  const g2=rc.createLinearGradient(0,0,0,160);
+  g2.addColorStop(0,'rgba(0,229,255,0.22)');g2.addColorStop(1,'rgba(0,229,255,0)');
+  rChart=new Chart(rc,{type:'line',data:{labels:[],datasets:[{label:'Raw ADC',data:[],borderColor:'#00e5ff',backgroundColor:g2,borderWidth:2,fill:true,tension:0.4,pointRadius:2,pointHoverRadius:4,pointBackgroundColor:'#00e5ff',pointBorderColor:'#070d1a',pointBorderWidth:1}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      scales:{x:{ticks:{color:'#8baabb',font:{size:8},maxTicksLimit:5,maxRotation:0},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}},
+        y:{min:1271,max:4095,ticks:{color:'#8baabb',font:{size:8},maxTicksLimit:5},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}}},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,22,40,.95)',borderColor:'rgba(0,229,255,.3)',borderWidth:1,titleColor:'#00e5ff',bodyColor:'#e8f4ff'}}}});
 }
 
 function updateGraph(){
-  if(!isMonitoring || moistHistory.length === 0) return;
-  document.getElementById('noDataMsg').style.display = 'none';
-  document.getElementById('chartContainer').style.display = 'block';
-  document.getElementById('noRawMsg').style.display = 'none';
-  document.getElementById('rawChartContainer').style.display = 'block';
-
-  let lbl = timeLabels, mData = moistHistory, rData = rawHistory;
-  if(graphView === 'last20'){
-    lbl = lbl.slice(-20); mData = mData.slice(-20); rData = rData.slice(-20);
-  }
-
-  if(moistChart){
-    moistChart.data.labels = lbl;
-    moistChart.data.datasets[0].data = mData;
-    moistChart.update('none');
-  }
-  if(rawChartObj){
-    rawChartObj.data.labels = lbl;
-    rawChartObj.data.datasets[0].data = rData;
-    rawChartObj.update('none');
-  }
-
-  // Graph stats
-  if(mData.length > 0){
-    document.getElementById('graphStats').style.display = 'block';
-    document.getElementById('gs_start').textContent = Math.round(mData[0])+'%';
-    document.getElementById('gs_cur').textContent   = Math.round(mData[mData.length-1])+'%';
-    const diff = mData[mData.length-1] - mData[0];
-    document.getElementById('gs_diff').textContent = (diff>=0?'+':'')+Math.round(diff*10)/10+'%';
+  if(!monitoring||moistHist.length===0)return;
+  document.getElementById('nd1').style.display='none';document.getElementById('cc1').style.display='block';
+  document.getElementById('nd2').style.display='none';document.getElementById('cc2').style.display='block';
+  let lbl=timeLabels,md=moistHist,rd=rawHist;
+  if(graphView==='20'){lbl=lbl.slice(-20);md=md.slice(-20);rd=rd.slice(-20)}
+  if(mChart){mChart.data.labels=lbl;mChart.data.datasets[0].data=md;mChart.update('none')}
+  if(rChart){rChart.data.labels=lbl;rChart.data.datasets[0].data=rd;rChart.update('none')}
+  if(md.length>0){
+    document.getElementById('gs1').style.display='grid';
+    document.getElementById('gss').textContent=Math.round(md[0])+'%';
+    document.getElementById('gsc').textContent=Math.round(md[md.length-1])+'%';
+    const df=md[md.length-1]-md[0];
+    document.getElementById('gsd').textContent=(df>=0?'+':'')+Math.round(df*10)/10+'%';
   }
 }
 
-function setGraphView(v,btn){
-  graphView = v;
-  document.querySelectorAll('.graph-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  updateGraph();
+function setView(v,btn){
+  graphView=v;
+  document.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');updateGraph();
 }
 function clearGraph(){
-  rawHistory=[]; moistHistory=[]; timeLabels=[]; sessionReadings=0;
-  document.getElementById('noDataMsg').style.display='flex';
-  document.getElementById('chartContainer').style.display='none';
-  document.getElementById('graphStats').style.display='none';
-  document.getElementById('noRawMsg').style.display='flex';
-  document.getElementById('rawChartContainer').style.display='none';
-  document.getElementById('ana_count').textContent='0';
-  if(moistChart){moistChart.data.labels=[];moistChart.data.datasets[0].data=[];moistChart.update()}
-  if(rawChartObj){rawChartObj.data.labels=[];rawChartObj.data.datasets[0].data=[];rawChartObj.update()}
+  rawHist=[];moistHist=[];timeLabels=[];sessRead=0;
+  document.getElementById('nd1').style.display='flex';document.getElementById('cc1').style.display='none';
+  document.getElementById('nd2').style.display='flex';document.getElementById('cc2').style.display='none';
+  document.getElementById('gs1').style.display='none';
+  document.getElementById('a_cnt').textContent='0';
+  if(mChart){mChart.data.labels=[];mChart.data.datasets[0].data=[];mChart.update()}
+  if(rChart){rChart.data.labels=[];rChart.data.datasets[0].data=[];rChart.update()}
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // MONITORING
-// ═══════════════════════════════════════════
-function toggleMonitoring(){
-  if(!blynkToken){ alert('पहले Blynk Token सेट करें!'); return; }
-  isMonitoring = !isMonitoring;
-  const btn = document.getElementById('monitorBtn');
-  const txt = document.getElementById('monBtnText');
-  const t = T[curLang]||T.hi;
-  if(isMonitoring){
-    btn.className = 'monitor-btn stop';
-    txt.textContent = t.stop_monitoring||'मॉनिटरिंग बंद करें';
-    btn.querySelector('span:first-child').textContent = '⏹️';
-    sessionStart = new Date();
-    rawHistory=[]; moistHistory=[]; timeLabels=[]; sessionReadings=0;
-    startSessionTimer();
-    initChart();
-    // Start polling
-    if(pollTimer) clearInterval(pollTimer);
-    fetchBlynk();
-    pollTimer = setInterval(()=>fetchBlynk(), pollInterval);
-    document.getElementById('pollDot').className = 'poll-dot active';
-    document.getElementById('pollInfoText').textContent = 'हर '+(pollInterval/1000)+'s पर अपडेट';
-  } else {
-    btn.className = 'monitor-btn start';
-    txt.textContent = t.start_monitoring||'मॉनिटरिंग शुरू करें';
-    btn.querySelector('span:first-child').textContent = '🎙️';
-    if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
-    if(sessionTimer){clearInterval(sessionTimer);sessionTimer=null;}
-    document.getElementById('pollDot').className = 'poll-dot';
-    document.getElementById('pollInfoText').textContent = 'मॉनिटरिंग बंद है';
+// ══════════════════════════════════════════════
+function toggleMonitor(){
+  if(!blynkToken){showToast('पहले Blynk Token सेट करें!','warn');return}
+  monitoring=!monitoring;
+  const btn=document.getElementById('monBtn'),txt=document.getElementById('monTxt');
+  if(monitoring){
+    btn.className='mon-btn stop';txt.textContent=t('stop_monitor');
+    btn.querySelector('span:first-child').textContent='⏹️';
+    sessStart=new Date();rawHist=[];moistHist=[];timeLabels=[];sessRead=0;firstRead=true;lastStatusKey='';
+    startSessTimer();initCharts();
+    if(pollTimer)clearInterval(pollTimer);
+    fetchBlynk();pollTimer=setInterval(()=>fetchBlynk(),pollMs);
+    document.getElementById('pdot').className='pdot on';
+  }else{
+    btn.className='mon-btn start';txt.textContent=t('start_monitor');
+    btn.querySelector('span:first-child').textContent='🎙️';
+    if(pollTimer){clearInterval(pollTimer);pollTimer=null}
+    if(sessTimer){clearInterval(sessTimer);sessTimer=null}
+    document.getElementById('pdot').className='pdot';
+    document.getElementById('pollTxt').textContent=t('not_conn');
+    stopFloodAlarm();
   }
 }
 
-function startSessionTimer(){
-  if(sessionTimer) clearInterval(sessionTimer);
-  sessionTimer = setInterval(()=>{
-    if(!sessionStart) return;
-    const diff = Math.floor((new Date()-sessionStart)/1000);
-    const m = String(Math.floor(diff/60)).padStart(2,'0');
-    const s = String(diff%60).padStart(2,'0');
-    document.getElementById('sessTime').textContent = m+':'+s;
+function startSessTimer(){
+  if(sessTimer)clearInterval(sessTimer);
+  sessTimer=setInterval(()=>{
+    if(!sessStart)return;
+    const s=Math.floor((new Date()-sessStart)/1000);
+    document.getElementById('sTime').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
   },1000);
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // PUMP
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 function updatePump(){
-  if(pumpManual) return;
-  const needsPump = curMoist !== null && curMoist < 40;
-  setPump(needsPump);
+  if(pumpManual)return;
+  for(const l of stLevels){if(curMoist<l.max){setPump(l.pump);break}}
 }
 function manualPump(){
-  pumpManual = true;
-  const card = document.getElementById('pumpCard');
-  const isOn = card.classList.contains('on');
-  setPump(!isOn);
-  setTimeout(()=>{pumpManual=false;},30000); // auto reset after 30s
+  pumpManual=true;setPump(!pumpOn);
+  setTimeout(()=>{pumpManual=false},60000);
 }
 function setPump(on){
-  const card = document.getElementById('pumpCard');
-  const status = document.getElementById('pumpStatus');
-  const sub = document.getElementById('pumpSub');
-  const toggle = document.getElementById('pumpToggle');
-  const icon = document.getElementById('pumpIcon');
-  const t = T[curLang]||T.hi;
+  pumpOn=on;
+  const c=document.getElementById('pCard');
+  const st=document.getElementById('pSt'),sub=document.getElementById('pSub');
+  const tg=document.getElementById('pToggle'),ic=document.getElementById('pIcon');
   if(on){
-    card.className='pump-card on';
-    status.textContent='⚡ पंप: चालू'; status.style.color='var(--red)';
-    sub.textContent='सिंचाई हो रही है...';
-    toggle.textContent='बंद करें';toggle.className='pump-toggle on';
-    icon.textContent='💦';
-  } else {
-    card.className='pump-card off';
-    status.textContent='⛽ पंप: बंद'; status.style.color='var(--green)';
-    sub.textContent=t.pump_off_sub||'नमी पर्याप्त है';
-    toggle.textContent='चालू करें';toggle.className='pump-toggle off';
-    icon.textContent='💧';
+    c.className='pump-card on';st.textContent='⚡ पंप: चालू';st.style.color='var(--red)';
+    sub.textContent='सिंचाई हो रही है...';tg.textContent=t('band_karo','बंद करें');
+    tg.className='ptoggle on';ic.textContent='💦';
+  }else{
+    c.className='pump-card off';st.textContent='⛽ पंप: बंद';st.style.color='var(--green)';
+    sub.textContent=t('nami_thik','नमी पर्याप्त है');tg.textContent=t('chalu_karo','चालू करें');
+    tg.className='ptoggle off';ic.textContent='💧';
   }
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 // FASAL / MITTI
-// ═══════════════════════════════════════════
-function selectFasal(el){
-  document.querySelectorAll('.fasal-card').forEach(c=>c.classList.remove('active'));
+// ══════════════════════════════════════════════
+function pickFasal(el){
+  document.querySelectorAll('.fc').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  curFasal = el.dataset.fasal;
-  fasalThresh = parseInt(el.dataset.thresh);
-  document.getElementById('customThreshWrap').style.display = curFasal==='कस्टम' ? 'block':'none';
-  document.getElementById('seemaRange').value = fasalThresh;
-  seemaThresh = fasalThresh;
-  updateSeema(fasalThresh);
-  if(curRaw !== null) updateGauge();
+  fasalName=el.dataset.f;fasalTh=parseInt(el.dataset.th);
+  document.getElementById('customWrap').style.display=fasalName==='कस्टम'?'block':'none';
+  document.getElementById('seemaR').value=fasalTh;seemaTh=fasalTh;updateSeema(fasalTh);
+  if(curMoist!==null)updateGauge();
 }
-function selectMitti(el){
-  document.querySelectorAll('.mitti-card').forEach(c=>c.classList.remove('active'));
+function pickMitti(el){
+  document.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  curMitti = el.dataset.mitti;
-  mittiFC = parseInt(el.dataset.fc);
-  if(curRaw !== null){ curMoist=calcMoisture(curRaw); updateGauge(); updateStatus(); updateAnalytics(); }
+  mittiName=el.dataset.m;mittiFC=parseInt(el.dataset.fc);
+  if(curRaw!==null){curMoist=calcM(curRaw);updateGauge();updateStatus();updateAna()}
 }
-function updateCustomThresh(){
-  const v = parseInt(document.getElementById('customThreshInp').value)||2500;
-  document.querySelector('[data-fasal="कस्टम"]').dataset.thresh = v;
-  document.getElementById('customThreshDisplay').textContent = v;
-  fasalThresh = v;
-  updateSeema(v);
+function updateCustomTh(){
+  const v=parseInt(document.getElementById('customTh').value)||2500;
+  document.querySelector('[data-f="कस्टम"]').dataset.th=v;
+  fasalTh=v;updateSeema(v);
 }
-
-// ═══════════════════════════════════════════
-// SEEMA
-// ═══════════════════════════════════════════
 function updateSeema(val){
-  seemaThresh = parseInt(val);
-  const pct = ((4095-seemaThresh)/(4095-1271))*100;
-  document.getElementById('seemaMarker').style.left = pct+'%';
-  document.getElementById('seemaWarningLbl').textContent = seemaThresh+' ⚠️';
-  document.getElementById('seemaValDisplay').textContent = (curRaw||0)+' / 4095';
-  document.getElementById('seemaRange').value = seemaThresh;
+  seemaTh=parseInt(val);
+  const p=((4095-seemaTh)/(4095-1271))*100;
+  document.getElementById('smarker').style.left=p+'%';
+  document.getElementById('sWarnLbl').textContent=seemaTh+' ⚠️';
+  document.getElementById('seemaDisp').textContent=(curRaw||0)+' / 4095';
+  document.getElementById('seemaR').value=seemaTh;
 }
 
-// ═══════════════════════════════════════════
-// LAST UPDATE
-// ═══════════════════════════════════════════
-function updateLastUpdate(t){ document.getElementById('lastUpdate').textContent = t; }
+// ══════════════════════════════════════════════
+// VOICE & ALARMS
+// ══════════════════════════════════════════════
+function toggleVoice(){
+  voiceOn=!voiceOn;
+  const btn=document.getElementById('voiceBtn');
+  if(voiceOn){btn.textContent='🔕 बंद करें';btn.style.background='rgba(255,23,68,0.15)';btn.style.borderColor='rgba(255,23,68,0.3)';btn.style.color='var(--red)';showToast('🔊 आवाज़ अलार्म चालू!','ok')}
+  else{btn.textContent='🔔 चालू करें';btn.style.background='';btn.style.borderColor='';btn.style.color='var(--green)';stopFloodAlarm()}
+}
 
-// ═══════════════════════════════════════════
-// AI ANALYSIS
-// ═══════════════════════════════════════════
-async function runAI(){
-  const btn = document.getElementById('aiBtn');
-  const loader = document.getElementById('aiLoader');
-  const result = document.getElementById('aiResult');
-  btn.disabled=true;
-  loader.className='ai-loader show';
-  result.className='ai-result';
-  const langNames={hi:'हिंदी',mr:'मराठी',bn:'বাংলা',te:'Telugu',ta:'Tamil',gu:'Gujarati',pa:'ਪੰਜਾਬੀ',kn:'Kannada',ml:'Malayalam',or:'Odia',ur:'Urdu'};
-  const lang = langNames[curLang]||'हिंदी';
-  const avgM = moistHistory.length>0 ? Math.round(moistHistory.reduce((a,b)=>a+b,0)/moistHistory.length) : '--';
-  const prompt = `You are KisanBudhi, an expert agricultural AI for Indian farmers based on ICAR standards.
-
-Current field data:
-- Crop (फसल): ${curFasal}
-- Soil (मिट्टी): ${curMitti} (Field Capacity raw: ${mittiFC})
-- Current Moisture: ${curMoist !== null ? Math.round(curMoist)+'%' : 'No data yet'}
-- Raw ADC Value: ${curRaw || 'No data'}
-- Session Readings: ${sessionReadings}
-- Session Average Moisture: ${avgM}%
-- Min Moisture this session: ${moistHistory.length>0?Math.round(Math.min(...moistHistory))+'%':'--'}
-- Max Moisture this session: ${moistHistory.length>0?Math.round(Math.max(...moistHistory))+'%':'--'}
-- Danger threshold: ${seemaThresh} raw ADC
-- Pump needed: ${curMoist < 40 ? 'YES' : 'NO'}
-
-Provide a detailed field analysis in ${lang} language including:
-1. **मिट्टी की स्थिति** — Current soil condition assessment
-2. **फसल की जरूरत** — What this crop needs right now
-3. **ICAR सलाह** — Specific ICAR-based recommendation
-4. **अगले 24 घंटे** — What to do in next 24 hours
-5. **सिंचाई निर्णय** — Final irrigation decision with scientific reason
-
-Keep it practical, specific, and farmer-friendly. Use emojis. Write in ${lang}.`;
-
+function speak(text){
+  if(!voiceOn||!text)return;
   try{
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data = await res.json();
-    const text = data.content.map(i=>i.text||'').join('');
-    // Format markdown-ish
-    const formatted = text
-      .replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--cyan)">$1</strong>')
-      .replace(/\n/g,'<br>');
-    result.innerHTML = formatted;
-    result.className = 'ai-result show';
-  } catch(e){
-    result.innerHTML='<span style="color:var(--red)">❌ Error: '+e.message+'</span>';
-    result.className='ai-result show';
-  }
-  loader.className='ai-loader';
-  btn.disabled=false;
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=curLang==='hi'?'hi-IN':curLang==='mr'?'mr-IN':curLang==='bn'?'bn-IN':curLang==='te'?'te-IN':curLang==='ta'?'ta-IN':curLang==='gu'?'gu-IN':curLang==='pa'?'pa-IN':curLang==='kn'?'kn-IN':curLang==='ml'?'ml-IN':'hi-IN';
+    u.rate=0.88;u.pitch=1.0;u.volume=1.0;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
 }
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-window.onload = function(){
-  applyTranslations();
-  updateSeema(2200);
-  // Draw tick marks on SVG
-  const ticks = document.getElementById('ticks');
-  for(let i=0;i<=10;i++){
-    const angle = -90 + (i*36);
-    const rad = angle * Math.PI/180;
-    const r1=88, r2=92;
-    const x1=100+r1*Math.cos(rad), y1=100+r1*Math.sin(rad);
-    const x2=100+r2*Math.cos(rad), y2=100+r2*Math.sin(rad);
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1',x1);line.setAttribute('y1',y1);
-    line.setAttribute('x2',x2);line.setAttribute('y2',y2);
-    line.setAttribute('stroke',i%5===0?'rgba(0,230,118,0.4)':'rgba(0,230,118,0.15)');
-    line.setAttribute('stroke-width',i%5===0?2:1);
-    ticks.appendChild(line);
+function firstNotify(){
+  if(curMoist===null)return;
+  let key='ok';
+  if(curMoist<20)key='critical';else if(curMoist<40)key='low';else if(curMoist>100)key='flood';
+  const msg=tv(key);
+  speak(msg);
+  showToast('🔊 '+msg,'ok');
+}
+
+function startFloodAlarm(){
+  document.getElementById('alarmBanner').style.display='block';
+  document.getElementById('alarmText').textContent=tv('flood')||(TR.hi.voice.flood);
+  if(!alarmTimer&&voiceOn){
+    speak(tv('flood'));
+    alarmTimer=setInterval(()=>{if(voiceOn)speak(tv('flood'))},10000);
   }
+}
+function stopFloodAlarm(){
+  document.getElementById('alarmBanner').style.display='none';
+  if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null}
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type==='warn'?'warn':type==='info'?'info':'');
+  t.style.display='block';
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.style.display='none'},4000);
+}
+
+// ══════════════════════════════════════════════
+// CALIBRATION
+// ══════════════════════════════════════════════
+function updateCalibLive(){
+  if(curMoist===null)return;
+  document.getElementById('calibCur').textContent=Math.round(curMoist)+'%';
+  document.getElementById('calibRawDisp').textContent='Raw: '+(curRaw||'--');
+  document.getElementById('calibBar').style.width=Math.min(100,curMoist)+'%';
+  if(calibTarget!==null){
+    const gap=Math.round(calibTarget-curMoist);
+    document.getElementById('calibComp').textContent=gap<=0?'✅ लक्ष्य पर है या अधिक!':'लक्ष्य तक '+gap+'% और चाहिए';
+  }
+}
+function setCalibTarget(){
+  if(curMoist===null){showToast('पहले सेंसर रीडिंग लें!','warn');return}
+  calibTarget=curMoist;
+  document.getElementById('calibResult').className='calib-result show';
+  document.getElementById('calibResult').innerHTML=`✅ लक्ष्य नमी सेट: <strong>${Math.round(calibTarget)}%</strong> (Raw: ${curRaw})<br><small>अब इस नमी पर खेत को उपयुक्त माना जाएगा।</small>`;
+  document.getElementById('a_target').textContent=Math.round(calibTarget);
+  showToast('🎯 लक्ष्य नमी '+Math.round(calibTarget)+'% सेट हुई!','ok');
+}
+function clearCalib(){
+  calibTarget=null;
+  document.getElementById('calibResult').className='calib-result';
+  document.getElementById('a_target').textContent='--';
+  document.getElementById('a_gap').textContent='--';
+  document.getElementById('calibComp').textContent='लक्ष्य सेट नहीं है';
+}
+
+// ══════════════════════════════════════════════
+// WEATHER
+// ══════════════════════════════════════════════
+const WX_CODE={0:'☀️ साफ आकाश',1:'🌤 ज्यादातर साफ',2:'⛅ आंशिक बादल',3:'☁️ बादल छाए',45:'🌫 कोहरा',48:'🌫 धुंध',51:'🌦 हल्की बूंदें',53:'🌦 बूंदाबांदी',55:'🌧 घनी बूंदें',61:'🌧 हल्की बारिश',63:'🌧 बारिश',65:'🌧 मूसलाधार',71:'🌨 हल्की बर्फ',73:'❄️ बर्फबारी',75:'❄️ घनी बर्फ',77:'🌨 बर्फ के टुकड़े',80:'🌦 हल्की फुहार',81:'🌧 फुहार',82:'⛈ मूसलाधार',85:'🌨 हल्की बर्फ',86:'❄️ भारी बर्फ',95:'⛈ गरज',96:'⛈ ओले',99:'⛈ भारी ओले'};
+const DAY_NAMES=['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
+
+function getWxEmoji(code){const e=WX_CODE[code]||'🌡';return e.split(' ')[0]}
+function getWxDesc(code){const d=WX_CODE[code]||'मौसम';return d.split(' ').slice(1).join(' ')}
+
+async function loadWeather(){
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    userLat=pos.coords.latitude;userLon=pos.coords.longitude;
+    const[wxRes,geoRes]=await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&forecast_days=5`),
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${userLat}&lon=${userLon}&format=json&accept-language=hi`)
+    ]);
+    const wx=await wxRes.json(),geo=await geoRes.json();
+    const city=(geo.address?.city||geo.address?.town||geo.address?.village||geo.address?.state||'आपका स्थान');
+    const rain24=wx.daily?.precipitation_sum?.[0]||0;
+    wxData={temp:wx.current.temperature_2m,humidity:wx.current.relative_humidity_2m,feels:wx.current.apparent_temperature,code:wx.current.weather_code,wind:wx.current.wind_speed_10m,city,rain24,forecast:wx.daily};
+    renderWeather(wxData);
+  }catch(e){
+    document.getElementById('wxCard').innerHTML=`<div class="wx-error">📍 स्थान अनुमति दें या <span onclick="loadWeather()">पुनः प्रयास करें</span><br><small style="color:var(--text2)">मौसम जानकारी के लिए लोकेशन जरूरी है</small></div>`;
+  }
+}
+
+function renderWeather(d){
+  const f=d.forecast;
+  let forecastHTML='';
+  if(f){
+    for(let i=0;i<Math.min(5,f.time?.length||0);i++){
+      const dt=new Date(f.time[i]);
+      const dayN=DAY_NAMES[dt.getDay()];
+      const icon=getWxEmoji(f.weather_code[i]);
+      const rain=f.precipitation_sum[i]||0;
+      forecastHTML+=`<div class="wx-day"><div class="wx-day-name">${dayN}</div><div class="wx-day-icon">${icon}</div><div class="wx-day-temp"><span class="hi">${Math.round(f.temperature_2m_max[i])}°</span> / <span class="lo">${Math.round(f.temperature_2m_min[i])}°</span></div>${rain>0?`<div class="wx-day-rain">💧${rain}mm</div>`:'<div class="wx-day-rain" style="color:var(--text2)">शुष्क</div>'}</div>`;
+    }
+  }
+  document.getElementById('wxCard').innerHTML=`
+    <div class="wx-main">
+      <div class="wx-left">
+        <div class="wx-emoji">${getWxEmoji(d.code)}</div>
+        <div><div class="wx-temp">${Math.round(d.temp)}<span>°C</span></div><div class="wx-desc">${getWxDesc(d.code)}</div></div>
+      </div>
+      <div class="wx-info" style="padding:0 8px">
+        <div class="wx-loc">📍 ${d.city}</div>
+      </div>
+      <div class="wx-right">
+        <div class="wx-feels">महसूस: <span>${Math.round(d.feels)}°C</span></div>
+        <div class="wx-humidity">आर्द्रता: <span>${d.humidity}%</span></div>
+        <div class="wx-humidity">हवा: <span>${Math.round(d.wind)} km/h</span></div>
+        ${d.rain24>0?`<div style="font-size:10px;color:var(--cyan);margin-top:2px">💧 ${d.rain24}mm बारिश</div>`:''}
+      </div>
+    </div>
+    <div class="wx-forecast">${forecastHTML}</div>`;
+  // Update analytics
+  if(d.rain24>0){
+    document.getElementById('a_rain').textContent=d.rain24;
+    document.getElementById('a_rain_s').textContent=d.rain24>10?'🌧 आज वर्षा होगी!':d.rain24>2?'🌦 हल्की वर्षा':'🌂 थोड़ी वर्षा';
+  }
+}
+
+// ══════════════════════════════════════════════
+// AI
+// ══════════════════════════════════════════════
+async function runAI(){
+  const btn=document.getElementById('aiBtn'),ld=document.getElementById('aiLoad'),res=document.getElementById('aiRes');
+  btn.disabled=true;ld.className='aiload show';res.className='ai-res';
+  const langMap={hi:'हिंदी',en:'English',mr:'मराठी',bn:'বাংলা',te:'Telugu',ta:'Tamil',gu:'Gujarati',pa:'ਪੰਜਾਬੀ',kn:'Kannada',ml:'Malayalam',or:'Odia',ur:'Urdu'};
+  const lang=langMap[curLang]||'हिंदी';
+  const avgM=moistHist.length>0?Math.round(moistHist.reduce((a,b)=>a+b,0)/moistHist.length):'N/A';
+  const wxStr=wxData?`Temperature: ${Math.round(wxData.temp)}°C, Humidity: ${wxData.humidity}%, Weather: ${getWxDesc(wxData.code)}, Expected rain: ${wxData.rain24}mm`:'No weather data';
+  const prompt=`You are KisanBudhi — expert Indian agricultural AI based on ICAR standards.
+
+FIELD DATA:
+- Crop (फसल): ${fasalName}
+- Soil (मिट्टी): ${mittiName} (Field Capacity raw: ${mittiFC})
+- Current Moisture: ${curMoist!==null?Math.round(curMoist)+'%':'No data'}
+- Raw ADC: ${curRaw||'No data'}
+- Session readings: ${sessRead}, Average: ${avgM}%
+- Min/Max: ${moistHist.length>0?Math.round(Math.min(...moistHist))+'%/'+Math.round(Math.max(...moistHist))+'%':'--'}
+- Calibration target: ${calibTarget!==null?Math.round(calibTarget)+'%':'Not set'}
+- Danger threshold: ${seemaTh} raw ADC
+- Weather: ${wxStr}
+
+Provide a comprehensive field analysis in ${lang} with:
+1. 🌱 **मिट्टी की वर्तमान स्थिति** — Current soil assessment
+2. 🌾 **फसल की जरूरत** — What this specific crop needs now based on ICAR data
+3. 🌤 **मौसम का प्रभाव** — How current weather affects irrigation decision
+4. 💧 **सिंचाई निर्णय** — Precise recommendation with scientific reasoning
+5. 📅 **अगले 48 घंटे की योजना** — Action plan
+6. ⚡ **बिजली/पंप टिप** — Practical pump usage advice
+
+Keep it farmer-friendly, specific, scientific, with emojis. Write entirely in ${lang}.`;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+    const data=await r.json();
+    const txt=data.content.map(i=>i.text||'').join('');
+    res.innerHTML=txt.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--cyan)">$1</strong>').replace(/\n/g,'<br>');
+    res.className='ai-res show';
+  }catch(e){res.innerHTML='<span style="color:var(--red)">❌ Error: '+e.message+'</span>';res.className='ai-res show'}
+  btn.disabled=false;ld.className='aiload';
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.onload=function(){
+  applyTrans();
+  updateSeema(2200);
+  // Draw SVG ticks
+  const tg=document.getElementById('ticks');
+  for(let i=0;i<=10;i++){
+    const ang=-90+i*36,rad=ang*Math.PI/180;
+    const r1=88,r2=92;
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',100+r1*Math.cos(rad));ln.setAttribute('y1',100+r1*Math.sin(rad));
+    ln.setAttribute('x2',100+r2*Math.cos(rad));ln.setAttribute('y2',100+r2*Math.sin(rad));
+    ln.setAttribute('stroke',i%5===0?'rgba(0,230,118,0.4)':'rgba(0,230,118,0.12)');
+    ln.setAttribute('stroke-width',i%5===0?2:1);
+    tg.appendChild(ln);
+  }
+  // Load weather
+  if(navigator.geolocation)loadWeather();
+  // Init charts
+  initCharts();
 };
 </script>
 </body>
