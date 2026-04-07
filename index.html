@@ -2,472 +2,339 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>किसान IoT — खेत निगरानी प्रणाली</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>किसान IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#070d1a;--bg2:#0c1526;--bg3:#111e35;
-  --card:#0d1a2e;--card2:#0a1628;
+  --bg:#060c18;--bg2:#0b1422;--bg3:#101d30;
+  --card:#0d1928;--card2:#091522;
   --green:#00e676;--green2:#00c853;
-  --cyan:#00e5ff;--cyan2:#00b0cc;
-  --yellow:#ffd600;--orange:#ff9100;
-  --red:#ff1744;--red2:#d50000;
+  --cyan:#00e5ff;--yellow:#ffd600;
+  --orange:#ff9100;--red:#ff1744;
   --purple:#e040fb;--blue:#448aff;
-  --text:#e8f4ff;--text2:#8baabb;
-  --border:rgba(0,230,118,0.15);--border2:rgba(0,229,255,0.12);
-  --glow-g:rgba(0,230,118,0.25);--glow-c:rgba(0,229,255,0.2);
-  --glow-r:rgba(255,23,68,0.25);
+  --text:#e4f0ff;--text2:#7a9bb5;
+  --bdr:rgba(0,230,118,0.13);--bdrc:rgba(0,229,255,0.11);
+  --gg:rgba(0,230,118,0.2);--gc:rgba(0,229,255,0.18);
+  --gr:rgba(255,23,68,0.22);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Noto Sans Devanagari',sans-serif;
-  min-height:100vh;overflow-x:hidden;
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Devanagari',sans-serif;display:flex;flex-direction:column}
+
+/* ── GRID BACKGROUND ── */
 body::before{
   content:'';position:fixed;inset:0;
   background:
-    radial-gradient(ellipse 60% 40% at 10% 20%,rgba(0,230,118,0.04) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 50% at 90% 80%,rgba(0,229,255,0.04) 0%,transparent 60%),
-    repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,229,255,0.012) 40px,rgba(0,229,255,0.012) 41px),
-    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,229,255,0.012) 40px,rgba(0,229,255,0.012) 41px);
+    radial-gradient(ellipse 70% 50% at 15% 25%,rgba(0,230,118,0.035) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 60% at 85% 75%,rgba(0,229,255,0.03) 0%,transparent 55%),
+    repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(0,229,255,0.018) 44px,rgba(0,229,255,0.018) 45px),
+    repeating-linear-gradient(90deg,transparent,transparent 44px,rgba(0,229,255,0.018) 44px,rgba(0,229,255,0.018) 45px);
   pointer-events:none;z-index:0;
 }
-.wrap{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:0 12px 100px}
 
-/* HEADER */
-header{
-  position:sticky;top:0;z-index:500;
-  background:rgba(7,13,26,0.97);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);padding:10px 14px;
-}
-.hdr{display:flex;align-items:center;justify-content:space-between;max-width:500px;margin:0 auto}
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo-box{
-  width:36px;height:36px;border-radius:9px;
-  background:linear-gradient(135deg,#0d2d0d,#1a3a1a);
-  border:1px solid rgba(0,230,118,0.35);
-  display:flex;align-items:center;justify-content:center;font-size:18px;
-  box-shadow:0 0 14px var(--glow-g);
-}
-.logo-text h1{
-  font-family:'Orbitron',monospace;font-size:15px;font-weight:700;
-  color:var(--green);letter-spacing:1px;
-}
-.logo-text p{font-size:8px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.live-pill{
-  display:flex;align-items:center;gap:5px;
-  background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);
-  border-radius:20px;padding:4px 10px;
-  font-size:10px;color:var(--green);font-weight:600;
-  font-family:'JetBrains Mono',monospace;letter-spacing:1px;
-}
-.ldot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:ldotAnim 1.5s infinite}
-@keyframes ldotAnim{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--glow-g)}50%{opacity:.5;box-shadow:0 0 0 4px transparent}}
-
-/* LANGUAGE */
-.lang-btn{
-  background:var(--card);border:1px solid var(--border2);
-  border-radius:8px;padding:4px 9px;color:var(--cyan);
-  font-size:13px;cursor:pointer;display:flex;align-items:center;gap:3px;
-}
-.lang-dd{
-  position:fixed;top:58px;right:14px;
-  background:#0d1a2e;border:1px solid var(--border2);
-  border-radius:12px;min-width:190px;z-index:600;
-  box-shadow:0 8px 32px rgba(0,0,0,0.6);
-  display:none;max-height:70vh;overflow-y:auto;
-}
-.lang-dd.open{display:block;animation:ddSlide .18s ease}
-@keyframes ddSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.lang-opt{
-  padding:10px 14px;font-size:13px;cursor:pointer;
-  border-bottom:1px solid rgba(0,229,255,0.07);
-  display:flex;align-items:center;gap:10px;transition:background .15s;
-}
-.lang-opt:last-child{border:none}
-.lang-opt:hover{background:rgba(0,229,255,0.08);color:var(--cyan)}
-.lang-opt.active{color:var(--green);background:rgba(0,230,118,0.06)}
-.lcode{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);min-width:22px}
-
-/* NOTIFICATION TOAST */
-.toast{
-  position:fixed;top:70px;left:50%;transform:translateX(-50%);
-  background:rgba(13,26,46,0.98);border:1px solid var(--green);
-  border-radius:12px;padding:12px 20px;z-index:700;
-  font-size:14px;font-weight:600;color:var(--green);
-  box-shadow:0 4px 20px var(--glow-g);
-  display:none;text-align:center;max-width:320px;
-  animation:toastIn .3s ease;
-}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.toast.warn{border-color:var(--red);color:var(--red);box-shadow:0 4px 20px var(--glow-r)}
-.toast.info{border-color:var(--cyan);color:var(--cyan)}
-
-/* ALARM BANNER */
-.alarm-banner{
-  display:none;background:rgba(213,0,0,0.15);
-  border:2px solid var(--red);border-radius:10px;
-  padding:10px 16px;margin-bottom:8px;
-  text-align:center;font-size:14px;font-weight:700;color:var(--red);
-  animation:alarmFlash 1s infinite;
-}
-@keyframes alarmFlash{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 20px var(--glow-r)}}
-
-/* SECTION */
-.section{padding:16px 0 0}
-.sec-title{
-  font-size:11px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--text2);margin-bottom:10px;
-  display:flex;align-items:center;gap:8px;
-  font-family:'JetBrains Mono',monospace;
-}
-.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* WEATHER WIDGET */
-.weather-card{
-  background:linear-gradient(135deg,#0a1a2e,#0d2240);
-  border:1px solid rgba(68,138,255,0.25);border-radius:16px;
-  overflow:hidden;position:relative;
-}
-.weather-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--blue),var(--cyan),transparent);
-}
-.wx-main{padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-.wx-left{display:flex;align-items:center;gap:12px}
-.wx-emoji{font-size:40px;filter:drop-shadow(0 0 8px rgba(68,138,255,0.4))}
-.wx-temp{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;color:#fff}
-.wx-temp span{font-size:16px;color:var(--text2)}
-.wx-info{flex:1}
-.wx-desc{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
-.wx-loc{font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px}
-.wx-right{text-align:right}
-.wx-feels{font-size:10px;color:var(--text2)}
-.wx-feels span{color:var(--cyan);font-family:'JetBrains Mono',monospace}
-.wx-humidity{font-size:10px;color:var(--text2);margin-top:2px}
-.wx-humidity span{color:var(--blue);font-family:'JetBrains Mono',monospace}
-.wx-forecast{
-  display:flex;overflow-x:auto;gap:0;
-  border-top:1px solid rgba(68,138,255,0.15);
-  scrollbar-width:none;
-}
-.wx-forecast::-webkit-scrollbar{display:none}
-.wx-day{
-  flex:0 0 auto;min-width:72px;padding:10px 8px;text-align:center;
-  border-right:1px solid rgba(68,138,255,0.1);
-}
-.wx-day:last-child{border:none}
-.wx-day-name{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.wx-day-icon{font-size:20px;margin-bottom:4px}
-.wx-day-temp{font-size:11px;font-family:'JetBrains Mono',monospace}
-.wx-day-temp .hi{color:var(--orange)}
-.wx-day-temp .lo{color:var(--blue)}
-.wx-day-rain{font-size:9px;color:var(--cyan);margin-top:2px}
-.wx-loading{padding:24px;text-align:center;color:var(--text2);font-size:12px}
-.wx-error{padding:14px;text-align:center;color:var(--text2);font-size:12px;cursor:pointer}
-.wx-error span{color:var(--cyan)}
-
-/* BLYNK PANEL */
-.blynk-panel{background:var(--card);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
-.blynk-hdr{
-  padding:13px 16px;cursor:pointer;
+/* ── HEADER ── */
+.header{
+  flex-shrink:0;position:relative;z-index:100;
+  background:rgba(6,12,24,0.98);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bdr);
+  padding:0 14px;height:56px;
   display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(0,229,255,0.07);
 }
-.blynk-title{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--cyan);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
-.bsdot{width:8px;height:8px;border-radius:50%;background:#555;transition:all .3s}
-.bsdot.on{background:var(--green);box-shadow:0 0 8px var(--glow-g)}
-.bsdot.err{background:var(--red);box-shadow:0 0 8px var(--glow-r)}
-.chev{color:var(--text2);font-size:11px;transition:transform .2s}
-.chev.open{transform:rotate(180deg)}
-.blynk-body{padding:14px 16px;display:none}
-.blynk-body.open{display:block;animation:ddSlide .2s ease}
-.flbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:5px;font-family:'JetBrains Mono',monospace}
-.inp{
-  width:100%;background:var(--bg2);border:1px solid rgba(0,229,255,0.15);
-  border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;
-  font-size:13px;padding:9px 12px;outline:none;margin-bottom:10px;
-  transition:border-color .2s,box-shadow .2s;
-}
-.inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--glow-c)}
-.inp::placeholder{color:rgba(139,170,187,0.35)}
-.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.bmsg{font-size:11px;padding:7px 10px;border-radius:6px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;display:none}
-.bmsg.ok{display:block;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);color:var(--green)}
-.bmsg.err{display:block;background:rgba(255,23,68,0.1);border:1px solid rgba(255,23,68,0.25);color:var(--red)}
-.btn-save{
-  width:100%;background:linear-gradient(135deg,#00897b,#00695c);
-  border:none;border-radius:9px;color:#fff;
-  font-family:'Noto Sans Devanagari',sans-serif;font-size:14px;font-weight:700;
-  padding:11px;cursor:pointer;transition:all .25s;
-  box-shadow:0 4px 14px rgba(0,137,123,.3);
-}
-.btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,137,123,.4)}
-.poll-row{display:flex;align-items:center;justify-content:center;gap:8px;font-size:10px;color:var(--text2);margin-top:8px;font-family:'JetBrains Mono',monospace}
-.pdot{width:5px;height:5px;border-radius:50%;background:var(--text2)}
-.pdot.on{background:var(--green);animation:ldotAnim 1s infinite}
+.h-left{display:flex;align-items:center;gap:10px}
+.h-logo{display:flex;align-items:center;gap:9px}
+.h-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0c2a0c,#1a3d1a);border:1px solid rgba(0,230,118,0.3);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 12px var(--gg)}
+.h-brand h1{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--green);letter-spacing:1px}
+.h-brand p{font-size:8px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.h-right{display:flex;align-items:center;gap:8px}
+.live-pill{display:flex;align-items:center;gap:5px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.22);border-radius:20px;padding:3px 9px;font-size:10px;color:var(--green);font-weight:600;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.ldot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:ldAnim 1.5s infinite}
+@keyframes ldAnim{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--gg)}50%{opacity:.5;box-shadow:0 0 0 4px transparent}}
 
-/* FASAL GRID */
-.fasal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.fc{
-  background:var(--card);border:1.5px solid rgba(0,230,118,0.1);
-  border-radius:11px;padding:10px 6px;text-align:center;
-  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
-}
-.fc:hover{border-color:rgba(0,230,118,0.3);background:var(--bg3)}
-.fc.active{border-color:var(--yellow);background:rgba(255,214,0,0.06);box-shadow:0 0 14px rgba(255,214,0,.15)}
-.fc.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow)}
-.fc-emoji{font-size:22px;margin-bottom:3px;display:block}
-.fc-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.2}
+/* HAMBURGER */
+.hbtn{width:36px;height:36px;background:var(--card);border:1px solid var(--bdrc);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .2s}
+.hbtn:hover{border-color:var(--cyan);background:rgba(0,229,255,0.06)}
+.hbar{width:18px;height:2px;background:var(--text2);border-radius:1px;transition:all .25s}
+.hbtn.open .hbar:nth-child(1){transform:rotate(45deg) translate(5px,5px);background:var(--cyan)}
+.hbtn.open .hbar:nth-child(2){opacity:0;transform:scaleX(0)}
+.hbtn.open .hbar:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);background:var(--cyan)}
 
-/* MITTI */
-.mitti-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.mc{
-  background:var(--card);border:1.5px solid rgba(0,229,255,0.1);
-  border-radius:11px;padding:12px 8px;text-align:center;
-  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+/* SIDE DRAWER */
+.drawer{
+  position:fixed;top:0;right:-280px;width:280px;height:100%;z-index:300;
+  background:rgba(9,21,34,0.98);backdrop-filter:blur(24px);
+  border-left:1px solid var(--bdrc);
+  transition:right .3s cubic-bezier(.25,.8,.25,1);
+  display:flex;flex-direction:column;
 }
-.mc:hover{border-color:rgba(0,229,255,0.3);background:var(--bg3)}
-.mc.active{border-color:var(--cyan);background:rgba(0,229,255,0.05);box-shadow:0 0 14px var(--glow-c)}
-.mc.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan)}
-.mc-icon{font-size:24px;margin-bottom:5px;display:block}
-.mc-name{font-size:12px;font-weight:700}
-.mc-fc{font-size:9px;color:var(--text2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.drawer.open{right:0}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:299;display:none;backdrop-filter:blur(2px)}
+.drawer-overlay.open{display:block}
+.drawer-header{padding:16px 18px;border-bottom:1px solid var(--bdrc);display:flex;align-items:center;justify-content:space-between}
+.drawer-title{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan);letter-spacing:1px}
+.d-close{width:30px;height:30px;background:rgba(255,23,68,0.1);border:1px solid rgba(255,23,68,0.25);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--red);font-size:14px}
+.drawer-nav{flex:1;overflow-y:auto;padding:10px 12px}
+.nav-section{margin-bottom:16px}
+.nav-sec-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);padding:0 6px;margin-bottom:6px;font-family:'JetBrains Mono',monospace}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 12px;border-radius:9px;cursor:pointer;
+  font-size:14px;font-weight:600;color:var(--text2);
+  transition:all .18s;margin-bottom:3px;
+  border:1px solid transparent;
+}
+.nav-item:hover{background:rgba(0,229,255,0.07);color:var(--text);border-color:var(--bdrc)}
+.nav-item.active{background:rgba(0,230,118,0.08);color:var(--green);border-color:rgba(0,230,118,0.2)}
+.nav-item.active .nav-icon{filter:none;opacity:1}
+.nav-icon{font-size:18px;opacity:.7}
+.nav-divider{height:1px;background:var(--bdr);margin:8px 0}
+/* Blynk settings in drawer */
+.drawer-blynk{padding:12px;border-top:1px solid var(--bdrc)}
+.d-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+.d-inp{width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(0,229,255,0.15);border-radius:7px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 10px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.d-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 2px var(--gc)}
+.d-inp::placeholder{color:rgba(122,155,181,0.4)}
+.d-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.d-btn{width:100%;background:linear-gradient(135deg,#00897b,#00695c);border:none;border-radius:8px;color:#fff;font-family:'Noto Sans Devanagari',sans-serif;font-size:13px;font-weight:700;padding:10px;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(0,137,123,.3)}
+.d-btn:hover{box-shadow:0 5px 18px rgba(0,137,123,.4);transform:translateY(-1px)}
+.d-msg{font-size:10px;padding:6px 8px;border-radius:5px;margin-bottom:8px;font-family:'JetBrains Mono',monospace;display:none}
+.d-msg.ok{display:block;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,.2);color:var(--green)}
+.d-msg.err{display:block;background:rgba(255,23,68,0.1);border:1px solid rgba(255,23,68,.2);color:var(--red)}
+/* lang in drawer */
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:4px 0}
+.lang-chip{padding:7px 8px;border-radius:7px;text-align:center;cursor:pointer;font-size:12px;background:rgba(0,0,0,.3);border:1px solid rgba(0,229,255,0.1);color:var(--text2);transition:all .15s}
+.lang-chip:hover{border-color:var(--cyan);color:var(--cyan)}
+.lang-chip.active{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,.3);color:var(--green);font-weight:700}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow:hidden;position:relative;z-index:1}
+.tab-page{position:absolute;inset:0;overflow-y:auto;padding:14px 14px 90px;display:none}
+.tab-page.active{display:block}
+.tab-page::-webkit-scrollbar{width:3px}
+.tab-page::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+
+/* ── BOTTOM TAB BAR ── */
+.tabbar{
+  flex-shrink:0;position:relative;z-index:100;
+  background:rgba(6,12,24,0.98);backdrop-filter:blur(20px);
+  border-top:1px solid var(--bdr);
+  height:58px;display:flex;align-items:center;
+}
+.tab-btn{
+  flex:1;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  cursor:pointer;color:var(--text2);transition:all .18s;
+  border:none;background:none;position:relative;
+}
+.tab-btn::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--green);border-radius:0 0 2px 2px;opacity:0;transition:opacity .18s}
+.tab-btn.active{color:var(--green)}
+.tab-btn.active::before{opacity:1}
+.tb-icon{font-size:20px}
+.tb-lbl{font-size:9px;letter-spacing:.5px;font-weight:600;font-family:'JetBrains Mono',monospace}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--green),transparent);opacity:.5}
+.card.cyan-top::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.card.purple-top::before{background:linear-gradient(90deg,var(--purple),var(--cyan),transparent)}
+.card-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace}
+.card-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+
+/* ── DASHBOARD PAGE ── */
+/* Clock + pump row */
+.top-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:12px;align-items:stretch}
+.clock-card{background:var(--card2);border:1px solid var(--bdrc);border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:center}
+.clk-time{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--text);letter-spacing:2px;line-height:1}
+.clk-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);margin-top:4px}
+.clk-loc{font-size:9px;color:var(--text2);margin-top:3px;display:flex;align-items:center;gap:4px}
+.pump-mini{
+  background:var(--card2);border-radius:14px;padding:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  border:1px solid rgba(0,230,118,.15);min-width:80px;cursor:pointer;transition:all .3s;
+}
+.pump-mini.on{background:rgba(255,23,68,.1);border-color:rgba(255,23,68,.4);animation:pmpFlash 2s infinite}
+@keyframes pmpFlash{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 16px var(--gr)}}
+.pm-icon{font-size:28px}
+.pm-label{font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pm-label.on{color:var(--red)}
+.pm-label.off{color:var(--green)}
+.pump-timer{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);display:none}
+.pump-mini.on .pump-timer{display:block}
 
 /* GAUGE */
-.gauge-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:20px 14px 16px;text-align:center;
-  position:relative;overflow:hidden;
-}
-.gauge-card::before{
-  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
-  width:240px;height:240px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,230,118,0.05) 0%,transparent 70%);
-  pointer-events:none;
-}
-.gauge-wrap{position:relative;width:200px;height:200px;margin:0 auto 14px}
-.gauge-svg{width:100%;height:100%}
-.gauge-center{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-}
-.g-emoji{font-size:26px;margin-bottom:2px}
-.g-pct{
-  font-family:'Orbitron',monospace;font-size:44px;font-weight:900;line-height:1;
-  background:linear-gradient(180deg,#fff,var(--green));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 12px var(--glow-g));
-}
-.g-unit{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--text2)}
-.g-status-sub{font-size:11px;color:var(--text2);margin-top:2px}
-.g-fasal{font-size:11px;color:var(--yellow);margin-top:3px;font-weight:600}
+.gauge-wrap{display:flex;align-items:center;gap:16px}
+.gauge-svg-box{position:relative;width:160px;height:160px;flex-shrink:0}
+.gsvg{width:100%;height:100%}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.g-emoji{font-size:22px;margin-bottom:2px}
+.g-pct{font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 10px var(--gg))}
+.g-unit{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--text2)}
+.g-raw{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);margin-top:1px}
+.gauge-info{flex:1}
+.sbanner{padding:9px 12px;border-radius:9px;text-align:center;font-size:13px;font-weight:700;border:1px solid;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .4s}
+.sg{background:rgba(0,230,118,.09);border-color:rgba(0,230,118,.28);color:var(--green)}
+.sc{background:rgba(0,229,255,.07);border-color:rgba(0,229,255,.22);color:var(--cyan)}
+.sy{background:rgba(255,214,0,.09);border-color:rgba(255,214,0,.28);color:var(--yellow)}
+.so{background:rgba(255,145,0,.09);border-color:rgba(255,145,0,.28);color:var(--orange)}
+.sr{background:rgba(255,23,68,.1);border-color:rgba(255,23,68,.32);color:var(--red);animation:srFlash 1.5s infinite}
+.sb{background:rgba(68,138,255,.09);border-color:rgba(68,138,255,.28);color:var(--blue)}
+@keyframes srFlash{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 18px var(--gr)}}
+.g-fasal-lbl{font-size:11px;color:var(--yellow);font-weight:600;text-align:center}
+/* mini stats beside gauge */
+.mini-stats{display:flex;flex-direction:column;gap:7px}
+.mstat{background:rgba(0,0,0,.25);border-radius:8px;padding:8px 10px;border:1px solid rgba(255,255,255,.05)}
+.mstat-lbl{font-size:9px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:3px}
+.mstat-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--text);line-height:1}
+.mstat-val .u{font-size:10px;color:var(--text2)}
 
-/* STATUS BANNER */
-.sbanner{
-  margin:12px 0 0;padding:11px 14px;border-radius:9px;
-  text-align:center;font-size:14px;font-weight:700;
-  border:1px solid;transition:all .4s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.sg{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--green)}
-.sc{background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.25);color:var(--cyan)}
-.sy{background:rgba(255,214,0,.1);border-color:rgba(255,214,0,.3);color:var(--yellow)}
-.so{background:rgba(255,145,0,.1);border-color:rgba(255,145,0,.3);color:var(--orange)}
-.sr{background:rgba(255,23,68,.12);border-color:rgba(255,23,68,.35);color:var(--red);animation:flashRed 1.5s infinite}
-.sb{background:rgba(0,229,255,.12);border-color:rgba(0,229,255,.35);color:var(--cyan)}
-@keyframes flashRed{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 20px var(--glow-r)}}
+/* FASAL / MITTI */
+.fasal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.fc{background:rgba(0,0,0,.3);border:1.5px solid rgba(0,230,118,0.09);border-radius:10px;padding:9px 5px;text-align:center;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.fc:hover{border-color:rgba(0,230,118,.25);background:rgba(0,230,118,.04)}
+.fc.active{border-color:var(--yellow);background:rgba(255,214,0,.06);box-shadow:0 0 12px rgba(255,214,0,.12)}
+.fc.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--yellow)}
+.fc-e{font-size:20px;display:block;margin-bottom:3px}
+.fc-n{font-size:10px;font-weight:700;line-height:1.2}
+.mitti-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.mc{background:rgba(0,0,0,.3);border:1.5px solid rgba(0,229,255,0.09);border-radius:10px;padding:11px 7px;text-align:center;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.mc:hover{border-color:rgba(0,229,255,.25);background:rgba(0,229,255,.04)}
+.mc.active{border-color:var(--cyan);background:rgba(0,229,255,.05);box-shadow:0 0 12px var(--gc)}
+.mc.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan)}
+.mc-i{font-size:22px;display:block;margin-bottom:4px}
+.mc-n{font-size:11px;font-weight:700}
+.mc-f{font-size:9px;color:var(--text2);margin-top:2px;font-family:'JetBrains Mono',monospace}
 
-/* KHATRA SLIDER */
-.seema-box{
-  background:var(--card);border:1px solid rgba(255,214,0,.15);
-  border-radius:12px;padding:12px 14px;
-}
-.seema-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+/* SEEMA */
+.seema-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .seema-lbl{font-size:11px;color:var(--yellow);font-weight:600;display:flex;align-items:center;gap:5px}
 .seema-v{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2)}
-.sbar{height:7px;background:rgba(255,255,255,.05);border-radius:4px;position:relative;overflow:visible;margin-bottom:6px}
+.sbar{height:7px;background:rgba(255,255,255,.05);border-radius:4px;position:relative;overflow:visible;margin-bottom:5px}
 .sfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .5s}
-.smarker{position:absolute;top:50%;transform:translate(-50%,-50%);width:11px;height:16px;background:var(--yellow);border-radius:2px;border:1.5px solid #000;cursor:pointer}
-.slabels{display:flex;justify-content:space-between;font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace}
-input[type=range].srange{width:100%;margin-top:6px;accent-color:var(--yellow);cursor:pointer}
+.smark{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:15px;background:var(--yellow);border-radius:2px;border:1.5px solid #000;cursor:pointer}
+.slbls{display:flex;justify-content:space-between;font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace}
+input[type=range].srange{width:100%;margin-top:5px;accent-color:var(--yellow);cursor:pointer}
 
-/* ANALYTICS */
+/* ANALYTICS GRID */
 .ana-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ana{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:11px;padding:12px 14px;position:relative;overflow:hidden;
-}
-.ana::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--green);border-radius:0 2px 2px 0}
+.ana{background:rgba(0,0,0,.3);border:1px solid var(--bdr);border-radius:10px;padding:11px 13px;position:relative;overflow:hidden}
+.ana::after{content:'';position:absolute;top:0;left:0;width:2.5px;height:100%;background:var(--green);border-radius:0 2px 2px 0}
 .ana.cc::after{background:var(--cyan)}.ana.cy::after{background:var(--yellow)}
 .ana.co::after{background:var(--orange)}.ana.cr::after{background:var(--red)}
 .ana.cp::after{background:var(--purple)}.ana.cb::after{background:var(--blue)}
-.albl{font-size:9px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-family:'JetBrains Mono',monospace}
-.aval{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1}
-.aval .unit{font-size:11px;color:var(--text2);margin-left:2px}
-.asub{font-size:10px;color:var(--text2);margin-top:3px}
+.a-lbl{font-size:9px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+.a-val{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;color:var(--text);line-height:1}
+.a-val .u{font-size:10px;color:var(--text2)}
+.a-sub{font-size:9px;color:var(--text2);margin-top:3px}
 .tup{color:var(--green)}.tdn{color:var(--red)}.tst{color:var(--yellow)}
 
+/* WEATHER */
+.wx-card{background:linear-gradient(135deg,#091625,#0c1d38);border:1px solid rgba(68,138,255,.2);border-radius:14px;overflow:hidden;position:relative;margin-bottom:12px}
+.wx-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan),transparent)}
+.wx-main{padding:14px 16px;display:flex;align-items:center;gap:12px}
+.wx-emoji{font-size:42px;filter:drop-shadow(0 0 10px rgba(68,138,255,.4))}
+.wx-info{flex:1}
+.wx-temp{font-family:'Orbitron',monospace;font-size:30px;font-weight:900;color:#fff;line-height:1}
+.wx-temp span{font-size:14px;color:var(--text2)}
+.wx-desc{font-size:12px;font-weight:600;color:var(--text);margin-top:2px}
+.wx-loc{font-size:10px;color:var(--text2);display:flex;align-items:center;gap:3px;margin-top:2px}
+.wx-extra{text-align:right}
+.wx-ex-row{font-size:10px;color:var(--text2);margin-bottom:3px}
+.wx-ex-row span{color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.wx-forecast{display:flex;overflow-x:auto;border-top:1px solid rgba(68,138,255,.12);scrollbar-width:none}
+.wx-forecast::-webkit-scrollbar{display:none}
+.wx-day{flex:0 0 auto;min-width:70px;padding:10px 7px;text-align:center;border-right:1px solid rgba(68,138,255,.09)}
+.wx-day:last-child{border:none}
+.wxd-name{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.wxd-icon{font-size:22px;margin-bottom:3px}
+.wxd-t{font-size:10px;font-family:'JetBrains Mono',monospace}
+.hi{color:var(--orange)}.lo{color:var(--blue)}
+.wxd-rain{font-size:9px;color:var(--cyan);margin-top:2px}
+.wx-loading,.wx-err{padding:22px;text-align:center;color:var(--text2);font-size:12px}
+.wx-err span{color:var(--cyan);cursor:pointer}
+
 /* GRAPHS */
-.graph-box{
-  background:var(--card);border:1px solid var(--border2);
-  border-radius:14px;padding:14px;position:relative;overflow:hidden;
-}
-.graph-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--cyan),transparent)}
-.gh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.gt{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px}
-.gc{display:flex;gap:5px}
-.gbtn{
-  background:var(--bg2);border:1px solid var(--border2);
-  border-radius:5px;padding:3px 7px;font-size:9px;
-  color:var(--text2);cursor:pointer;transition:all .15s;
-  font-family:'JetBrains Mono',monospace;
-}
-.gbtn:hover,.gbtn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06)}
-.chart-c{position:relative;height:160px}
-.nodata{
-  height:160px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  color:var(--text2);font-size:12px;gap:8px;
-}
-.nodata-icon{font-size:30px;opacity:.35}
-.graph-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;text-align:center}
-.gs-item .gv{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
-.gs-item .gl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.graph-box{background:rgba(0,0,0,.25);border:1px solid var(--bdrc);border-radius:12px;padding:12px;margin-bottom:10px;position:relative;overflow:hidden}
+.graph-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--green),var(--cyan),transparent)}
+.gh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.gt{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px}
+.gctrl{display:flex;gap:5px;align-items:center}
+.gbtn{background:rgba(0,0,0,.4);border:1px solid var(--bdrc);border-radius:5px;padding:3px 7px;font-size:9px;color:var(--text2);cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s}
+.gbtn:hover,.gbtn.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06)}
+.chart-wrap{height:150px;position:relative}
+.nodata{height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:12px}
+.nodata-icon{font-size:28px;opacity:.3}
+.gs-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;text-align:center}
+.gs-v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.gs-l{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
 /* MONITOR BTN */
-.mon-btn{
-  width:100%;padding:16px;border:none;border-radius:13px;
-  font-family:'Noto Sans Devanagari',sans-serif;font-size:17px;font-weight:800;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:all .3s;position:relative;overflow:hidden;
-}
-.mon-btn.start{background:linear-gradient(135deg,#00c853,#00897b);color:#fff;box-shadow:0 5px 20px rgba(0,200,83,.35)}
-.mon-btn.stop{background:linear-gradient(135deg,#d50000,#b71c1c);color:#fff;box-shadow:0 5px 20px rgba(213,0,0,.35);animation:mbPulse 2s infinite}
-@keyframes mbPulse{0%,100%{box-shadow:0 5px 20px rgba(213,0,0,.35)}50%{box-shadow:0 5px 28px rgba(213,0,0,.55)}}
-.sess-row{
-  display:flex;justify-content:space-around;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:9px;padding:9px;margin-top:8px;
-}
-.sess-item{text-align:center}
-.sv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--green)}
-.sl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.mon-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Noto Sans Devanagari',sans-serif;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .3s;margin-bottom:8px}
+.mon-btn.start{background:linear-gradient(135deg,#00c853,#00897b);color:#fff;box-shadow:0 4px 18px rgba(0,200,83,.32)}
+.mon-btn.stop{background:linear-gradient(135deg,#c62828,#b71c1c);color:#fff;box-shadow:0 4px 18px rgba(198,40,40,.32);animation:mbP 2s infinite}
+@keyframes mbP{0%,100%{box-shadow:0 4px 18px rgba(198,40,40,.32)}50%{box-shadow:0 4px 26px rgba(198,40,40,.52)}}
+.sess-row{display:flex;justify-content:space-around;background:rgba(0,0,0,.3);border:1px solid var(--bdr);border-radius:9px;padding:8px}
+.si{text-align:center}
+.sv{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green)}
+.sl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
-/* PUMP */
-.pump-card{
-  background:var(--card);border-radius:13px;padding:14px;
-  display:flex;align-items:center;justify-content:space-between;
-  border:1px solid;transition:all .4s;
-}
-.pump-card.on{border-color:rgba(255,23,68,.4);background:rgba(255,23,68,.06);box-shadow:0 0 18px rgba(255,23,68,.12)}
-.pump-card.off{border-color:rgba(0,230,118,.25);background:rgba(0,230,118,.04)}
-.p-status{font-size:17px;font-weight:800;margin-bottom:3px}
-.p-sub{font-size:11px;color:var(--text2)}
-.p-icon{font-size:34px}
-.ptoggle{
-  background:none;border:1.5px solid;border-radius:7px;
-  padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;
-  font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s;
-}
-.ptoggle.on{border-color:var(--red);color:var(--red)}
-.ptoggle.off{border-color:var(--green);color:var(--green)}
-
-/* CALIBRATION */
-.calib-card{
-  background:linear-gradient(135deg,rgba(13,26,46,.95),rgba(10,22,40,.95));
-  border:1px solid rgba(224,64,251,.2);border-radius:14px;padding:16px;
-  position:relative;overflow:hidden;
-}
-.calib-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan),transparent)}
-.calib-steps{margin-top:10px}
-.calib-step{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:10px 0;border-bottom:1px solid rgba(224,64,251,.1);
-}
-.calib-step:last-child{border:none}
-.step-num{
-  width:24px;height:24px;border-radius:50%;
-  background:rgba(224,64,251,.15);border:1px solid rgba(224,64,251,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;color:var(--purple);flex-shrink:0;
-}
-.step-text{font-size:13px;line-height:1.5;color:var(--text2)}
-.step-text strong{color:var(--text)}
-.calib-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.btn-calib{
-  padding:10px;border:1px solid rgba(224,64,251,.3);
-  border-radius:9px;background:rgba(224,64,251,.08);
-  color:var(--purple);font-size:13px;font-weight:700;cursor:pointer;
-  font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s;
-}
-.btn-calib:hover{background:rgba(224,64,251,.15);border-color:var(--purple)}
-.btn-calib.set{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--green)}
-.calib-result{
-  margin-top:10px;padding:10px 12px;
-  background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
-  border-radius:8px;font-size:12px;color:var(--green);
-  display:none;
-}
-.calib-result.show{display:block}
-.calib-live{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-top:10px;padding:10px;
-  background:rgba(0,0,0,.3);border-radius:8px;
-  font-family:'JetBrains Mono',monospace;font-size:12px;
-}
-.calib-bar-wrap{margin-top:8px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
-.calib-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:3px;transition:width .5s}
-.calib-compare{margin-top:8px;font-size:11px;text-align:center;color:var(--text2)}
-
-/* AI BOX */
-.ai-box{
-  background:linear-gradient(135deg,rgba(13,26,46,.9),rgba(10,22,40,.9));
-  border:1px solid rgba(0,229,255,.2);border-radius:14px;padding:14px;
-  position:relative;overflow:hidden;
-}
+/* AI */
+.ai-box{background:linear-gradient(135deg,rgba(13,25,40,.9),rgba(9,21,34,.9));border:1px solid rgba(0,229,255,.18);border-radius:14px;padding:14px;position:relative;overflow:hidden}
 .ai-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--green))}
 .ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.ai-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px;display:flex;align-items:center;gap:7px}
-.btn-ai{
-  background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(224,64,251,.15));
-  border:1px solid rgba(0,229,255,.3);border-radius:7px;
-  color:var(--cyan);font-size:12px;font-weight:700;
-  padding:7px 13px;cursor:pointer;transition:all .2s;
-  font-family:'Noto Sans Devanagari',sans-serif;
-}
-.btn-ai:hover{border-color:var(--cyan);box-shadow:0 0 10px var(--glow-c)}
-.btn-ai:disabled{opacity:.5;cursor:not-allowed}
-.aiload{display:none;align-items:center;justify-content:center;gap:10px;padding:18px;color:var(--cyan);font-size:11px;font-family:'JetBrains Mono',monospace}
-.aiload.show{display:flex}
-.spinner{width:18px;height:18px;border:2px solid rgba(0,229,255,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite}
+.ai-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.ai-btn{background:linear-gradient(135deg,rgba(0,229,255,.14),rgba(224,64,251,.14));border:1px solid rgba(0,229,255,.28);border-radius:7px;color:var(--cyan);font-size:12px;font-weight:700;padding:7px 13px;cursor:pointer;transition:all .2s;font-family:'Noto Sans Devanagari',sans-serif}
+.ai-btn:hover{border-color:var(--cyan);box-shadow:0 0 10px var(--gc)}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-load{display:none;align-items:center;justify-content:center;gap:10px;padding:16px;color:var(--cyan);font-size:11px;font-family:'JetBrains Mono',monospace}
+.ai-load.show{display:flex}
+.spin{width:16px;height:16px;border:2px solid rgba(0,229,255,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ai-res{font-size:13px;line-height:1.8;color:rgba(232,244,255,.85);display:none}
-.ai-res.show{display:block;animation:ddSlide .3s ease}
+.ai-res{font-size:13px;line-height:1.8;color:rgba(228,240,255,.85);display:none}
+.ai-res.show{display:block;animation:fdUp .3s ease}
+@keyframes fdUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* VOICE */
-.voice-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:800;
-  background:rgba(7,13,26,.97);border-top:1px solid var(--border2);
-  padding:10px 16px;display:flex;align-items:center;justify-content:space-between;
-  max-width:500px;margin:0 auto;
-}
-.vb-info{font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace}
-.vb-info span{color:var(--green)}
-.vb-btn{
-  background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);
-  border-radius:7px;padding:5px 12px;
-  color:var(--green);font-size:11px;cursor:pointer;
-  font-family:'Noto Sans Devanagari',sans-serif;font-weight:600;
-}
+/* CALIB */
+.calib-box{background:linear-gradient(135deg,rgba(10,20,36,.95),rgba(8,17,30,.95));border:1px solid rgba(224,64,251,.18);border-radius:14px;padding:14px;position:relative;overflow:hidden;margin-bottom:12px}
+.calib-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan),transparent)}
+.calib-live-row{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.3);border-radius:8px;padding:9px 12px;margin:10px 0 6px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.calib-bar-wrap{height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.calib-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:3px;transition:width .5s}
+.calib-cmp{text-align:center;font-size:11px;color:var(--text2);margin-bottom:10px}
+.calib-steps{margin-bottom:10px}
+.cs{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(224,64,251,.08)}
+.cs:last-child{border:none}
+.csn{width:22px;height:22px;border-radius:50%;background:rgba(224,64,251,.12);border:1px solid rgba(224,64,251,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--purple);flex-shrink:0}
+.cst{font-size:12px;line-height:1.5;color:var(--text2)}
+.cst strong{color:var(--text)}
+.calib-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.c-btn{padding:9px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s}
+.c-set{background:rgba(0,230,118,.09);border:1px solid rgba(0,230,118,.28);color:var(--green)}
+.c-clr{background:rgba(255,23,68,.07);border:1px solid rgba(255,23,68,.22);color:var(--red)}
+.calib-res{margin-top:9px;padding:9px 11px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.18);border-radius:7px;font-size:11px;color:var(--green);display:none}
+.calib-res.show{display:block}
 
-/* FOOTER */
-.last-up{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);padding:8px 0;display:flex;align-items:center;justify-content:center;gap:5px}
+/* TOAST */
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:rgba(13,25,40,.98);border:1px solid var(--green);border-radius:10px;padding:10px 18px;z-index:1000;font-size:13px;font-weight:600;color:var(--green);box-shadow:0 4px 18px var(--gg);display:none;text-align:center;max-width:300px;white-space:nowrap}
+.toast.w{border-color:var(--red);color:var(--red);box-shadow:0 4px 18px var(--gr)}
+.toast.i{border-color:var(--cyan);color:var(--cyan)}
+.toast.show{display:block;animation:fdUp .25s ease}
+
+/* ALARM */
+.alarm-bar{display:none;background:rgba(213,0,0,.15);border:2px solid var(--red);border-radius:10px;padding:10px 14px;margin-bottom:10px;text-align:center;font-size:13px;font-weight:700;color:var(--red);animation:alFlash 1s infinite}
+@keyframes alFlash{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 18px var(--gr)}}
+
+/* VOICE BAR */
+.vbar{position:fixed;bottom:58px;left:0;right:0;z-index:99;background:rgba(6,12,24,.97);border-top:1px solid var(--bdrc);padding:7px 16px;display:flex;align-items:center;justify-content:space-between}
+.vbar-info{font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.pdot{width:5px;height:5px;border-radius:50%;background:var(--text2)}
+.pdot.on{background:var(--green);animation:ldAnim .9s infinite}
+.vbar-right{display:flex;align-items:center;gap:8px}
+.v-btn{background:rgba(0,230,118,.09);border:1px solid rgba(0,230,118,.25);border-radius:7px;padding:5px 11px;color:var(--green);font-size:11px;cursor:pointer;font-family:'Noto Sans Devanagari',sans-serif;font-weight:600;transition:all .2s}
+.v-btn.on{background:rgba(255,23,68,.09);border-color:rgba(255,23,68,.28);color:var(--red)}
+.inp{width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(0,229,255,0.14);border-radius:7px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 10px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.inp:focus{border-color:var(--cyan);box-shadow:0 0 0 2px var(--gc)}
+.inp::placeholder{color:rgba(122,155,181,0.35)}
 </style>
 </head>
 <body>
@@ -475,594 +342,565 @@ input[type=range].srange{width:100%;margin-top:6px;accent-color:var(--yellow);cu
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- LANG DROPDOWN -->
-<div class="lang-dd" id="langDD">
-  <div class="lang-opt active" onclick="setLang('hi',this)" data-l="hi"><span class="lcode">HI</span>हिंदी</div>
-  <div class="lang-opt" onclick="setLang('en',this)" data-l="en"><span class="lcode">EN</span>English</div>
-  <div class="lang-opt" onclick="setLang('mr',this)" data-l="mr"><span class="lcode">MR</span>मराठी</div>
-  <div class="lang-opt" onclick="setLang('bn',this)" data-l="bn"><span class="lcode">BN</span>বাংলা</div>
-  <div class="lang-opt" onclick="setLang('te',this)" data-l="te"><span class="lcode">TE</span>తెలుగు</div>
-  <div class="lang-opt" onclick="setLang('ta',this)" data-l="ta"><span class="lcode">TA</span>தமிழ்</div>
-  <div class="lang-opt" onclick="setLang('gu',this)" data-l="gu"><span class="lcode">GU</span>ગુજરાતી</div>
-  <div class="lang-opt" onclick="setLang('pa',this)" data-l="pa"><span class="lcode">PA</span>ਪੰਜਾਬੀ</div>
-  <div class="lang-opt" onclick="setLang('kn',this)" data-l="kn"><span class="lcode">KN</span>ಕನ್ನಡ</div>
-  <div class="lang-opt" onclick="setLang('ml',this)" data-l="ml"><span class="lcode">ML</span>മലയാളം</div>
-  <div class="lang-opt" onclick="setLang('or',this)" data-l="or"><span class="lcode">OR</span>ଓଡ଼ିଆ</div>
-  <div class="lang-opt" onclick="setLang('ur',this)" data-l="ur"><span class="lcode">UR</span>اردو</div>
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="dOverlay" onclick="closeDrawer()"></div>
+
+<!-- SIDE DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-title">⚙ SETTINGS</div>
+    <div class="d-close" onclick="closeDrawer()">✕</div>
+  </div>
+  <div class="drawer-nav">
+    <!-- BLYNK -->
+    <div class="nav-section">
+      <div class="nav-sec-lbl">📡 Blynk IoT Connection</div>
+      <div class="d-msg" id="dmsg"></div>
+      <div class="d-lbl">Auth Token</div>
+      <input class="d-inp" id="dToken" type="text" placeholder="i-tqVg06uA3dsmpc..." spellcheck="false" autocomplete="off">
+      <div class="d-row">
+        <div>
+          <div class="d-lbl">Virtual Pin</div>
+          <input class="d-inp" id="dPin" value="V2" style="margin-bottom:0">
+        </div>
+        <div>
+          <div class="d-lbl">Server</div>
+          <input class="d-inp" id="dSrv" value="blynk.cloud" style="margin-bottom:0">
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="d-lbl">Poll अंतराल (सेकंड)</div>
+      <input class="d-inp" id="dPoll" type="number" value="3" min="2" max="30">
+      <button class="d-btn" onclick="saveBlynk()">✅ सेव करें और कनेक्ट करें</button>
+    </div>
+    <div class="nav-divider"></div>
+    <!-- LANGUAGE -->
+    <div class="nav-section">
+      <div class="nav-sec-lbl">🌐 भाषा / Language</div>
+      <div class="lang-grid" id="langGrid">
+        <div class="lang-chip active" onclick="setLang('hi',this)">हिंदी</div>
+        <div class="lang-chip" onclick="setLang('en',this)">English</div>
+        <div class="lang-chip" onclick="setLang('mr',this)">मराठी</div>
+        <div class="lang-chip" onclick="setLang('bn',this)">বাংলা</div>
+        <div class="lang-chip" onclick="setLang('te',this)">తెలుగు</div>
+        <div class="lang-chip" onclick="setLang('ta',this)">தமிழ்</div>
+        <div class="lang-chip" onclick="setLang('gu',this)">ગુજ</div>
+        <div class="lang-chip" onclick="setLang('pa',this)">ਪੰਜਾ</div>
+        <div class="lang-chip" onclick="setLang('kn',this)">ಕನ್ನ</div>
+        <div class="lang-chip" onclick="setLang('ml',this)">മലയ</div>
+        <div class="lang-chip" onclick="setLang('or',this)">ଓଡ଼ିଆ</div>
+        <div class="lang-chip" onclick="setLang('ur',this)">اردو</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<header>
-  <div class="hdr">
-    <div class="logo-wrap">
-      <div class="logo-box">🌾</div>
-      <div class="logo-text">
+<!-- HEADER -->
+<div class="header">
+  <div class="h-left">
+    <div class="h-logo">
+      <div class="h-icon">🌾</div>
+      <div class="h-brand">
         <h1>किसान IoT</h1>
         <p>KHET NIGRANI SYSTEM</p>
       </div>
     </div>
-    <div class="hdr-right">
-      <div class="live-pill"><div class="ldot"></div><span id="liveTxt">लाइव ✓</span></div>
-      <div class="lang-btn" id="langBtn" onclick="toggleLang()">
-        <span id="langLbl">हि</span>▾
-      </div>
-    </div>
   </div>
-</header>
-
-<div class="wrap">
-
-<!-- ALARM BANNER -->
-<div class="alarm-banner" id="alarmBanner">
-  🚨 <span id="alarmText">खेत में पानी भर गया है! पंप तुरंत बंद करें!</span> 🚨
-</div>
-
-<!-- WEATHER -->
-<div class="section">
-  <div class="sec-title">🌤 <span data-k="mausam">मौसम पूर्वानुमान</span></div>
-  <div class="weather-card" id="wxCard">
-    <div class="wx-loading" id="wxLoad">📡 आपका स्थान पता कर रहे हैं...</div>
+  <div class="h-right">
+    <div class="live-pill"><div class="ldot"></div><span id="liveTxt">लाइव ✓</span></div>
+    <div class="hbtn" id="hbtn" onclick="toggleDrawer()">
+      <div class="hbar"></div><div class="hbar"></div><div class="hbar"></div>
+    </div>
   </div>
 </div>
 
-<!-- BLYNK -->
-<div class="section">
-  <div class="sec-title">⚙ <span data-k="blynk_conn">BLYNK कनेक्शन</span></div>
-  <div class="blynk-panel">
-    <div class="blynk-hdr" onclick="toggleBlynk()">
-      <div class="blynk-title">
-        <div class="bsdot" id="bsdot"></div>
-        ⚡ Blynk IoT सेटिंग
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TAB: DASHBOARD -->
+  <div class="tab-page active" id="pg-dash">
+    <!-- ALARM -->
+    <div class="alarm-bar" id="alarmBar">🚨 <span id="alarmTxt">खेत में पानी भर गया!</span> 🚨</div>
+
+    <!-- CLOCK + PUMP -->
+    <div class="top-row">
+      <div class="clock-card">
+        <div class="clk-time" id="clkTime">--:--:--</div>
+        <div class="clk-date" id="clkDate">--</div>
+        <div class="clk-loc" id="clkLoc">📍 --</div>
       </div>
-      <span class="chev" id="bchev">▼</span>
+      <div class="pump-mini off" id="pumpMini" onclick="manualPump()">
+        <div class="pm-icon" id="pmIcon">💧</div>
+        <div class="pm-label off" id="pmLbl">पंप: बंद</div>
+        <div class="pump-timer" id="pumpTimer">00:00</div>
+      </div>
     </div>
-    <div class="blynk-body open" id="bbody">
-      <div class="bmsg" id="bmsg"></div>
-      <div class="flbl">Auth Token</div>
-      <input class="inp" id="authTok" type="text" placeholder="i-tqVg06uA3dsm..." spellcheck="false">
-      <div class="inp-row">
-        <div>
-          <div class="flbl">Virtual Pin</div>
-          <input class="inp" id="vpin" value="V2" style="margin-bottom:0">
+
+    <!-- GAUGE + STATUS -->
+    <div class="card">
+      <div class="gauge-wrap">
+        <div class="gauge-svg-box">
+          <svg class="gsvg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="80" cy="80" r="64" fill="none" stroke="rgba(255,255,255,.03)" stroke-width="11"/>
+            <circle cx="80" cy="80" r="64" fill="none" stroke="rgba(0,230,118,.07)" stroke-width="11" stroke-dasharray="402" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="64" fill="none" stroke="url(#gg)" stroke-width="11" stroke-dasharray="402" stroke-dashoffset="402" stroke-linecap="round" transform="rotate(-90 80 80)" id="garc" style="transition:stroke-dashoffset .7s ease,stroke .4s"/>
+            <circle cx="80" cy="80" r="64" fill="none" stroke="url(#gg)" stroke-width="3" stroke-dasharray="402" stroke-dashoffset="402" stroke-linecap="round" opacity=".22" transform="rotate(-90 80 80)" id="glow" filter="url(#blur)" style="transition:stroke-dashoffset .7s ease"/>
+            <defs>
+              <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00e676"/>
+                <stop offset="50%" stop-color="#00e5ff"/>
+                <stop offset="100%" stop-color="#e040fb"/>
+              </linearGradient>
+              <filter id="blur"><feGaussianBlur stdDeviation="3"/></filter>
+            </defs>
+            <g id="ticks"></g>
+          </svg>
+          <div class="gauge-center">
+            <div class="g-emoji" id="gEmoji">🌿</div>
+            <div class="g-pct" id="gPct">--</div>
+            <div class="g-unit">%</div>
+            <div class="g-raw" id="gRaw">RAW: ---</div>
+          </div>
         </div>
-        <div>
-          <div class="flbl">Poll (सेकंड)</div>
-          <input class="inp" id="pollS" type="number" value="5" min="3" max="60" style="margin-bottom:0">
+        <div class="gauge-info">
+          <div class="sbanner sy" id="sbanner"><span id="sIcon">⏳</span><span id="sTxt">प्रतीक्षा...</span></div>
+          <div class="g-fasal-lbl" id="gFasalLbl">गेहूँ | FC: 2000</div>
+          <div class="mini-stats" style="margin-top:8px">
+            <div class="mstat"><div class="mstat-lbl">न्यूनतम</div><div class="mstat-val"><span id="ms_min">--</span><span class="u">%</span></div></div>
+            <div class="mstat"><div class="mstat-lbl">अधिकतम</div><div class="mstat-val"><span id="ms_max">--</span><span class="u">%</span></div></div>
+            <div class="mstat"><div class="mstat-lbl">दर/मिनट</div><div class="mstat-val"><span id="ms_rate">--</span><span class="u">%</span></div></div>
+          </div>
         </div>
       </div>
-      <div style="height:8px"></div>
-      <div class="flbl">Blynk Server</div>
-      <input class="inp" id="bserver" value="blynk.cloud">
-      <button class="btn-save" onclick="saveBlynk()" data-k="save_conn">✅ सेव करें और शुरू करें</button>
-      <div class="poll-row">
-        <div class="pdot" id="pdot"></div>
-        <span id="pollTxt" data-k="not_conn">कनेक्ट नहीं है</span>
+    </div>
+
+    <!-- MINI GRAPH beside pump status (shown when monitoring) -->
+    <div class="graph-box" id="miniGraphBox" style="display:none">
+      <div class="gh">
+        <div class="gt">📈 LIVE नमी ग्राफ</div>
+        <div class="gctrl">
+          <div class="bsdot pdot on" id="liveGDot" style="width:7px;height:7px"></div>
+          <span style="font-size:9px;color:var(--green);font-family:'JetBrains Mono',monospace" id="liveGCount">0 रीडिंग</span>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="miniChart"></canvas></div>
+    </div>
+
+    <!-- SEEMA -->
+    <div class="card">
+      <div class="card-title">⚠ खतरा सीमा</div>
+      <div class="seema-row">
+        <div class="seema-lbl">⚠️ सीमा</div>
+        <div class="seema-v" id="seemaDisp">-- / 4095</div>
+      </div>
+      <div class="sbar">
+        <div class="sfill" id="sfill" style="width:0%"></div>
+        <div class="smark" id="smark" style="left:53%"></div>
+      </div>
+      <div class="slbls"><span>0 (सूखा)</span><span id="sWarnLbl">2200 ⚠️</span><span>4095 (भरा)</span></div>
+      <input type="range" class="srange" id="seemaR" min="1271" max="4095" value="2200" oninput="updateSeema(this.value)">
+    </div>
+
+    <!-- FASAL -->
+    <div class="card">
+      <div class="card-title">🌱 फसल चुनें</div>
+      <div class="fasal-grid" id="fasalGrid">
+        <div class="fc active" data-f="गेहूँ" data-th="2200" onclick="pickFasal(this)"><span class="fc-e">🌿</span><div class="fc-n">गेहूँ</div></div>
+        <div class="fc" data-f="चावल" data-th="1400" onclick="pickFasal(this)"><span class="fc-e">🍚</span><div class="fc-n">चावल</div></div>
+        <div class="fc" data-f="मक्का" data-th="1800" onclick="pickFasal(this)"><span class="fc-e">🌽</span><div class="fc-n">मक्का</div></div>
+        <div class="fc" data-f="गन्ना" data-th="1600" onclick="pickFasal(this)"><span class="fc-e">🎋</span><div class="fc-n">गन्ना</div></div>
+        <div class="fc" data-f="सोयाबीन" data-th="2000" onclick="pickFasal(this)"><span class="fc-e">🫘</span><div class="fc-n">सोयाबीन</div></div>
+        <div class="fc" data-f="टमाटर" data-th="2200" onclick="pickFasal(this)"><span class="fc-e">🍅</span><div class="fc-n">टमाटर</div></div>
+        <div class="fc" data-f="सरसों" data-th="1500" onclick="pickFasal(this)"><span class="fc-e">🌻</span><div class="fc-n">सरसों</div></div>
+        <div class="fc" data-f="कस्टम" data-th="2500" onclick="pickFasal(this)"><span class="fc-e">⚙️</span><div class="fc-n">कस्टम</div></div>
+      </div>
+      <div id="customWrap" style="display:none;margin-top:8px">
+        <div class="d-lbl">कस्टम सीमा (Raw ADC)</div>
+        <input class="inp" id="customTh" type="number" placeholder="2500" min="1271" max="4095" oninput="updateCustomTh()">
+      </div>
+    </div>
+
+    <!-- MITTI -->
+    <div class="card">
+      <div class="card-title">🏔 मिट्टी का प्रकार</div>
+      <div class="mitti-grid">
+        <div class="mc active" data-m="बालुई मिट्टी" data-fc="2000" onclick="pickMitti(this)"><span class="mc-i">🏜️</span><div class="mc-n">बालुई मिट्टी</div><div class="mc-f">FC≈2000</div></div>
+        <div class="mc" data-m="दोमट मिट्टी" data-fc="1700" onclick="pickMitti(this)"><span class="mc-i">🌱</span><div class="mc-n">दोमट मिट्टी</div><div class="mc-f">FC≈1700</div></div>
+        <div class="mc" data-m="चिकनी मिट्टी" data-fc="1450" onclick="pickMitti(this)"><span class="mc-i">🧱</span><div class="mc-n">चिकनी मिट्टी</div><div class="mc-f">FC≈1450</div></div>
+      </div>
+    </div>
+
+    <!-- MONITORING -->
+    <div class="card">
+      <div class="card-title">📡 मॉनिटरिंग</div>
+      <button class="mon-btn start" id="monBtn" onclick="toggleMonitor()">
+        <span>🎙️</span><span id="monTxt">मॉनिटरिंग शुरू करें</span>
+      </button>
+      <div class="sess-row">
+        <div class="si"><div class="sv" id="sTime">00:00</div><div class="sl">अवधि</div></div>
+        <div class="si"><div class="sv" id="sRead">0</div><div class="sl">रीडिंग</div></div>
+        <div class="si"><div class="sv" id="sAvg">--%</div><div class="sl">औसत</div></div>
+        <div class="si"><div class="sv" id="sLast" style="color:var(--cyan)">--</div><div class="sl">अंतिम</div></div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- FASAL -->
-<div class="section">
-  <div class="sec-title">🌱 <span data-k="apni_fasal">अपनी फसल चुनें</span></div>
-  <div class="fasal-grid" id="fasalGrid">
-    <div class="fc active" data-f="गेहूँ" data-th="2200" onclick="pickFasal(this)"><span class="fc-emoji">🌿</span><div class="fc-name">गेहूँ</div></div>
-    <div class="fc" data-f="चावल" data-th="1400" onclick="pickFasal(this)"><span class="fc-emoji">🍚</span><div class="fc-name">चावल</div></div>
-    <div class="fc" data-f="मक्का" data-th="1800" onclick="pickFasal(this)"><span class="fc-emoji">🌽</span><div class="fc-name">मक्का</div></div>
-    <div class="fc" data-f="गन्ना" data-th="1600" onclick="pickFasal(this)"><span class="fc-emoji">🎋</span><div class="fc-name">गन्ना</div></div>
-    <div class="fc" data-f="सोयाबीन" data-th="2000" onclick="pickFasal(this)"><span class="fc-emoji">🫘</span><div class="fc-name">सोयाबीन</div></div>
-    <div class="fc" data-f="टमाटर" data-th="2200" onclick="pickFasal(this)"><span class="fc-emoji">🍅</span><div class="fc-name">टमाटर</div></div>
-    <div class="fc" data-f="सरसों" data-th="1500" onclick="pickFasal(this)"><span class="fc-emoji">🌻</span><div class="fc-name">सरसों</div></div>
-    <div class="fc" data-f="कस्टम" data-th="2500" onclick="pickFasal(this)"><span class="fc-emoji">⚙️</span><div class="fc-name">कस्टम</div></div>
-  </div>
-  <div id="customWrap" style="display:none;margin-top:8px">
-    <div class="flbl">कस्टम सीमा (Raw ADC)</div>
-    <input class="inp" id="customTh" type="number" placeholder="2500" min="1271" max="4095" oninput="updateCustomTh()">
-  </div>
-</div>
-
-<!-- MITTI -->
-<div class="section">
-  <div class="sec-title">🏔 <span data-k="mitti_prakar">मिट्टी का प्रकार</span></div>
-  <div class="mitti-grid">
-    <div class="mc active" data-m="बालुई मिट्टी" data-fc="2000" onclick="pickMitti(this)">
-      <span class="mc-icon">🏜️</span>
-      <div class="mc-name">बालुई मिट्टी</div>
-      <div class="mc-fc">FC≈2000 | Sandy</div>
-    </div>
-    <div class="mc" data-m="दोमट मिट्टी" data-fc="1700" onclick="pickMitti(this)">
-      <span class="mc-icon">🌱</span>
-      <div class="mc-name">दोमट मिट्टी</div>
-      <div class="mc-fc">FC≈1700 | Loamy</div>
-    </div>
-    <div class="mc" data-m="चिकनी मिट्टी" data-fc="1450" onclick="pickMitti(this)">
-      <span class="mc-icon">🧱</span>
-      <div class="mc-name">चिकनी मिट्टी</div>
-      <div class="mc-fc">FC≈1450 | Clay</div>
+  <!-- TAB: WEATHER -->
+  <div class="tab-page" id="pg-wx">
+    <div class="wx-card" id="wxCard"><div class="wx-loading">📡 स्थान पता कर रहे हैं...</div></div>
+    <div class="card cyan-top">
+      <div class="card-title">🌡 मौसम का खेती पर प्रभाव</div>
+      <div id="wxAna" style="font-size:13px;line-height:1.8;color:var(--text2)">मौसम डेटा लोड हो रहा है...</div>
     </div>
   </div>
-</div>
 
-<!-- GAUGE -->
-<div class="section">
-  <div class="sec-title">💧 <span data-k="nami_star">नमी स्तर (MOISTURE)</span></div>
-  <div class="gauge-card">
-    <div class="gauge-wrap">
-      <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="13"/>
-        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,230,118,0.07)" stroke-width="13" stroke-dasharray="440" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
-        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gg)" stroke-width="13" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 100 100)" id="garc" style="transition:stroke-dashoffset .8s ease,stroke .5s"/>
-        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gg)" stroke-width="3" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" opacity=".25" transform="rotate(-90 100 100)" id="glow" filter="url(#gblur)" style="transition:stroke-dashoffset .8s ease"/>
-        <defs>
-          <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#00e676"/>
-            <stop offset="50%" stop-color="#00e5ff"/>
-            <stop offset="100%" stop-color="#e040fb"/>
-          </linearGradient>
-          <filter id="gblur"><feGaussianBlur stdDeviation="3"/></filter>
-        </defs>
-        <g id="ticks"></g>
-      </svg>
-      <div class="gauge-center">
-        <div class="g-emoji" id="gEmoji">🌿</div>
-        <div class="g-pct" id="gPct">--</div>
-        <div class="g-unit">%</div>
-        <div class="g-status-sub" id="gSub" data-k="waiting">प्रतीक्षा...</div>
-        <div class="g-fasal" id="gFasal">गेहूँ | सीमा: 2200</div>
+  <!-- TAB: ANALYTICS -->
+  <div class="tab-page" id="pg-ana">
+    <!-- ANALYTICS GRID -->
+    <div class="card">
+      <div class="card-title">📊 खेत विश्लेषण</div>
+      <div class="ana-grid">
+        <div class="ana cc"><div class="a-lbl">वर्तमान नमी</div><div class="a-val"><span id="a_cur">--</span><span class="u">%</span></div><div class="a-sub" id="a_cur_s">ICAR अंशांकित</div></div>
+        <div class="ana"><div class="a-lbl">न्यूनतम</div><div class="a-val"><span id="a_min">--</span><span class="u">%</span></div><div class="a-sub">सत्र</div></div>
+        <div class="ana"><div class="a-lbl">अधिकतम</div><div class="a-val"><span id="a_max">--</span><span class="u">%</span></div><div class="a-sub">सत्र</div></div>
+        <div class="ana cy"><div class="a-lbl">औसत नमी</div><div class="a-val"><span id="a_avg">--</span><span class="u">%</span></div><div class="a-sub">सत्र</div></div>
+        <div class="ana co"><div class="a-lbl">परिवर्तन दर</div><div class="a-val"><span id="a_rate">--</span><span class="u">%/मि</span></div><div class="a-sub" id="a_trend">-</div></div>
+        <div class="ana cp"><div class="a-lbl">FC की कमी</div><div class="a-val"><span id="a_def">--</span><span class="u">%</span></div><div class="a-sub" id="a_defs">क्षमता तक</div></div>
+        <div class="ana"><div class="a-lbl">कुल रीडिंग</div><div class="a-val"><span id="a_cnt">0</span></div><div class="a-sub">इस सत्र में</div></div>
+        <div class="ana cr"><div class="a-lbl">FC तक समय</div><div class="a-val" style="font-size:14px"><span id="a_eta">--</span></div><div class="a-sub">अनुमानित</div></div>
+        <div class="ana cb"><div class="a-lbl">बारिश (24h)</div><div class="a-val"><span id="a_rain">--</span><span class="u">mm</span></div><div class="a-sub" id="a_rains">अगले 24 घंटे</div></div>
+        <div class="ana"><div class="a-lbl">तापमान</div><div class="a-val"><span id="a_temp">--</span><span class="u">°C</span></div><div class="a-sub" id="a_temps">वर्तमान</div></div>
+        <div class="ana cc"><div class="a-lbl">लक्ष्य नमी</div><div class="a-val"><span id="a_tgt">--</span><span class="u">%</span></div><div class="a-sub">अंशांकन से</div></div>
+        <div class="ana cy"><div class="a-lbl">पानी की कमी</div><div class="a-val"><span id="a_gap">--</span><span class="u">%</span></div><div class="a-sub" id="a_gaps">लक्ष्य तक</div></div>
       </div>
     </div>
-    <div class="sbanner sy" id="sbanner">
-      <span id="sIcon">⏳</span>
-      <span id="sTxt" data-k="waiting">डेटा का इंतज़ार है...</span>
+
+    <!-- CALIBRATION -->
+    <div class="calib-box">
+      <div class="card-title" style="margin-bottom:8px">🎯 लक्ष्य नमी अंशांकन</div>
+      <div style="font-size:12px;color:var(--text2)">पानी डालें → सेंसर लगाएं → जब नमी स्थिर हो तब "यही नमी चाहिए" दबाएं</div>
+      <div class="calib-live-row">
+        <span style="color:var(--text2);font-size:10px">वर्तमान रीडिंग:</span>
+        <span style="color:var(--cyan);font-family:'JetBrains Mono',monospace" id="calibCur">-- %</span>
+        <span style="color:var(--text2);font-size:10px;font-family:'JetBrains Mono',monospace" id="calibRaw">Raw: ---</span>
+      </div>
+      <div class="calib-bar-wrap"><div class="calib-bar" id="calibBar" style="width:0%"></div></div>
+      <div class="calib-cmp" id="calibCmp">लक्ष्य सेट नहीं है</div>
+      <div class="calib-steps">
+        <div class="cs"><div class="csn">1</div><div class="cst"><strong>पानी डालें</strong> — जितना खेत चाहता है उतना</div></div>
+        <div class="cs"><div class="csn">2</div><div class="cst"><strong>सेंसर लगाएं</strong> — रीडिंग स्थिर होने दें</div></div>
+        <div class="cs"><div class="csn">3</div><div class="cst"><strong>लक्ष्य सेट करें</strong> — नीचे बटन दबाएं</div></div>
+      </div>
+      <div class="calib-btns">
+        <button class="c-btn c-set" onclick="setCalibTarget()">🎯 यही नमी चाहिए — सेट करें</button>
+        <button class="c-btn c-clr" onclick="clearCalib()">🗑 लक्ष्य हटाएं</button>
+      </div>
+      <div class="calib-res" id="calibRes"></div>
     </div>
   </div>
-</div>
 
-<!-- KHATRA SEEMA -->
-<div class="section">
-  <div class="sec-title">⚠ <span data-k="khatra">खतरा सीमा</span></div>
-  <div class="seema-box">
-    <div class="seema-top">
-      <div class="seema-lbl">⚠️ <span data-k="khatra">खतरा सीमा</span></div>
-      <div class="seema-v" id="seemaDisp">0 / 4095</div>
-    </div>
-    <div class="sbar">
-      <div class="sfill" id="sfill" style="width:0%"></div>
-      <div class="smarker" id="smarker" style="left:53%"></div>
-    </div>
-    <div class="slabels">
-      <span data-k="sookha">0 (सूखा)</span>
-      <span id="sWarnLbl">2200 ⚠️</span>
-      <span data-k="bhara">4095 (भरा)</span>
-    </div>
-    <input type="range" class="srange" id="seemaR" min="1271" max="4095" value="2200" oninput="updateSeema(this.value)">
-  </div>
-</div>
-
-<!-- ANALYTICS -->
-<div class="section">
-  <div class="sec-title">📊 <span data-k="khet_vishleshan">खेत विश्लेषण</span></div>
-  <div class="ana-grid">
-    <div class="ana cc">
-      <div class="albl" data-k="vartman_nami">वर्तमान नमी</div>
-      <div class="aval"><span id="a_cur">--</span><span class="unit">%</span></div>
-      <div class="asub" id="a_cur_s">ICAR अंशांकित</div>
-    </div>
-    <div class="ana">
-      <div class="albl" data-k="nyuntam">न्यूनतम</div>
-      <div class="aval"><span id="a_min">--</span><span class="unit">%</span></div>
-      <div class="asub">सत्र न्यूनतम</div>
-    </div>
-    <div class="ana">
-      <div class="albl" data-k="adhiktam">अधिकतम</div>
-      <div class="aval"><span id="a_max">--</span><span class="unit">%</span></div>
-      <div class="asub">सत्र अधिकतम</div>
-    </div>
-    <div class="ana cy">
-      <div class="albl" data-k="ausat">औसत</div>
-      <div class="aval"><span id="a_avg">--</span><span class="unit">%</span></div>
-      <div class="asub">सत्र औसत</div>
-    </div>
-    <div class="ana co">
-      <div class="albl" data-k="parivartan_dar">परिवर्तन दर</div>
-      <div class="aval"><span id="a_rate">--</span><span class="unit">%/मि</span></div>
-      <div class="asub" id="a_trend">-</div>
-    </div>
-    <div class="ana cp">
-      <div class="albl" data-k="fc_kami">FC की कमी</div>
-      <div class="aval"><span id="a_def">--</span><span class="unit">%</span></div>
-      <div class="asub" id="a_def_s">खेत क्षमता तक</div>
-    </div>
-    <div class="ana">
-      <div class="albl" data-k="total_reading">कुल रीडिंग</div>
-      <div class="aval"><span id="a_cnt">0</span></div>
-      <div class="asub">इस सत्र में</div>
-    </div>
-    <div class="ana cr">
-      <div class="albl" data-k="fc_time">FC पहुँचने में</div>
-      <div class="aval" style="font-size:15px"><span id="a_eta">--</span></div>
-      <div class="asub" data-k="anumaan">अनुमानित समय</div>
-    </div>
-    <div class="ana cb">
-      <div class="albl" data-k="barish_probability">वर्षा संभावना</div>
-      <div class="aval"><span id="a_rain">--</span><span class="unit">mm</span></div>
-      <div class="asub" id="a_rain_s">अगले 24 घंटे</div>
-    </div>
-    <div class="ana">
-      <div class="albl" data-k="temp">तापमान</div>
-      <div class="aval"><span id="a_temp">--</span><span class="unit">°C</span></div>
-      <div class="asub" id="a_temp_s">वर्तमान</div>
-    </div>
-    <div class="ana cc">
-      <div class="albl" data-k="target_nami">लक्ष्य नमी</div>
-      <div class="aval"><span id="a_target">--</span><span class="unit">%</span></div>
-      <div class="asub" id="a_target_s">अंशांकन से</div>
-    </div>
-    <div class="ana cy">
-      <div class="albl" data-k="pani_ki_kami">पानी की कमी</div>
-      <div class="aval"><span id="a_gap">--</span><span class="unit">%</span></div>
-      <div class="asub" id="a_gap_s">लक्ष्य तक</div>
-    </div>
-  </div>
-</div>
-
-<!-- MOISTURE GRAPH -->
-<div class="section">
-  <div class="sec-title">📈 <span data-k="nami_graph">नमी % — सत्र ग्राफ</span></div>
-  <div class="graph-box">
-    <div class="gh">
-      <div class="gt">💧 नमी % बनाम समय</div>
-      <div class="gc">
-        <button class="gbtn active" onclick="setView('all',this)">सभी</button>
-        <button class="gbtn" onclick="setView('20',this)">20</button>
-        <button class="gbtn" onclick="clearGraph()">🗑</button>
+  <!-- TAB: GRAPH -->
+  <div class="tab-page" id="pg-graph">
+    <div class="card">
+      <div class="card-title">📈 नमी % — सत्र ग्राफ</div>
+      <div class="graph-box" style="margin-bottom:0">
+        <div class="gh">
+          <div class="gt">💧 नमी % बनाम समय</div>
+          <div class="gctrl">
+            <button class="gbtn on" onclick="setView('all',this)">सभी</button>
+            <button class="gbtn" onclick="setView('20',this)">20</button>
+            <button class="gbtn" onclick="clearGraph()">🗑</button>
+          </div>
+        </div>
+        <div class="nodata" id="nd1"><div class="nodata-icon">📡</div><span>मॉनिटरिंग शुरू करें</span></div>
+        <div class="chart-wrap" id="cc1" style="display:none"><canvas id="mc"></canvas></div>
+        <div class="gs-row" id="gs1" style="display:none">
+          <div class="gs-item"><div class="gs-v" id="gss" style="color:var(--green)">--</div><div class="gs-l">शुरुआत</div></div>
+          <div class="gs-item"><div class="gs-v" id="gsc" style="color:var(--cyan)">--</div><div class="gs-l">अभी</div></div>
+          <div class="gs-item"><div class="gs-v" id="gsd" style="color:var(--yellow)">--</div><div class="gs-l">बदलाव</div></div>
+        </div>
       </div>
     </div>
-    <div class="nodata" id="nd1"><div class="nodata-icon">📡</div><span data-k="start_monitor">मॉनिटरिंग शुरू करें</span></div>
-    <div class="chart-c" id="cc1" style="display:none"><canvas id="mc"></canvas></div>
-    <div class="graph-stats" id="gs1" style="display:none">
-      <div class="gs-item"><div class="gv" id="gss" style="color:var(--green)">--</div><div class="gl" data-k="shuruat">शुरुआत</div></div>
-      <div class="gs-item"><div class="gv" id="gsc" style="color:var(--cyan)">--</div><div class="gl" data-k="abhi">अभी</div></div>
-      <div class="gs-item"><div class="gv" id="gsd" style="color:var(--yellow)">--</div><div class="gl" data-k="kul_badlav">कुल बदलाव</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- RAW ADC GRAPH -->
-<div class="section">
-  <div class="sec-title">🔢 <span data-k="raw_graph">Raw ADC ग्राफ</span></div>
-  <div class="graph-box">
-    <div class="gh">
-      <div class="gt">📟 RAW ADC बनाम समय</div>
-      <div class="gc"><div class="bsdot" id="rawdot" style="width:8px;height:8px"></div></div>
-    </div>
-    <div class="nodata" id="nd2"><div class="nodata-icon">🔢</div><span data-k="raw_wait">Raw ADC इंतज़ार है</span></div>
-    <div class="chart-c" id="cc2" style="display:none"><canvas id="rc"></canvas></div>
-  </div>
-</div>
-
-<!-- MONITOR BUTTON -->
-<div class="section">
-  <button class="mon-btn start" id="monBtn" onclick="toggleMonitor()">
-    <span>🎙️</span><span id="monTxt" data-k="start_monitor">मॉनिटरिंग शुरू करें</span>
-  </button>
-  <div class="sess-row">
-    <div class="sess-item"><div class="sv" id="sTime">00:00</div><div class="sl" data-k="avadhi">अवधि</div></div>
-    <div class="sess-item"><div class="sv" id="sRead">0</div><div class="sl" data-k="readings">रीडिंग</div></div>
-    <div class="sess-item"><div class="sv" id="sAvg">--%</div><div class="sl" data-k="ausat">औसत</div></div>
-  </div>
-</div>
-
-<!-- PUMP -->
-<div class="section">
-  <div class="sec-title">⚙ <span data-k="pump">पंप नियंत्रण</span></div>
-  <div class="pump-card off" id="pCard">
-    <div>
-      <div class="p-status" id="pSt" style="color:var(--green)">⛽ पंप: बंद</div>
-      <div class="p-sub" id="pSub" data-k="nami_thik">नमी पर्याप्त है</div>
-    </div>
-    <button class="ptoggle off" id="pToggle" onclick="manualPump()" data-k="chalu_karo">चालू करें</button>
-    <div class="p-icon" id="pIcon">💧</div>
-  </div>
-</div>
-
-<!-- CALIBRATION -->
-<div class="section">
-  <div class="sec-title">🎯 <span data-k="anshankaran">लक्ष्य नमी अंशांकन</span></div>
-  <div class="calib-card">
-    <div style="font-size:12px;color:var(--text2);line-height:1.6" data-k="calib_desc">
-      अपने खेत के लिए उपयुक्त नमी स्तर स्वयं निर्धारित करें। जितना पानी चाहिए उतना डालें, सेंसर लगाएं और जांचें।
-    </div>
-    <div class="calib-live" id="calibLive">
-      <span style="color:var(--text2);font-size:11px">वर्तमान रीडिंग:</span>
-      <span style="color:var(--cyan)" id="calibCur">-- %</span>
-      <span style="color:var(--text2);font-size:10px" id="calibRawDisp">Raw: ---</span>
-    </div>
-    <div class="calib-bar-wrap">
-      <div class="calib-bar" id="calibBar" style="width:0%"></div>
-    </div>
-    <div class="calib-compare" id="calibComp">लक्ष्य सेट नहीं है</div>
-    <div class="calib-steps">
-      <div class="calib-step">
-        <div class="step-num">1</div>
-        <div class="step-text"><strong>पानी डालें</strong> — जितना आपका खेत चाहता है उतना पानी डालें</div>
-      </div>
-      <div class="calib-step">
-        <div class="step-num">2</div>
-        <div class="step-text"><strong>सेंसर लगाएं</strong> — ESP32 सेंसर मिट्टी में डालें और रीडिंग स्थिर होने दें</div>
-      </div>
-      <div class="calib-step">
-        <div class="step-num">3</div>
-        <div class="step-text"><strong>लक्ष्य सेट करें</strong> — नीचे बटन दबाकर इस नमी को अपना लक्ष्य बनाएं</div>
+    <div class="card">
+      <div class="card-title">🔢 Raw ADC ग्राफ</div>
+      <div class="graph-box" style="margin-bottom:0">
+        <div class="gh">
+          <div class="gt">📟 RAW ADC बनाम समय</div>
+          <div class="gctrl"><div class="pdot" id="rawDot"></div></div>
+        </div>
+        <div class="nodata" id="nd2"><div class="nodata-icon">🔢</div><span>Raw ADC इंतज़ार है</span></div>
+        <div class="chart-wrap" id="cc2" style="display:none"><canvas id="rc"></canvas></div>
       </div>
     </div>
-    <div class="calib-actions">
-      <button class="btn-calib set" onclick="setCalibTarget()" data-k="set_target">🎯 यही नमी चाहिए — सेट करें</button>
-      <button class="btn-calib" onclick="clearCalib()" data-k="clear_target">🗑 लक्ष्य हटाएं</button>
-    </div>
-    <div class="calib-result" id="calibResult"></div>
   </div>
-</div>
 
-<!-- AI ANALYSIS -->
-<div class="section">
-  <div class="sec-title">🧠 <span data-k="ai_salaah">AI खेत सलाह</span></div>
-  <div class="ai-box">
-    <div class="ai-hdr">
-      <div class="ai-title">🤖 <span data-k="icar_ai">ICAR-आधारित AI विश्लेषण</span></div>
-      <button class="btn-ai" id="aiBtn" onclick="runAI()" data-k="vishleshan">विश्लेषण करें</button>
+  <!-- TAB: AI -->
+  <div class="tab-page" id="pg-ai">
+    <div class="ai-box">
+      <div class="ai-hdr">
+        <div class="ai-title">🤖 ICAR-आधारित AI विश्लेषण</div>
+        <button class="ai-btn" id="aiBtn" onclick="runAI()">विश्लेषण करें</button>
+      </div>
+      <div class="ai-load" id="aiLoad"><div class="spin"></div><span>विश्लेषण हो रहा है...</span></div>
+      <div class="ai-res" id="aiRes"></div>
     </div>
-    <div class="aiload" id="aiLoad"><div class="spinner"></div><span data-k="vishleshan_ho_raha">विश्लेषण हो रहा है...</span></div>
-    <div class="ai-res" id="aiRes"></div>
   </div>
-</div>
 
-<!-- LAST UPDATE -->
-<div class="last-up">
-  <span>🕐</span>
-  <span data-k="antim">अंतिम अपडेट:</span>
-  <span id="lastUpd" style="color:var(--cyan)">--:--</span>
-</div>
-
-</div><!-- /wrap -->
+</div><!-- /main -->
 
 <!-- VOICE BAR -->
-<div class="voice-bar" style="max-width:500px;left:50%;transform:translateX(-50%);right:auto;width:100%">
-  <div class="vb-info"><span>🔊</span> <span data-k="voice_alert">आवाज़ अलार्म</span></div>
-  <button class="vb-btn" id="voiceBtn" onclick="toggleVoice()">🔔 चालू करें</button>
+<div class="vbar">
+  <div class="vbar-info">
+    <div class="pdot" id="pdot"></div>
+    <span id="pollTxt">कनेक्ट नहीं है</span>
+  </div>
+  <div class="vbar-right">
+    <div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace" id="lastUpd">--:--:--</div>
+    <button class="v-btn" id="vBtn" onclick="toggleVoice()">🔔 आवाज़</button>
+  </div>
+</div>
+
+<!-- BOTTOM TABBAR -->
+<div class="tabbar">
+  <button class="tab-btn active" onclick="goTab('dash',this)"><div class="tb-icon">🏠</div><div class="tb-lbl">HOME</div></button>
+  <button class="tab-btn" onclick="goTab('wx',this)"><div class="tb-icon">🌤</div><div class="tb-lbl">मौसम</div></button>
+  <button class="tab-btn" onclick="goTab('ana',this)"><div class="tb-icon">📊</div><div class="tb-lbl">विश्लेषण</div></button>
+  <button class="tab-btn" onclick="goTab('graph',this)"><div class="tb-icon">📈</div><div class="tb-lbl">ग्राफ</div></button>
+  <button class="tab-btn" onclick="goTab('ai',this)"><div class="tb-icon">🧠</div><div class="tb-lbl">AI सलाह</div></button>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// TRANSLATIONS
-// ══════════════════════════════════════════════
-const TR={
-  hi:{mausam:'मौसम पूर्वानुमान',blynk_conn:'BLYNK कनेक्शन',save_conn:'✅ सेव करें और शुरू करें',not_conn:'कनेक्ट नहीं है',apni_fasal:'अपनी फसल चुनें',mitti_prakar:'मिट्टी का प्रकार',nami_star:'नमी स्तर (MOISTURE)',khatra:'खतरा सीमा',khet_vishleshan:'खेत विश्लेषण',nami_graph:'नमी % — सत्र ग्राफ',raw_graph:'Raw ADC ग्राफ',start_monitor:'मॉनिटरिंग शुरू करें',stop_monitor:'मॉनिटरिंग बंद करें',avadhi:'अवधि',readings:'रीडिंग',ausat:'औसत',pump:'पंप नियंत्रण',nami_thik:'नमी पर्याप्त है',chalu_karo:'चालू करें',band_karo:'बंद करें',anshankaran:'लक्ष्य नमी अंशांकन',calib_desc:'अपने खेत के लिए उपयुक्त नमी स्तर स्वयं निर्धारित करें।',set_target:'🎯 यही नमी चाहिए — सेट करें',clear_target:'🗑 लक्ष्य हटाएं',ai_salaah:'AI खेत सलाह',icar_ai:'ICAR-आधारित AI विश्लेषण',vishleshan:'विश्लेषण करें',vishleshan_ho_raha:'विश्लेषण हो रहा है...',antim:'अंतिम अपडेट:',voice_alert:'आवाज़ अलार्म',waiting:'डेटा का इंतज़ार है...',vartman_nami:'वर्तमान नमी',nyuntam:'न्यूनतम',adhiktam:'अधिकतम',parivartan_dar:'परिवर्तन दर',fc_kami:'FC की कमी',total_reading:'कुल रीडिंग',fc_time:'FC पहुँचने में',barish_probability:'वर्षा संभावना',temp:'तापमान',target_nami:'लक्ष्य नमी',pani_ki_kami:'पानी की कमी',anumaan:'अनुमानित समय',sookha:'0 (सूखा)',bhara:'4095 (भरा)',shuruat:'शुरुआत',abhi:'अभी',kul_badlav:'कुल बदलाव',raw_wait:'Raw ADC इंतज़ार है',start_monitor_msg:'मॉनिटरिंग शुरू करें',liveTxt:'लाइव ✓',
-    voice:{ok:'खेत में नमी पर्याप्त है। पंप बंद रखें।',low:'ध्यान दें! खेत में नमी कम है। सिंचाई की आवश्यकता है।',critical:'चेतावनी! खेत बहुत सूखा है। तुरंत सिंचाई करें।',flood:'खतरा! खेत में पानी भर गया है। पंप तुरंत बंद करें।'},
-    status:{ok:'खेत में नमी सही है ✓',low:'नमी कम — सिंचाई करें',critical:'बहुत कम नमी — तुरंत सिंचाई!',flood:'अत्यधिक नमी — पानी भर गया!',vgood:'नमी बहुत अच्छी है 🌱'}
-  },
-  en:{mausam:'Weather Forecast',blynk_conn:'BLYNK Connection',save_conn:'✅ Save & Start',not_conn:'Not connected',apni_fasal:'Select Your Crop',mitti_prakar:'Soil Type',nami_star:'Moisture Level',khatra:'Danger Threshold',khet_vishleshan:'Field Analytics',nami_graph:'Moisture % — Session Graph',raw_graph:'Raw ADC Graph',start_monitor:'Start Monitoring',stop_monitor:'Stop Monitoring',avadhi:'Duration',readings:'Readings',ausat:'Average',pump:'Pump Control',nami_thik:'Moisture adequate',chalu_karo:'Turn ON',band_karo:'Turn OFF',anshankaran:'Target Moisture Calibration',calib_desc:'Set the optimal moisture level for your field.',set_target:'🎯 Set This as Target',clear_target:'🗑 Clear Target',ai_salaah:'AI Field Advice',icar_ai:'ICAR-based AI Analysis',vishleshan:'Analyze',vishleshan_ho_raha:'Analyzing...',antim:'Last Update:',voice_alert:'Voice Alert',waiting:'Waiting for data...',vartman_nami:'Current Moisture',nyuntam:'Minimum',adhiktam:'Maximum',parivartan_dar:'Rate of Change',fc_kami:'FC Deficit',total_reading:'Total Readings',fc_time:'Time to FC',barish_probability:'Rainfall',temp:'Temperature',target_nami:'Target Moisture',pani_ki_kami:'Water Deficit',anumaan:'Estimated time',sookha:'0 (Dry)',bhara:'4095 (Full)',shuruat:'Start',abhi:'Now',kul_badlav:'Total Change',raw_wait:'Waiting for Raw ADC',liveTxt:'Live ✓',
-    voice:{ok:'Field moisture is adequate. Keep pump off.',low:'Alert! Field moisture is low. Irrigation needed.',critical:'Warning! Field is very dry. Irrigate immediately.',flood:'Danger! Field is waterlogged. Stop pump immediately.'},
-    status:{ok:'Moisture is good ✓',low:'Low moisture — irrigate',critical:'Very low — irrigate now!',flood:'Waterlogged — stop pump!',vgood:'Excellent moisture 🌱'}
-  },
-  mr:{mausam:'हवामान अंदाज',blynk_conn:'BLYNK कनेक्शन',save_conn:'✅ जतन करा',not_conn:'कनेक्ट नाही',apni_fasal:'तुमची पीक निवडा',mitti_prakar:'मातीचा प्रकार',nami_star:'ओलावा पातळी',khatra:'धोक्याची मर्यादा',khet_vishleshan:'शेत विश्लेषण',start_monitor:'देखरेख सुरू करा',stop_monitor:'देखरेख थांबवा',voice:{ok:'शेतात पुरेसा ओलावा आहे.',low:'सावधान! शेतात ओलावा कमी आहे.',critical:'इशारा! शेत खूप कोरडे आहे.',flood:'धोका! शेतात पूर आला आहे.'},status:{ok:'ओलावा योग्य आहे ✓',low:'कमी ओलावा — सिंचन करा',critical:'खूप कमी — आत्ता सिंचन करा!',flood:'जास्त पाणी — पंप बंद करा!',vgood:'उत्कृष्ट ओलावा 🌱'},liveTxt:'लाइव्ह ✓',waiting:'डेटाची वाट पाहत आहे...',antim:'शेवटचे अपडेट:',ausat:'सरासरी',avadhi:'कालावधी',readings:'रीडिंग'},
-  bn:{mausam:'আবহাওয়ার পূর্বাভাস',blynk_conn:'BLYNK সংযোগ',save_conn:'✅ সেভ করুন',not_conn:'সংযুক্ত নয়',apni_fasal:'আপনার ফসল বেছে নিন',mitti_prakar:'মাটির ধরন',nami_star:'আর্দ্রতার স্তর',khatra:'বিপদ সীমা',start_monitor:'পর্যবেক্ষণ শুরু করুন',stop_monitor:'পর্যবেক্ষণ বন্ধ করুন',voice:{ok:'মাঠে পর্যাপ্ত আর্দ্রতা আছে।',low:'সতর্কতা! মাঠে আর্দ্রতা কম।',critical:'সতর্কতা! মাঠ খুব শুকনো।',flood:'বিপদ! মাঠে জল জমেছে।'},status:{ok:'আর্দ্রতা ঠিক আছে ✓',low:'কম আর্দ্রতা',critical:'খুব কম — এখনই সেচ দিন!',flood:'জলাবদ্ধ!',vgood:'চমৎকার আর্দ্রতা 🌱'},liveTxt:'লাইভ ✓',waiting:'ডেটার অপেক্ষা...',antim:'শেষ আপডেট:',ausat:'গড়',avadhi:'সময়কাল',readings:'রিডিং'},
-  te:{mausam:'వాతావరణ సూచన',start_monitor:'పర్యవేక్షణ ప్రారంభించండి',stop_monitor:'పర్యవేక్షణ ఆపండి',voice:{ok:'పొలంలో తగినంత తేమ ఉంది.',low:'హెచ్చరిక! తేమ తక్కువగా ఉంది.',critical:'అత్యవసరం! పొలం చాలా పొడిగా ఉంది.',flood:'ప్రమాదం! పొలంలో నీరు నిండింది.'},status:{ok:'తేమ సరిగా ఉంది ✓',low:'తక్కువ తేమ',critical:'చాలా తక్కువ!',flood:'నీరు నిండింది!',vgood:'అద్భుతమైన తేమ 🌱'},liveTxt:'లైవ్ ✓',waiting:'డేటా కోసం వేచి...',antim:'చివరి నవీకరణ:'},
-  ta:{mausam:'வானிலை முன்னறிவிப்பு',start_monitor:'கண்காணிப்பை தொடங்கு',stop_monitor:'கண்காணிப்பை நிறுத்து',voice:{ok:'வயலில் போதுமான ஈரப்பதம் உள்ளது.',low:'எச்சரிக்கை! ஈரப்பதம் குறைவு.',critical:'அவசரம்! வயல் மிகவும் வறண்டது.',flood:'ஆபத்து! வயலில் வெள்ளம்.'},status:{ok:'ஈரப்பதம் சரி ✓',low:'குறைவான ஈரப்பதம்',critical:'மிகவும் குறைவு!',flood:'வெள்ளம்!',vgood:'சிறந்த ஈரப்பதம் 🌱'},liveTxt:'நேரடி ✓',waiting:'தரவுக்கு காத்திருக்கிறோம்...',antim:'கடைசி புதுப்பிப்பு:'},
-  gu:{mausam:'હવામાન આગાહી',start_monitor:'મોનિટરિંગ શરૂ કરો',stop_monitor:'મોનિટરિંગ બંધ કરો',voice:{ok:'ખેતરમાં પૂરતો ભેજ છે.',low:'ધ્યાન! ભેજ ઓછો છે.',critical:'ચેતવણી! ખેતર ખૂબ સૂકું છે.',flood:'ખતરો! ખેતર ડૂબ્યું.'},status:{ok:'ભેજ સારો છે ✓',low:'ઓછો ભેજ',critical:'ખૂબ ઓછો!',flood:'ડૂબ્યું!',vgood:'ઉત્તમ ભેજ 🌱'},liveTxt:'લાઇવ ✓',waiting:'ડેટાની રાહ...',antim:'છેલ્લો અપડેટ:'},
-  pa:{mausam:'ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ',start_monitor:'ਨਿਗਰਾਨੀ ਸ਼ੁਰੂ ਕਰੋ',stop_monitor:'ਨਿਗਰਾਨੀ ਬੰਦ ਕਰੋ',voice:{ok:'ਖੇਤ ਵਿੱਚ ਕਾਫ਼ੀ ਨਮੀ ਹੈ।',low:'ਧਿਆਨ! ਨਮੀ ਘੱਟ ਹੈ।',critical:'ਚੇਤਾਵਨੀ! ਖੇਤ ਬਹੁਤ ਸੁੱਕਾ ਹੈ।',flood:'ਖ਼ਤਰਾ! ਖੇਤ ਵਿੱਚ ਹੜ੍ਹ।'},status:{ok:'ਨਮੀ ਸਹੀ ਹੈ ✓',low:'ਘੱਟ ਨਮੀ',critical:'ਬਹੁਤ ਘੱਟ!',flood:'ਹੜ੍ਹ!',vgood:'ਸ਼ਾਨਦਾਰ ਨਮੀ 🌱'},liveTxt:'ਲਾਈਵ ✓',waiting:'ਡੇਟਾ ਦੀ ਉਡੀਕ...',antim:'ਆਖਰੀ ਅਪਡੇਟ:'},
-  kn:{start_monitor:'ಮೇಲ್ವಿಚಾರಣೆ ಪ್ರಾರಂಭಿಸಿ',stop_monitor:'ಮೇಲ್ವಿಚಾರಣೆ ನಿಲ್ಲಿಸಿ',voice:{ok:'ಜಮೀನಿನಲ್ಲಿ ಸಾಕಷ್ಟು ತೇವಾಂಶ ಇದೆ.',low:'ಎಚ್ಚರಿಕೆ! ತೇವಾಂಶ ಕಡಿಮೆ.',critical:'ತಕ್ಷಣ ನೀರಾವರಿ ಮಾಡಿ.',flood:'ಅಪಾಯ! ಜಮೀನು ಮುಳುಗಿದೆ.'},status:{ok:'ತೇವಾಂಶ ಸರಿ ✓',low:'ಕಡಿಮೆ ತೇವಾಂಶ',critical:'ತುಂಬಾ ಕಡಿಮೆ!',flood:'ಪ್ರವಾಹ!',vgood:'ಅದ್ಭುತ ತೇವಾಂಶ 🌱'},liveTxt:'ಲೈವ್ ✓',waiting:'ಡೇಟಾ ನಿರೀಕ್ಷೆ...'},
-  ml:{start_monitor:'നിരീക്ഷണം ആരംഭിക്കുക',stop_monitor:'നിരീക്ഷണം നിർത്തുക',voice:{ok:'വയലിൽ മതിയായ ഈർപ്പം ഉണ്ട്.',low:'ശ്രദ്ധ! ഈർപ്പം കുറവ്.',critical:'മുന്നറിയിപ്പ്! ഉടൻ നനയ്ക്കുക.',flood:'അപകടം! വയൽ വെള്ളത്തിൽ.'},status:{ok:'ഈർപ്പം ശരി ✓',low:'കുറഞ്ഞ ഈർപ്പം',critical:'വളരെ കുറവ്!',flood:'വെള്ളപ്പൊക്കം!',vgood:'മികച്ച ഈർപ്പം 🌱'},liveTxt:'ലൈവ് ✓',waiting:'ഡേറ്റ കാത്തിരിക്കുന്നു...'},
-  or:{start_monitor:'ନଜରଦାରି ଆରଂଭ କରନ୍ତୁ',stop_monitor:'ନଜରଦାରି ବନ୍ଦ କରନ୍ତୁ',voice:{ok:'ଜମିରେ ଯଥେଷ୍ଟ ଆର୍ଦ୍ରତା ଅଛି।',low:'ଧ୍ୟାନ! ଆର୍ଦ୍ରତା କମ।',critical:'ଚେତାବନୀ! ଜମି ଖୁବ ଶୁଖିଲା।',flood:'ବିପଦ! ଜମିରେ ବନ୍ୟା।'},status:{ok:'ଆର୍ଦ୍ରତା ଠିକ ✓',low:'କମ ଆର୍ଦ୍ରତା',critical:'ଖୁବ କମ!',flood:'ବନ୍ୟା!',vgood:'ଉତ୍ତମ ଆର୍ଦ୍ରତା 🌱'},liveTxt:'ଲାଇଭ ✓',waiting:'ଡାଟା ଅପେକ୍ଷା...'},
-  ur:{mausam:'موسم کی پیشگوئی',start_monitor:'نگرانی شروع کریں',stop_monitor:'نگرانی بند کریں',voice:{ok:'کھیت میں نمی کافی ہے۔',low:'خبردار! نمی کم ہے۔',critical:'فوری آبپاشی کریں۔',flood:'خطرہ! کھیت میں پانی بھر گیا۔'},status:{ok:'نمی ٹھیک ہے ✓',low:'کم نمی',critical:'بہت کم!',flood:'پانی بھرا!',vgood:'بہترین نمی 🌱'},liveTxt:'لائیو ✓',waiting:'ڈیٹا کا انتظار...',antim:'آخری اپڈیٹ:'}
-};
-
-function t(key,fallback){return (TR[curLang]&&TR[curLang][key])||(TR.hi[key])||fallback||key}
-function tv(key){return (TR[curLang]&&TR[curLang].voice&&TR[curLang].voice[key])||(TR.hi.voice[key])}
-function ts(key){return (TR[curLang]&&TR[curLang].status&&TR[curLang].status[key])||(TR.hi.status[key])}
-
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // STATE
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 let curLang='hi',curRaw=null,curMoist=null;
-let fasalName='गेहूँ',fasalTh=2200,mittiName='बालुई मिट्टी',mittiFC=2000;
-let seemaTh=2200;
+let fasalName='गेहूँ',fasalTh=2200,mittiFC=2000,mittiName='बालुई मिट्टी';
+let seemaTh=2200,calibTarget=null;
 let rawHist=[],moistHist=[],timeLabels=[];
 let sessStart=null,sessTimer=null,pollTimer=null;
 let monitoring=false,sessRead=0;
-let mChart=null,rChart=null;
+let mChart=null,rChart=null,miniChart=null;
 let blynkToken='',blynkPin='V2',blynkSrv='blynk.cloud';
-let pollMs=5000;
+let pollMs=3000;
 let voiceOn=false,alarmTimer=null,firstRead=true;
-let pumpManual=false,pumpOn=false;
-let calibTarget=null,calibMode=false;
-let wxData=null,userLat=null,userLon=null;
+let pumpOn=false,pumpManual=false;
+let pumpStartTime=null,pumpTimerInterval=null;
+let wxData=null;
 let graphView='all';
+let lastStatusKey='';
 
-// ══════════════════════════════════════════════
-// LANG
-// ══════════════════════════════════════════════
-function toggleLang(){document.getElementById('langDD').classList.toggle('open')}
-function setLang(l,el){
-  curLang=l;
-  document.querySelectorAll('.lang-opt').forEach(o=>o.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('langDD').classList.remove('open');
-  const lbl=el.childNodes[1]?el.childNodes[1].textContent.trim():'';
-  document.getElementById('langLbl').textContent=lbl.substring(0,2)||l.toUpperCase();
-  applyTrans();
+// ═══════════════════════════════════════════════════
+// LOCAL STORAGE PERSISTENCE
+// ═══════════════════════════════════════════════════
+function saveLS(){
+  try{localStorage.setItem('kisan_blynk',JSON.stringify({token:blynkToken,pin:blynkPin,srv:blynkSrv,poll:pollMs,lang:curLang,fasal:fasalName,fasalTh,mitti:mittiName,mittiFC,seemaTh,calibTarget,voiceOn}))}catch(e){}
 }
-function applyTrans(){
-  document.querySelectorAll('[data-k]').forEach(el=>{
-    const k=el.getAttribute('data-k'),v=t(k);
-    if(v&&v!==k)el.textContent=v;
-  });
-  document.getElementById('liveTxt').textContent=t('liveTxt','लाइव ✓');
-  const monTxt=document.getElementById('monTxt');
-  if(monTxt)monTxt.textContent=monitoring?t('stop_monitor'):t('start_monitor');
+function loadLS(){
+  try{
+    const d=JSON.parse(localStorage.getItem('kisan_blynk')||'{}');
+    if(d.token){blynkToken=d.token;document.getElementById('dToken').value=blynkToken}
+    if(d.pin){blynkPin=d.pin;document.getElementById('dPin').value=blynkPin}
+    if(d.srv){blynkSrv=d.srv;document.getElementById('dSrv').value=blynkSrv}
+    if(d.poll){pollMs=d.poll;document.getElementById('dPoll').value=pollMs/1000}
+    if(d.lang)setLangCode(d.lang);
+    if(d.calibTarget!=null)calibTarget=d.calibTarget;
+    if(d.voiceOn){voiceOn=true;document.getElementById('vBtn').className='v-btn on';document.getElementById('vBtn').textContent='🔕 बंद'}
+    // Restore fasal
+    if(d.fasal){
+      const fc=document.querySelector(`.fc[data-f="${d.fasal}"]`);
+      if(fc)pickFasal(fc);
+    }
+    // Restore mitti
+    if(d.mitti){
+      const mc=document.querySelector(`.mc[data-m="${d.mitti}"]`);
+      if(mc)pickMitti(mc);
+    }
+    // Restore seema
+    if(d.seemaTh){updateSeema(d.seemaTh);document.getElementById('seemaR').value=d.seemaTh}
+  }catch(e){}
 }
-document.addEventListener('click',e=>{if(!e.target.closest('#langBtn')&&!e.target.closest('#langDD'))document.getElementById('langDD').classList.remove('open')});
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// TABS + DRAWER
+// ═══════════════════════════════════════════════════
+function goTab(name,btn){
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleDrawer(){
+  const d=document.getElementById('drawer'),o=document.getElementById('dOverlay'),h=document.getElementById('hbtn');
+  const open=d.classList.toggle('open');
+  o.classList.toggle('open',open);
+  h.classList.toggle('open',open);
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('dOverlay').classList.remove('open');
+  document.getElementById('hbtn').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════════
+const LANGS={
+  hi:{live:'लाइव ✓',start:'मॉनिटरिंग शुरू करें',stop:'मॉनिटरिंग बंद करें',poff:'पंप: बंद',pon:'पंप: चालू',won:'✅ कनेक्टेड!',werr:'❌ कनेक्ट नहीं',notconn:'कनेक्ट नहीं है',voice:{ok:'खेत में नमी सही है। पंप बंद रखें।',low:'ध्यान दें! नमी कम है। सिंचाई की जरूरत है।',critical:'चेतावनी! खेत बहुत सूखा है। तुरंत सिंचाई करें।',flood:'खतरा! खेत में पानी भर गया। पंप बंद करें!'},st:{ok:'खेत में नमी सही है ✓',low:'नमी कम — सिंचाई करें',critical:'बहुत कम — तुरंत सिंचाई!',flood:'अत्यधिक नमी! पंप बंद करें',vgood:'नमी बहुत अच्छी है 🌱'}},
+  en:{live:'Live ✓',start:'Start Monitoring',stop:'Stop Monitoring',poff:'Pump: OFF',pon:'Pump: ON',won:'✅ Connected!',werr:'❌ Not connected',notconn:'Not connected',voice:{ok:'Field moisture is adequate.',low:'Alert! Moisture is low. Irrigate now.',critical:'Warning! Field is very dry. Irrigate immediately.',flood:'Danger! Field is waterlogged. Stop pump!'},st:{ok:'Moisture is good ✓',low:'Low — irrigate now',critical:'Very low — irrigate immediately!',flood:'Waterlogged! Stop pump',vgood:'Excellent moisture 🌱'}},
+  mr:{live:'लाइव्ह ✓',start:'देखरेख सुरू करा',stop:'देखरेख थांबवा',poff:'पंप: बंद',pon:'पंप: चालू',won:'✅ जोडलेले!',werr:'❌ जोडलेले नाही',notconn:'जोडलेले नाही',voice:{ok:'शेतात पुरेसा ओलावा आहे.',low:'लक्ष द्या! ओलावा कमी.',critical:'इशारा! शेत खूप कोरडे.',flood:'धोका! शेतात पूर आला.'},st:{ok:'ओलावा योग्य ✓',low:'कमी ओलावा',critical:'खूप कमी!',flood:'जास्त पाणी!',vgood:'उत्कृष्ट ओलावा 🌱'}},
+  bn:{live:'লাইভ ✓',start:'পর্যবেক্ষণ শুরু',stop:'পর্যবেক্ষণ বন্ধ',poff:'পাম্প: বন্ধ',pon:'পাম্প: চালু',won:'✅ সংযুক্ত!',werr:'❌ সংযুক্ত নয়',notconn:'সংযুক্ত নয়',voice:{ok:'মাঠে আর্দ্রতা পর্যাপ্ত।',low:'সতর্কতা! আর্দ্রতা কম।',critical:'জরুরি! সেচ দিন।',flood:'বিপদ! মাঠে জলাবদ্ধতা।'},st:{ok:'আর্দ্রতা ঠিক ✓',low:'কম আর্দ্রতা',critical:'খুব কম!',flood:'জলাবদ্ধ!',vgood:'চমৎকার 🌱'}},
+  te:{live:'లైవ్ ✓',start:'పర్యవేక్షణ',stop:'ఆపు',poff:'పంప్: ఆఫ్',pon:'పంప్: ఆన్',voice:{ok:'తేమ సరిపోతుంది.',low:'హెచ్చరిక! తేమ తక్కువ.',critical:'అత్యవసరం! నీరు పోయండి.',flood:'ప్రమాదం! నీరు నిండింది.'},st:{ok:'తేమ సరి ✓',low:'తక్కువ తేమ',critical:'చాలా తక్కువ!',flood:'నీరు నిండింది!',vgood:'అద్భుతం 🌱'},notconn:'కనెక్ట్ కాలేదు'},
+  ta:{live:'நேரடி ✓',start:'கண்காணிப்பு',stop:'நிறுத்து',poff:'பம்ப்: ஆஃப்',pon:'பம்ப்: ஆன்',voice:{ok:'ஈரப்பதம் சரி.',low:'எச்சரிக்கை! ஈரப்பதம் குறைவு.',critical:'உடனடி நீர்ப்பாசனம்.',flood:'ஆபத்து! தண்ணீர் நிரம்பியது.'},st:{ok:'ஈரப்பதம் சரி ✓',low:'குறைவான ஈரப்பதம்',critical:'மிகவும் குறைவு!',flood:'வெள்ளம்!',vgood:'சிறந்தது 🌱'},notconn:'இணைக்கப்படவில்லை'},
+  gu:{live:'લાઇવ ✓',start:'મોનિટરિંગ',stop:'બંધ',poff:'પંપ: બંધ',pon:'પંપ: ચાલુ',voice:{ok:'ભેજ પૂરતો છે.',low:'ધ્યાન! ભેજ ઓછો.',critical:'ચેતવણી! ખૂબ સૂકું.',flood:'ખતરો! ડૂબ્યું.'},st:{ok:'ભેજ સારો ✓',low:'ઓછો ભેજ',critical:'ખૂબ ઓછો!',flood:'ડૂબ્યું!',vgood:'ઉત્તમ 🌱'},notconn:'જોડાયેલ નથી'},
+  pa:{live:'ਲਾਈਵ ✓',start:'ਸ਼ੁਰੂ ਕਰੋ',stop:'ਬੰਦ ਕਰੋ',poff:'ਪੰਪ: ਬੰਦ',pon:'ਪੰਪ: ਚਾਲੂ',voice:{ok:'ਨਮੀ ਕਾਫ਼ੀ ਹੈ।',low:'ਧਿਆਨ! ਨਮੀ ਘੱਟ।',critical:'ਚੇਤਾਵਨੀ! ਤੁਰੰਤ ਸਿੰਚਾਈ।',flood:'ਖ਼ਤਰਾ! ਹੜ੍ਹ।'},st:{ok:'ਨਮੀ ਸਹੀ ✓',low:'ਘੱਟ ਨਮੀ',critical:'ਬਹੁਤ ਘੱਟ!',flood:'ਹੜ੍ਹ!',vgood:'ਸ਼ਾਨਦਾਰ 🌱'},notconn:'ਜੁੜਿਆ ਨਹੀਂ'},
+  kn:{live:'ಲೈವ್ ✓',start:'ಪ್ರಾರಂಭಿಸಿ',stop:'ನಿಲ್ಲಿಸಿ',poff:'ಪಂಪ್: ಆಫ್',pon:'ಪಂಪ್: ಆನ್',voice:{ok:'ತೇವಾಂಶ ಸಾಕಷ್ಟಿದೆ.',low:'ಎಚ್ಚರಿಕೆ! ತೇವಾಂಶ ಕಡಿಮೆ.',critical:'ತಕ್ಷಣ ನೀರಾವರಿ.',flood:'ಅಪಾಯ! ಪ್ರವಾಹ.'},st:{ok:'ತೇವಾಂಶ ಸರಿ ✓',low:'ಕಡಿಮೆ',critical:'ಬಹಳ ಕಡಿಮೆ!',flood:'ಪ್ರವಾಹ!',vgood:'ಅದ್ಭುತ 🌱'},notconn:'ಸಂಪರ್ಕ ಇಲ್ಲ'},
+  ml:{live:'ലൈവ് ✓',start:'ആരംഭിക്കുക',stop:'നിർത്തുക',poff:'പമ്പ്: ഓഫ്',pon:'പമ്പ്: ഓൺ',voice:{ok:'ഈർപ്പം മതിയായതാണ്.',low:'മുന്നറിയിപ്പ്! ഈർപ്പം കുറവ്.',critical:'ഉടൻ നനയ്ക്കുക.',flood:'അപകടം! വെള്ളപ്പൊക്കം.'},st:{ok:'ഈർപ്പം ശരി ✓',low:'കുറഞ്ഞ ഈർപ്പം',critical:'വളരെ കുറവ്!',flood:'വെള്ളപ്പൊക്കം!',vgood:'മികച്ചത് 🌱'},notconn:'ബന്ധമില്ല'},
+  or:{live:'ଲାଇଭ ✓',start:'ଆରମ୍ଭ',stop:'ବନ୍ଦ',poff:'ପମ୍ପ: ବନ୍ଦ',pon:'ପମ୍ପ: ଚାଲୁ',voice:{ok:'ଆର୍ଦ୍ରତା ଯଥେଷ୍ଟ।',low:'ଧ୍ୟାନ! ଆର୍ଦ୍ରତା କମ।',critical:'ଚେତାବନୀ! ଜଳ ଦିଅ।',flood:'ବିପଦ! ବନ୍ୟା।'},st:{ok:'ଆର୍ଦ୍ରତା ଠିକ ✓',low:'କମ',critical:'ଖୁବ କମ!',flood:'ବନ୍ୟା!',vgood:'ଉତ୍ତମ 🌱'},notconn:'ସଂଯୁକ୍ତ ନୁହେଁ'},
+  ur:{live:'لائیو ✓',start:'نگرانی شروع',stop:'نگرانی بند',poff:'پمپ: بند',pon:'پمپ: چالو',voice:{ok:'نمی کافی ہے۔',low:'خبردار! نمی کم۔',critical:'فوری آبپاشی۔',flood:'خطرہ! پانی بھرا۔'},st:{ok:'نمی ٹھیک ✓',low:'کم نمی',critical:'بہت کم!',flood:'پانی بھرا!',vgood:'بہترین 🌱'},notconn:'منسلک نہیں'}
+};
+function L(key,sub=''){const d=LANGS[curLang]||LANGS.hi;if(sub)return (d[key]&&d[key][sub])||(LANGS.hi[key]&&LANGS.hi[key][sub])||'';return d[key]||LANGS.hi[key]||key}
+function setLangCode(l){curLang=l;document.querySelectorAll('.lang-chip').forEach(c=>{c.classList.toggle('active',c.textContent.trim()===getLangLabel(l))});applyLang()}
+function getLangLabel(l){const map={hi:'हिंदी',en:'English',mr:'मराठी',bn:'বাংলা',te:'తెలుగు',ta:'தமிழ்',gu:'ગુજ',pa:'ਪੰਜਾ',kn:'ಕನ್ನ',ml:'മലയ',or:'ଓଡ଼ିଆ',ur:'اردو'};return map[l]||l}
+function applyLang(){document.getElementById('liveTxt').textContent=L('live');document.getElementById('monTxt').textContent=monitoring?L('stop'):L('start');if(!pumpOn){document.getElementById('pmLbl').textContent=L('poff');document.getElementById('pmLbl').className='pm-label off'}else{document.getElementById('pmLbl').textContent=L('pon');document.getElementById('pmLbl').className='pm-label on'}saveLS()}
+function setLang(l,el){curLang=l;document.querySelectorAll('.lang-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');applyLang()}
+
+// ═══════════════════════════════════════════════════
 // BLYNK
-// ══════════════════════════════════════════════
-function toggleBlynk(){
-  const b=document.getElementById('bbody'),c=document.getElementById('bchev');
-  b.classList.toggle('open');c.classList.toggle('open');
-}
+// ═══════════════════════════════════════════════════
 function saveBlynk(){
-  blynkToken=document.getElementById('authTok').value.trim();
-  blynkPin=document.getElementById('vpin').value.trim().toUpperCase()||'V2';
-  blynkSrv=document.getElementById('bserver').value.trim()||'blynk.cloud';
-  pollMs=Math.max(3000,parseInt(document.getElementById('pollS').value||'5')*1000);
-  if(!blynkToken){setMsg('err','Auth Token डालें!');return}
-  setMsg('ok','सेव हो गया — कनेक्ट हो रहे हैं...');
-  fetchBlynk(true);
+  blynkToken=document.getElementById('dToken').value.trim();
+  blynkPin=document.getElementById('dPin').value.trim().toUpperCase()||'V2';
+  blynkSrv=document.getElementById('dSrv').value.trim()||'blynk.cloud';
+  pollMs=Math.max(2000,parseInt(document.getElementById('dPoll').value||'3')*1000);
+  if(!blynkToken){setDMsg('err','Auth Token डालें!');return}
+  setDMsg('ok','कनेक्ट हो रहे हैं...');
+  saveLS();
+  // Auto-start monitoring
+  if(!monitoring){startMonitoring()}else{restartPoll()}
+  setTimeout(closeDrawer,1200);
 }
-function setMsg(type,txt){const m=document.getElementById('bmsg');m.textContent=txt;m.className='bmsg '+type}
-function setBDot(s){document.getElementById('bsdot').className='bsdot '+(s==='on'?'on':s==='err'?'err':'')}
+function setDMsg(t,m){const el=document.getElementById('dmsg');el.textContent=m;el.className='d-msg '+t}
 
-async function fetchBlynk(initial=false){
-  if(!blynkToken)return;
+let fetchInFlight=false;
+async function fetchBlynk(){
+  if(!blynkToken||fetchInFlight)return;
+  fetchInFlight=true;
   const pin=blynkPin.startsWith('V')?blynkPin.toLowerCase():'v'+blynkPin;
   const url=`https://${blynkSrv}/external/api/get?token=${blynkToken}&${pin}`;
   try{
-    const r=await fetch(url);
+    const r=await fetch(url,{signal:AbortSignal.timeout(4000)});
     if(!r.ok)throw new Error('HTTP '+r.status);
     const v=parseFloat(await r.text());
     if(isNaN(v))throw new Error('Invalid');
     onReading(v);
-    setBDot('on');
-    document.getElementById('rawdot').className='bsdot on';
-    if(initial){setMsg('ok',`✅ कनेक्टेड! Raw: ${Math.round(v)}`)}
-    document.getElementById('pdot').className='pdot on';
-    document.getElementById('pollTxt').textContent=`हर ${pollMs/1000}s पर अपडेट`;
+    setBStatus('on');
   }catch(e){
-    setBDot('err');
-    document.getElementById('rawdot').className='bsdot err';
-    if(initial){setMsg('err','❌ Error: '+e.message)}
+    setBStatus('err');
+    console.warn('Blynk:',e.message);
   }
+  fetchInFlight=false;
+}
+function setBStatus(s){
+  document.getElementById('pdot').className='pdot '+(s==='on'?'on':'');
+  document.getElementById('rawDot').className='pdot '+(s==='on'?'on':'');
+  if(s==='on'){document.getElementById('liveTxt').textContent=L('live');document.getElementById('pollTxt').textContent=`हर ${pollMs/1000}s | ${blynkPin}`}
+  else{document.getElementById('pollTxt').textContent=L('notconn')||'कनेक्ट नहीं'}
+}
+function restartPoll(){
+  if(pollTimer)clearInterval(pollTimer);
+  fetchBlynk();
+  pollTimer=setInterval(fetchBlynk,pollMs);
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // READING
-// ══════════════════════════════════════════════
-function calcM(raw){
-  const pct=((4095-raw)/(4095-mittiFC))*100;
-  return Math.max(0,Math.min(130,Math.round(pct*10)/10));
-}
+// ═══════════════════════════════════════════════════
+function calcM(raw){return Math.max(0,Math.min(130,Math.round(((4095-raw)/(4095-mittiFC))*1000)/10))}
 
 function onReading(raw){
-  const wasFirst=firstRead&&curRaw===null;
-  curRaw=Math.round(raw);
-  curMoist=calcM(curRaw);
+  const isFirst=firstRead&&curRaw===null;
+  curRaw=Math.round(raw);curMoist=calcM(curRaw);
   const now=new Date();
   const ts=now.toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   if(monitoring){rawHist.push(curRaw);moistHist.push(curMoist);timeLabels.push(ts);sessRead++}
   updateGauge();updateStatus();updateAna();updateGraph();updatePump();updateCalibLive();
   document.getElementById('lastUpd').textContent=ts;
-  // First reading voice notification
-  if(wasFirst&&voiceOn){firstRead=false;setTimeout(()=>firstNotify(),800)}
+  document.getElementById('sLast').textContent=ts.split(' ')[0]||ts;
+  document.getElementById('liveGCount').textContent=sessRead+' रीडिंग';
+  if(isFirst&&voiceOn){firstRead=false;setTimeout(()=>firstNotify(),600)}
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // GAUGE
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function updateGauge(){
   if(curMoist===null)return;
-  const d=Math.min(100,curMoist);
-  const off=440*(1-d/100);
+  const d=Math.min(100,curMoist),off=402*(1-d/100);
   document.getElementById('garc').style.strokeDashoffset=off;
   document.getElementById('glow').style.strokeDashoffset=off;
-  // Color
   const arc=document.getElementById('garc');
   if(curMoist<20)arc.setAttribute('stroke','#ff1744');
   else if(curMoist<40)arc.setAttribute('stroke','#ff9100');
   else if(curMoist<60)arc.setAttribute('stroke','#ffd600');
   else arc.setAttribute('stroke','url(#gg)');
   document.getElementById('gPct').textContent=Math.round(curMoist);
-  const emoji=curMoist<15?'🏜️':curMoist<35?'🌵':curMoist<55?'🌿':curMoist<80?'🌱':curMoist<105?'💧':'🌊';
-  document.getElementById('gEmoji').textContent=emoji;
-  document.getElementById('gSub').textContent='ICAR अंशांकित';
-  document.getElementById('gFasal').textContent=fasalName+' | सीमा: '+fasalTh;
+  document.getElementById('gRaw').textContent='RAW: '+curRaw;
+  const e=curMoist<15?'🏜️':curMoist<35?'🌵':curMoist<55?'🌿':curMoist<80?'🌱':curMoist<105?'💧':'🌊';
+  document.getElementById('gEmoji').textContent=e;
+  document.getElementById('gFasalLbl').textContent=fasalName+' | FC: '+mittiFC;
+  document.getElementById('calibCur').textContent=Math.round(curMoist)+'%';
+  document.getElementById('calibRaw').textContent='Raw: '+curRaw;
+  document.getElementById('calibBar').style.width=Math.min(100,curMoist)+'%';
+  // Mini stats
+  if(moistHist.length>0){
+    document.getElementById('ms_min').textContent=Math.round(Math.min(...moistHist));
+    document.getElementById('ms_max').textContent=Math.round(Math.max(...moistHist));
+  }
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // STATUS
-// ══════════════════════════════════════════════
-const stLevels=[
-  {max:15,cls:'sr',icon:'🏜️',key:'critical',pump:true},
-  {max:35,cls:'so',icon:'🌵',key:'low',pump:true},
-  {max:55,cls:'sy',icon:'⚠️',key:'low',pump:true},
-  {max:75,cls:'sg',icon:'✅',key:'ok',pump:false},
-  {max:95,cls:'sg',icon:'🌱',key:'vgood',pump:false},
-  {max:999,cls:'sb',icon:'🌊',key:'flood',pump:false}
-];
-let lastStatusKey='';
+// ═══════════════════════════════════════════════════
+const stLevels=[{max:15,cls:'sr',icon:'🏜️',key:'critical',pump:true},{max:35,cls:'so',icon:'🌵',key:'low',pump:true},{max:55,cls:'sy',icon:'⚠️',key:'low',pump:true},{max:75,cls:'sg',icon:'✅',key:'ok',pump:false},{max:95,cls:'sg',icon:'🌱',key:'vgood',pump:false},{max:999,cls:'sb',icon:'🌊',key:'flood',pump:false}];
 function updateStatus(){
   if(curMoist===null)return;
   let lv=stLevels[stLevels.length-1];
   for(const l of stLevels){if(curMoist<l.max){lv=l;break}}
-  document.getElementById('sbanner').className='sbanner '+lv.cls;
+  const bn=document.getElementById('sbanner');
+  bn.className='sbanner '+lv.cls;
   document.getElementById('sIcon').textContent=lv.icon;
-  document.getElementById('sTxt').textContent=ts(lv.key);
-  // Seema
+  document.getElementById('sTxt').textContent=L('st',lv.key);
   const fp=((4095-(curRaw||4095))/4095)*100;
   document.getElementById('sfill').style.width=fp+'%';
   document.getElementById('seemaDisp').textContent=(curRaw||0)+' / 4095';
-  // Flood alarm
-  if(lv.key==='flood'){startFloodAlarm()}else{stopFloodAlarm()}
-  // Voice on status change
-  if(lv.key!==lastStatusKey&&voiceOn&&!firstRead){
-    speak(tv(lv.key));
-    lastStatusKey=lv.key;
-  }
+  if(lv.key==='flood')startFloodAlarm();else stopFloodAlarm();
+  if(lv.key!==lastStatusKey&&voiceOn&&!firstRead){speak(L('voice',lv.key));lastStatusKey=lv.key}
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // ANALYTICS
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function updateAna(){
   if(curMoist===null)return;
   document.getElementById('a_cur').textContent=Math.round(curMoist);
   if(moistHist.length>0){
-    const mn=Math.min(...moistHist),mx=Math.max(...moistHist);
-    const avg=moistHist.reduce((a,b)=>a+b,0)/moistHist.length;
+    const mn=Math.min(...moistHist),mx=Math.max(...moistHist),avg=moistHist.reduce((a,b)=>a+b,0)/moistHist.length;
     document.getElementById('a_min').textContent=Math.round(mn);
     document.getElementById('a_max').textContent=Math.round(mx);
     document.getElementById('a_avg').textContent=Math.round(avg*10)/10;
     document.getElementById('sAvg').textContent=Math.round(avg)+'%';
-    document.getElementById('sRead').textContent=sessRead;
     document.getElementById('a_cnt').textContent=sessRead;
-    if(moistHist.length>=2){
+    document.getElementById('sRead').textContent=sessRead;
+    if(moistHist.length>=3){
       const rc=moistHist.slice(-8);
       const rate=(rc[rc.length-1]-rc[0])/Math.max(1,(rc.length-1)*(pollMs/60000));
       const rr=Math.round(rate*100)/100;
       document.getElementById('a_rate').textContent=(rr>=0?'+':'')+rr;
+      document.getElementById('ms_rate').textContent=(rr>=0?'+':'')+rr;
       const te=document.getElementById('a_trend');
-      if(Math.abs(rr)<0.05){te.textContent='→ स्थिर';te.className='asub tst'}
-      else if(rr>0){te.textContent='↑ बढ़ रहा है';te.className='asub tup'}
-      else{te.textContent='↓ घट रहा है';te.className='asub tdn'}
-      // ETA
+      if(Math.abs(rr)<0.05){te.textContent='→ स्थिर';te.className='a-sub tst'}
+      else if(rr>0){te.textContent='↑ बढ़ रहा';te.className='a-sub tup'}
+      else{te.textContent='↓ घट रहा';te.className='a-sub tdn'}
       if(rate>0.05){const rem=100-curMoist;const etaM=Math.round(rem/rate);document.getElementById('a_eta').textContent=etaM>60?Math.floor(etaM/60)+'ह '+(etaM%60)+'म':etaM+'म'}
       else if(rate<-0.05)document.getElementById('a_eta').textContent='↓ सूख रहा';
       else document.getElementById('a_eta').textContent='~स्थिर';
@@ -1070,56 +908,67 @@ function updateAna(){
   }
   const def=Math.max(0,100-curMoist);
   document.getElementById('a_def').textContent=Math.round(def);
-  document.getElementById('a_def_s').textContent=def<3?'✅ FC पर है':Math.round(def)+'% और चाहिए';
-  // Calibration comparison
+  document.getElementById('a_defs').textContent=def<3?'✅ FC पर है':Math.round(def)+'% और चाहिए';
   if(calibTarget!==null){
-    document.getElementById('a_target').textContent=Math.round(calibTarget);
+    document.getElementById('a_tgt').textContent=Math.round(calibTarget);
     const gap=Math.max(0,calibTarget-curMoist);
     document.getElementById('a_gap').textContent=Math.round(gap);
-    document.getElementById('a_gap_s').textContent=gap<2?'✅ लक्ष्य पर!':Math.round(gap)+'% और चाहिए';
+    document.getElementById('a_gaps').textContent=gap<2?'✅ लक्ष्य पर!':Math.round(gap)+'% और चाहिए';
+    document.getElementById('calibCmp').textContent=gap<=0?'✅ लक्ष्य पर है या अधिक!':'लक्ष्य तक '+Math.round(gap)+'% और चाहिए';
   }
-  // Weather data
   if(wxData){
     document.getElementById('a_temp').textContent=Math.round(wxData.temp);
-    document.getElementById('a_temp_s').textContent=wxData.city||'वर्तमान';
+    document.getElementById('a_temps').textContent=wxData.city||'वर्तमान';
     document.getElementById('a_rain').textContent=wxData.rain24||'0';
-    document.getElementById('a_rain_s').textContent=wxData.rain24>5?'🌧 वर्षा संभव!':'अगले 24 घंटे';
+    document.getElementById('a_rains').textContent=wxData.rain24>5?'🌧 वर्षा संभव!':'अगले 24 घंटे';
   }
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // CHARTS
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+const CHART_OPT=(yMin,yMax,cb)=>({type:'line',options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},scales:{x:{ticks:{color:'#7a9bb5',font:{size:8},maxTicksLimit:5,maxRotation:0},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.07)'}},y:{min:yMin,max:yMax,ticks:{color:'#7a9bb5',font:{size:8},callback:cb,maxTicksLimit:5},grid:{color:'rgba(0,229,255,0.05)'},border:{color:'rgba(0,229,255,0.07)'}}},plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(9,21,34,.95)',borderColor:'rgba(0,230,118,.25)',borderWidth:1,titleColor:'#00e676',bodyColor:'#e4f0ff'}}}});
+
 function initCharts(){
+  // Main moisture chart
   if(mChart)mChart.destroy();
   const mc=document.getElementById('mc').getContext('2d');
-  const g1=mc.createLinearGradient(0,0,0,160);
-  g1.addColorStop(0,'rgba(0,230,118,0.28)');g1.addColorStop(1,'rgba(0,230,118,0)');
-  mChart=new Chart(mc,{type:'line',data:{labels:[],datasets:[{label:'नमी %',data:[],borderColor:'#00e676',backgroundColor:g1,borderWidth:2,fill:true,tension:0.4,pointRadius:2,pointHoverRadius:5,pointBackgroundColor:'#00e676',pointBorderColor:'#070d1a',pointBorderWidth:1.5}]},
-    options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
-      scales:{x:{ticks:{color:'#8baabb',font:{size:8},maxTicksLimit:6,maxRotation:0},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}},
-        y:{min:0,max:110,ticks:{color:'#8baabb',font:{size:8},callback:v=>v+'%'},grid:{color:'rgba(0,229,255,0.05)'},border:{color:'rgba(0,229,255,0.08)'}}},
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,22,40,.95)',borderColor:'rgba(0,230,118,.3)',borderWidth:1,titleColor:'#00e676',bodyColor:'#e8f4ff'}}}});
-
+  const g1=mc.createLinearGradient(0,0,0,150);
+  g1.addColorStop(0,'rgba(0,230,118,0.25)');g1.addColorStop(1,'rgba(0,230,118,0)');
+  const cfg=CHART_OPT(0,110,v=>v+'%');
+  cfg.data={labels:[],datasets:[{label:'नमी',data:[],borderColor:'#00e676',backgroundColor:g1,borderWidth:2,fill:true,tension:0.4,pointRadius:2,pointHoverRadius:5,pointBackgroundColor:'#00e676',pointBorderColor:'#060c18',pointBorderWidth:1.5}]};
+  mChart=new Chart(mc,cfg);
+  // Raw chart
   if(rChart)rChart.destroy();
   const rc=document.getElementById('rc').getContext('2d');
-  const g2=rc.createLinearGradient(0,0,0,160);
-  g2.addColorStop(0,'rgba(0,229,255,0.22)');g2.addColorStop(1,'rgba(0,229,255,0)');
-  rChart=new Chart(rc,{type:'line',data:{labels:[],datasets:[{label:'Raw ADC',data:[],borderColor:'#00e5ff',backgroundColor:g2,borderWidth:2,fill:true,tension:0.4,pointRadius:2,pointHoverRadius:4,pointBackgroundColor:'#00e5ff',pointBorderColor:'#070d1a',pointBorderWidth:1}]},
-    options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
-      scales:{x:{ticks:{color:'#8baabb',font:{size:8},maxTicksLimit:5,maxRotation:0},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}},
-        y:{min:1271,max:4095,ticks:{color:'#8baabb',font:{size:8},maxTicksLimit:5},grid:{color:'rgba(0,229,255,0.04)'},border:{color:'rgba(0,229,255,0.08)'}}},
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,22,40,.95)',borderColor:'rgba(0,229,255,.3)',borderWidth:1,titleColor:'#00e5ff',bodyColor:'#e8f4ff'}}}});
+  const g2=rc.createLinearGradient(0,0,0,150);
+  g2.addColorStop(0,'rgba(0,229,255,0.2)');g2.addColorStop(1,'rgba(0,229,255,0)');
+  const cfg2=CHART_OPT(1271,4095,v=>v);
+  cfg2.data={labels:[],datasets:[{label:'Raw',data:[],borderColor:'#00e5ff',backgroundColor:g2,borderWidth:2,fill:true,tension:0.4,pointRadius:1.5,pointHoverRadius:4,pointBackgroundColor:'#00e5ff',pointBorderColor:'#060c18',pointBorderWidth:1}]};
+  rChart=new Chart(rc,cfg2);
+  // Mini chart (dashboard)
+  if(miniChart)miniChart.destroy();
+  const mmc=document.getElementById('miniChart').getContext('2d');
+  const g3=mmc.createLinearGradient(0,0,0,140);
+  g3.addColorStop(0,'rgba(0,230,118,0.2)');g3.addColorStop(1,'rgba(0,230,118,0)');
+  const cfg3=CHART_OPT(0,110,v=>v+'%');
+  cfg3.data={labels:[],datasets:[{label:'नमी',data:[],borderColor:'#00e676',backgroundColor:g3,borderWidth:1.5,fill:true,tension:0.4,pointRadius:1,pointHoverRadius:4,pointBackgroundColor:'#00e676',pointBorderColor:'#060c18',pointBorderWidth:1}]};
+  miniChart=new Chart(mmc,cfg3);
 }
 
 function updateGraph(){
   if(!monitoring||moistHist.length===0)return;
   document.getElementById('nd1').style.display='none';document.getElementById('cc1').style.display='block';
   document.getElementById('nd2').style.display='none';document.getElementById('cc2').style.display='block';
+  document.getElementById('miniGraphBox').style.display='block';
   let lbl=timeLabels,md=moistHist,rd=rawHist;
   if(graphView==='20'){lbl=lbl.slice(-20);md=md.slice(-20);rd=rd.slice(-20)}
-  if(mChart){mChart.data.labels=lbl;mChart.data.datasets[0].data=md;mChart.update('none')}
-  if(rChart){rChart.data.labels=lbl;rChart.data.datasets[0].data=rd;rChart.update('none')}
+  [mChart,rChart,miniChart].forEach((c,i)=>{
+    if(!c)return;
+    c.data.labels=lbl;
+    c.data.datasets[0].data=i===1?rd:md;
+    c.update('none');
+  });
   if(md.length>0){
     document.getElementById('gs1').style.display='grid';
     document.getElementById('gss').textContent=Math.round(md[0])+'%';
@@ -1128,48 +977,37 @@ function updateGraph(){
     document.getElementById('gsd').textContent=(df>=0?'+':'')+Math.round(df*10)/10+'%';
   }
 }
+function setView(v,btn){graphView=v;document.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');updateGraph()}
+function clearGraph(){rawHist=[];moistHist=[];timeLabels=[];sessRead=0;document.getElementById('nd1').style.display='flex';document.getElementById('cc1').style.display='none';document.getElementById('nd2').style.display='flex';document.getElementById('cc2').style.display='none';document.getElementById('gs1').style.display='none';document.getElementById('miniGraphBox').style.display='none';if(mChart){mChart.data.labels=[];mChart.data.datasets[0].data=[];mChart.update()}if(rChart){rChart.data.labels=[];rChart.data.datasets[0].data=[];rChart.update()}if(miniChart){miniChart.data.labels=[];miniChart.data.datasets[0].data=[];miniChart.update()}}
 
-function setView(v,btn){
-  graphView=v;
-  document.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');updateGraph();
-}
-function clearGraph(){
-  rawHist=[];moistHist=[];timeLabels=[];sessRead=0;
-  document.getElementById('nd1').style.display='flex';document.getElementById('cc1').style.display='none';
-  document.getElementById('nd2').style.display='flex';document.getElementById('cc2').style.display='none';
-  document.getElementById('gs1').style.display='none';
-  document.getElementById('a_cnt').textContent='0';
-  if(mChart){mChart.data.labels=[];mChart.data.datasets[0].data=[];mChart.update()}
-  if(rChart){rChart.data.labels=[];rChart.data.datasets[0].data=[];rChart.update()}
-}
-
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // MONITORING
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function toggleMonitor(){
-  if(!blynkToken){showToast('पहले Blynk Token सेट करें!','warn');return}
-  monitoring=!monitoring;
-  const btn=document.getElementById('monBtn'),txt=document.getElementById('monTxt');
-  if(monitoring){
-    btn.className='mon-btn stop';txt.textContent=t('stop_monitor');
-    btn.querySelector('span:first-child').textContent='⏹️';
-    sessStart=new Date();rawHist=[];moistHist=[];timeLabels=[];sessRead=0;firstRead=true;lastStatusKey='';
-    startSessTimer();initCharts();
-    if(pollTimer)clearInterval(pollTimer);
-    fetchBlynk();pollTimer=setInterval(()=>fetchBlynk(),pollMs);
-    document.getElementById('pdot').className='pdot on';
-  }else{
-    btn.className='mon-btn start';txt.textContent=t('start_monitor');
-    btn.querySelector('span:first-child').textContent='🎙️';
-    if(pollTimer){clearInterval(pollTimer);pollTimer=null}
-    if(sessTimer){clearInterval(sessTimer);sessTimer=null}
-    document.getElementById('pdot').className='pdot';
-    document.getElementById('pollTxt').textContent=t('not_conn');
-    stopFloodAlarm();
-  }
+  if(!blynkToken){showToast('पहले Blynk Token सेट करें!','w');toggleDrawer();return}
+  if(monitoring)stopMonitoring();else startMonitoring();
 }
-
+function startMonitoring(){
+  monitoring=true;firstRead=true;lastStatusKey='';
+  sessStart=new Date();rawHist=[];moistHist=[];timeLabels=[];sessRead=0;
+  const btn=document.getElementById('monBtn');
+  btn.className='mon-btn stop';
+  document.getElementById('monTxt').textContent=L('stop');
+  btn.querySelector('span:first-child').textContent='⏹️';
+  startSessTimer();initCharts();restartPoll();
+}
+function stopMonitoring(){
+  monitoring=false;
+  const btn=document.getElementById('monBtn');
+  btn.className='mon-btn start';
+  document.getElementById('monTxt').textContent=L('start');
+  btn.querySelector('span:first-child').textContent='🎙️';
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null}
+  if(sessTimer){clearInterval(sessTimer);sessTimer=null}
+  document.getElementById('pdot').className='pdot';
+  document.getElementById('pollTxt').textContent=L('notconn')||'कनेक्ट नहीं';
+  stopFloodAlarm();
+}
 function startSessTimer(){
   if(sessTimer)clearInterval(sessTimer);
   sessTimer=setInterval(()=>{
@@ -1179,243 +1017,144 @@ function startSessTimer(){
   },1000);
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // PUMP
-// ══════════════════════════════════════════════
-function updatePump(){
-  if(pumpManual)return;
-  for(const l of stLevels){if(curMoist<l.max){setPump(l.pump);break}}
-}
-function manualPump(){
-  pumpManual=true;setPump(!pumpOn);
-  setTimeout(()=>{pumpManual=false},60000);
-}
+// ═══════════════════════════════════════════════════
+function updatePump(){if(pumpManual)return;let np=false;for(const l of stLevels){if(curMoist<l.max){np=l.pump;break}}if(np!==pumpOn)setPump(np);}
+function manualPump(){pumpManual=true;setPump(!pumpOn);setTimeout(()=>{pumpManual=false},60000)}
 function setPump(on){
   pumpOn=on;
-  const c=document.getElementById('pCard');
-  const st=document.getElementById('pSt'),sub=document.getElementById('pSub');
-  const tg=document.getElementById('pToggle'),ic=document.getElementById('pIcon');
+  const mini=document.getElementById('pumpMini'),icon=document.getElementById('pmIcon'),lbl=document.getElementById('pmLbl');
   if(on){
-    c.className='pump-card on';st.textContent='⚡ पंप: चालू';st.style.color='var(--red)';
-    sub.textContent='सिंचाई हो रही है...';tg.textContent=t('band_karo','बंद करें');
-    tg.className='ptoggle on';ic.textContent='💦';
+    mini.className='pump-mini on';icon.textContent='💦';
+    lbl.textContent=L('pon');lbl.className='pm-label on';
+    pumpStartTime=new Date();
+    if(pumpTimerInterval)clearInterval(pumpTimerInterval);
+    pumpTimerInterval=setInterval(()=>{
+      const s=Math.floor((new Date()-pumpStartTime)/1000);
+      document.getElementById('pumpTimer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+    },1000);
   }else{
-    c.className='pump-card off';st.textContent='⛽ पंप: बंद';st.style.color='var(--green)';
-    sub.textContent=t('nami_thik','नमी पर्याप्त है');tg.textContent=t('chalu_karo','चालू करें');
-    tg.className='ptoggle off';ic.textContent='💧';
+    mini.className='pump-mini off';icon.textContent='💧';
+    lbl.textContent=L('poff');lbl.className='pm-label off';
+    if(pumpTimerInterval){clearInterval(pumpTimerInterval);pumpTimerInterval=null}
   }
 }
 
-// ══════════════════════════════════════════════
-// FASAL / MITTI
-// ══════════════════════════════════════════════
-function pickFasal(el){
-  document.querySelectorAll('.fc').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  fasalName=el.dataset.f;fasalTh=parseInt(el.dataset.th);
-  document.getElementById('customWrap').style.display=fasalName==='कस्टम'?'block':'none';
-  document.getElementById('seemaR').value=fasalTh;seemaTh=fasalTh;updateSeema(fasalTh);
-  if(curMoist!==null)updateGauge();
-}
-function pickMitti(el){
-  document.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  mittiName=el.dataset.m;mittiFC=parseInt(el.dataset.fc);
-  if(curRaw!==null){curMoist=calcM(curRaw);updateGauge();updateStatus();updateAna()}
-}
-function updateCustomTh(){
-  const v=parseInt(document.getElementById('customTh').value)||2500;
-  document.querySelector('[data-f="कस्टम"]').dataset.th=v;
-  fasalTh=v;updateSeema(v);
-}
-function updateSeema(val){
-  seemaTh=parseInt(val);
-  const p=((4095-seemaTh)/(4095-1271))*100;
-  document.getElementById('smarker').style.left=p+'%';
-  document.getElementById('sWarnLbl').textContent=seemaTh+' ⚠️';
-  document.getElementById('seemaDisp').textContent=(curRaw||0)+' / 4095';
-  document.getElementById('seemaR').value=seemaTh;
-}
+// ═══════════════════════════════════════════════════
+// FASAL / MITTI / SEEMA
+// ═══════════════════════════════════════════════════
+function pickFasal(el){document.querySelectorAll('.fc').forEach(c=>c.classList.remove('active'));el.classList.add('active');fasalName=el.dataset.f;fasalTh=parseInt(el.dataset.th);document.getElementById('customWrap').style.display=fasalName==='कस्टम'?'block':'none';updateSeema(fasalTh);document.getElementById('seemaR').value=fasalTh;saveLS()}
+function pickMitti(el){document.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));el.classList.add('active');mittiName=el.dataset.m;mittiFC=parseInt(el.dataset.fc);if(curRaw!==null){curMoist=calcM(curRaw);updateGauge();updateStatus();updateAna()}saveLS()}
+function updateCustomTh(){const v=parseInt(document.getElementById('customTh').value)||2500;document.querySelector('.fc[data-f="कस्टम"]').dataset.th=v;fasalTh=v;updateSeema(v)}
+function updateSeema(val){seemaTh=parseInt(val);const p=((4095-seemaTh)/(4095-1271))*100;document.getElementById('smark').style.left=p+'%';document.getElementById('sWarnLbl').textContent=seemaTh+' ⚠️';document.getElementById('seemaDisp').textContent=(curRaw||0)+' / 4095';document.getElementById('seemaR').value=seemaTh;saveLS()}
 
-// ══════════════════════════════════════════════
-// VOICE & ALARMS
-// ══════════════════════════════════════════════
-function toggleVoice(){
-  voiceOn=!voiceOn;
-  const btn=document.getElementById('voiceBtn');
-  if(voiceOn){btn.textContent='🔕 बंद करें';btn.style.background='rgba(255,23,68,0.15)';btn.style.borderColor='rgba(255,23,68,0.3)';btn.style.color='var(--red)';showToast('🔊 आवाज़ अलार्म चालू!','ok')}
-  else{btn.textContent='🔔 चालू करें';btn.style.background='';btn.style.borderColor='';btn.style.color='var(--green)';stopFloodAlarm()}
-}
-
-function speak(text){
-  if(!voiceOn||!text)return;
-  try{
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang=curLang==='hi'?'hi-IN':curLang==='mr'?'mr-IN':curLang==='bn'?'bn-IN':curLang==='te'?'te-IN':curLang==='ta'?'ta-IN':curLang==='gu'?'gu-IN':curLang==='pa'?'pa-IN':curLang==='kn'?'kn-IN':curLang==='ml'?'ml-IN':'hi-IN';
-    u.rate=0.88;u.pitch=1.0;u.volume=1.0;
-    window.speechSynthesis.speak(u);
-  }catch(e){}
-}
-
-function firstNotify(){
-  if(curMoist===null)return;
-  let key='ok';
-  if(curMoist<20)key='critical';else if(curMoist<40)key='low';else if(curMoist>100)key='flood';
-  const msg=tv(key);
-  speak(msg);
-  showToast('🔊 '+msg,'ok');
-}
-
-function startFloodAlarm(){
-  document.getElementById('alarmBanner').style.display='block';
-  document.getElementById('alarmText').textContent=tv('flood')||(TR.hi.voice.flood);
-  if(!alarmTimer&&voiceOn){
-    speak(tv('flood'));
-    alarmTimer=setInterval(()=>{if(voiceOn)speak(tv('flood'))},10000);
-  }
-}
-function stopFloodAlarm(){
-  document.getElementById('alarmBanner').style.display='none';
-  if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null}
-}
-
-// ══════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════
-let toastTimer=null;
-function showToast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast '+(type==='warn'?'warn':type==='info'?'info':'');
-  t.style.display='block';
-  if(toastTimer)clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{t.style.display='none'},4000);
-}
-
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // CALIBRATION
-// ══════════════════════════════════════════════
-function updateCalibLive(){
-  if(curMoist===null)return;
-  document.getElementById('calibCur').textContent=Math.round(curMoist)+'%';
-  document.getElementById('calibRawDisp').textContent='Raw: '+(curRaw||'--');
-  document.getElementById('calibBar').style.width=Math.min(100,curMoist)+'%';
-  if(calibTarget!==null){
-    const gap=Math.round(calibTarget-curMoist);
-    document.getElementById('calibComp').textContent=gap<=0?'✅ लक्ष्य पर है या अधिक!':'लक्ष्य तक '+gap+'% और चाहिए';
-  }
-}
-function setCalibTarget(){
-  if(curMoist===null){showToast('पहले सेंसर रीडिंग लें!','warn');return}
-  calibTarget=curMoist;
-  document.getElementById('calibResult').className='calib-result show';
-  document.getElementById('calibResult').innerHTML=`✅ लक्ष्य नमी सेट: <strong>${Math.round(calibTarget)}%</strong> (Raw: ${curRaw})<br><small>अब इस नमी पर खेत को उपयुक्त माना जाएगा।</small>`;
-  document.getElementById('a_target').textContent=Math.round(calibTarget);
-  showToast('🎯 लक्ष्य नमी '+Math.round(calibTarget)+'% सेट हुई!','ok');
-}
-function clearCalib(){
-  calibTarget=null;
-  document.getElementById('calibResult').className='calib-result';
-  document.getElementById('a_target').textContent='--';
-  document.getElementById('a_gap').textContent='--';
-  document.getElementById('calibComp').textContent='लक्ष्य सेट नहीं है';
+// ═══════════════════════════════════════════════════
+function updateCalibLive(){if(curMoist===null)return;if(calibTarget!==null){const gap=Math.round(calibTarget-curMoist);document.getElementById('calibCmp').textContent=gap<=0?'✅ लक्ष्य पर है या अधिक!':'लक्ष्य तक '+gap+'% और चाहिए'}}
+function setCalibTarget(){if(curMoist===null){showToast('पहले सेंसर रीडिंग लें!','w');return}calibTarget=curMoist;const res=document.getElementById('calibRes');res.className='calib-res show';res.innerHTML=`✅ लक्ष्य: <strong>${Math.round(calibTarget)}%</strong> (Raw: ${curRaw}) सेट हुआ`;document.getElementById('a_tgt').textContent=Math.round(calibTarget);showToast('🎯 लक्ष्य '+Math.round(calibTarget)+'% सेट!','');saveLS()}
+function clearCalib(){calibTarget=null;document.getElementById('calibRes').className='calib-res';document.getElementById('a_tgt').textContent='--';document.getElementById('a_gap').textContent='--';document.getElementById('calibCmp').textContent='लक्ष्य सेट नहीं है';saveLS()}
+
+// ═══════════════════════════════════════════════════
+// VOICE
+// ═══════════════════════════════════════════════════
+function toggleVoice(){voiceOn=!voiceOn;const btn=document.getElementById('vBtn');if(voiceOn){btn.textContent='🔕 बंद';btn.className='v-btn on';showToast('🔊 आवाज़ चालू!')}else{btn.textContent='🔔 आवाज़';btn.className='v-btn';stopFloodAlarm()}saveLS()}
+function speak(text){if(!voiceOn||!text)return;try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const lmap={hi:'hi-IN',mr:'mr-IN',bn:'bn-IN',te:'te-IN',ta:'ta-IN',gu:'gu-IN',pa:'pa-IN',kn:'kn-IN',ml:'ml-IN'};u.lang=lmap[curLang]||'hi-IN';u.rate=0.88;u.pitch=1;u.volume=1;window.speechSynthesis.speak(u)}catch(e){}}
+function firstNotify(){if(curMoist===null)return;let key='ok';if(curMoist<20)key='critical';else if(curMoist<40)key='low';else if(curMoist>100)key='flood';const msg=L('voice',key);speak(msg);showToast('🔊 '+msg.substring(0,40))}
+function startFloodAlarm(){document.getElementById('alarmBar').style.display='block';document.getElementById('alarmTxt').textContent=L('voice','flood');if(!alarmTimer&&voiceOn){speak(L('voice','flood'));alarmTimer=setInterval(()=>{if(voiceOn)speak(L('voice','flood'))},10000)}}
+function stopFloodAlarm(){document.getElementById('alarmBar').style.display='none';if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null}}
+
+// ═══════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════
+let tTimer=null;
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type==='w'?'w':type==='i'?'i':'');if(tTimer)clearTimeout(tTimer);tTimer=setTimeout(()=>{t.className='toast'},4000)}
+
+// ═══════════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════════
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clkTime').textContent=n.toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clkDate').textContent=n.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long'});
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // WEATHER
-// ══════════════════════════════════════════════
-const WX_CODE={0:'☀️ साफ आकाश',1:'🌤 ज्यादातर साफ',2:'⛅ आंशिक बादल',3:'☁️ बादल छाए',45:'🌫 कोहरा',48:'🌫 धुंध',51:'🌦 हल्की बूंदें',53:'🌦 बूंदाबांदी',55:'🌧 घनी बूंदें',61:'🌧 हल्की बारिश',63:'🌧 बारिश',65:'🌧 मूसलाधार',71:'🌨 हल्की बर्फ',73:'❄️ बर्फबारी',75:'❄️ घनी बर्फ',77:'🌨 बर्फ के टुकड़े',80:'🌦 हल्की फुहार',81:'🌧 फुहार',82:'⛈ मूसलाधार',85:'🌨 हल्की बर्फ',86:'❄️ भारी बर्फ',95:'⛈ गरज',96:'⛈ ओले',99:'⛈ भारी ओले'};
-const DAY_NAMES=['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
-
-function getWxEmoji(code){const e=WX_CODE[code]||'🌡';return e.split(' ')[0]}
-function getWxDesc(code){const d=WX_CODE[code]||'मौसम';return d.split(' ').slice(1).join(' ')}
+// ═══════════════════════════════════════════════════
+const WC={0:'☀️ साफ',1:'🌤 लगभग साफ',2:'⛅ बादल',3:'☁️ घने बादल',45:'🌫 कोहरा',48:'🌫 धुंध',51:'🌦 बूंदें',53:'🌧 बूंदाबांदी',55:'🌧 घनी बूंदें',61:'🌧 हल्की बारिश',63:'🌧 बारिश',65:'🌧 मूसलाधार',71:'🌨 हल्की बर्फ',73:'❄️ बर्फ',75:'❄️ घनी बर्फ',80:'🌦 फुहार',81:'🌧 फुहार',82:'⛈ मूसलाधार',95:'⛈ गरज',96:'⛈ ओले',99:'⛈ भारी ओले'};
+const DN=['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
+function wIcon(c){return (WC[c]||'🌡').split(' ')[0]}
+function wDesc(c){return (WC[c]||'मौसम').split(' ').slice(1).join(' ')}
 
 async function loadWeather(){
   try{
     const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
-    userLat=pos.coords.latitude;userLon=pos.coords.longitude;
-    const[wxRes,geoRes]=await Promise.all([
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&forecast_days=5`),
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${userLat}&lon=${userLon}&format=json&accept-language=hi`)
+    const lat=pos.coords.latitude,lon=pos.coords.longitude;
+    const[wx,geo]=await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&forecast_days=6`),
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=hi`)
     ]);
-    const wx=await wxRes.json(),geo=await geoRes.json();
-    const city=(geo.address?.city||geo.address?.town||geo.address?.village||geo.address?.state||'आपका स्थान');
-    const rain24=wx.daily?.precipitation_sum?.[0]||0;
-    wxData={temp:wx.current.temperature_2m,humidity:wx.current.relative_humidity_2m,feels:wx.current.apparent_temperature,code:wx.current.weather_code,wind:wx.current.wind_speed_10m,city,rain24,forecast:wx.daily};
-    renderWeather(wxData);
-  }catch(e){
-    document.getElementById('wxCard').innerHTML=`<div class="wx-error">📍 स्थान अनुमति दें या <span onclick="loadWeather()">पुनः प्रयास करें</span><br><small style="color:var(--text2)">मौसम जानकारी के लिए लोकेशन जरूरी है</small></div>`;
-  }
+    const d=await wx.json(),g=await geo.json();
+    const city=g.address?.city||g.address?.town||g.address?.village||g.address?.state||'आपका स्थान';
+    wxData={temp:d.current.temperature_2m,humidity:d.current.relative_humidity_2m,feels:d.current.apparent_temperature,code:d.current.weather_code,wind:d.current.wind_speed_10m,city,rain24:d.daily?.precipitation_sum?.[0]||0,forecast:d.daily};
+    renderWeather();
+    document.getElementById('clkLoc').textContent='📍 '+city;
+  }catch(e){document.getElementById('wxCard').innerHTML=`<div class="wx-err">📍 स्थान अनुमति दें <span onclick="loadWeather()">या पुनः प्रयास करें</span></div>`}
 }
 
-function renderWeather(d){
+function renderWeather(){
+  const d=wxData;if(!d)return;
   const f=d.forecast;
-  let forecastHTML='';
-  if(f){
-    for(let i=0;i<Math.min(5,f.time?.length||0);i++){
-      const dt=new Date(f.time[i]);
-      const dayN=DAY_NAMES[dt.getDay()];
-      const icon=getWxEmoji(f.weather_code[i]);
-      const rain=f.precipitation_sum[i]||0;
-      forecastHTML+=`<div class="wx-day"><div class="wx-day-name">${dayN}</div><div class="wx-day-icon">${icon}</div><div class="wx-day-temp"><span class="hi">${Math.round(f.temperature_2m_max[i])}°</span> / <span class="lo">${Math.round(f.temperature_2m_min[i])}°</span></div>${rain>0?`<div class="wx-day-rain">💧${rain}mm</div>`:'<div class="wx-day-rain" style="color:var(--text2)">शुष्क</div>'}</div>`;
-    }
-  }
-  document.getElementById('wxCard').innerHTML=`
-    <div class="wx-main">
-      <div class="wx-left">
-        <div class="wx-emoji">${getWxEmoji(d.code)}</div>
-        <div><div class="wx-temp">${Math.round(d.temp)}<span>°C</span></div><div class="wx-desc">${getWxDesc(d.code)}</div></div>
-      </div>
-      <div class="wx-info" style="padding:0 8px">
-        <div class="wx-loc">📍 ${d.city}</div>
-      </div>
-      <div class="wx-right">
-        <div class="wx-feels">महसूस: <span>${Math.round(d.feels)}°C</span></div>
-        <div class="wx-humidity">आर्द्रता: <span>${d.humidity}%</span></div>
-        <div class="wx-humidity">हवा: <span>${Math.round(d.wind)} km/h</span></div>
-        ${d.rain24>0?`<div style="font-size:10px;color:var(--cyan);margin-top:2px">💧 ${d.rain24}mm बारिश</div>`:''}
-      </div>
-    </div>
-    <div class="wx-forecast">${forecastHTML}</div>`;
+  let fc='';
+  if(f){for(let i=0;i<Math.min(6,f.time?.length||0);i++){const dt=new Date(f.time[i]);const rain=f.precipitation_sum[i]||0;fc+=`<div class="wx-day"><div class="wxd-name">${DN[dt.getDay()]}</div><div class="wxd-icon">${wIcon(f.weather_code[i])}</div><div class="wxd-t"><span class="hi">${Math.round(f.temperature_2m_max[i])}°</span>/<span class="lo">${Math.round(f.temperature_2m_min[i])}°</span></div><div class="wxd-rain">${rain>0?'💧'+rain+'mm':'—'}</div></div>`}}
+  document.getElementById('wxCard').innerHTML=`<div class="wx-main"><div class="wx-emoji">${wIcon(d.code)}</div><div class="wx-info"><div class="wx-temp">${Math.round(d.temp)}<span>°C</span></div><div class="wx-desc">${wDesc(d.code)}</div><div class="wx-loc">📍 ${d.city}</div></div><div class="wx-extra"><div class="wx-ex-row">महसूस <span>${Math.round(d.feels)}°</span></div><div class="wx-ex-row">आर्द्रता <span>${d.humidity}%</span></div><div class="wx-ex-row">हवा <span>${Math.round(d.wind)}km/h</span></div>${d.rain24>0?`<div class="wx-ex-row" style="color:var(--cyan)">💧 ${d.rain24}mm</div>`:''}</div></div><div class="wx-forecast">${fc}</div>`;
+  // Advice card
+  const rain=d.rain24;const temp=d.temp;
+  let advice='';
+  if(rain>15)advice='🌧 <strong>अगले 24 घंटों में भारी बारिश संभव!</strong> सिंचाई की जरूरत नहीं। पंप बंद रखें और जलनिकासी सुनिश्चित करें।';
+  else if(rain>5)advice='🌦 <strong>हल्की बारिश का अनुमान है।</strong> सिंचाई में कमी करें। मिट्टी की जांच करते रहें।';
+  else if(temp>40)advice='☀️ <strong>अत्यधिक गर्मी!</strong> पानी जल्दी वाष्पित होगा। सुबह या शाम सिंचाई करें।';
+  else if(temp<10)advice='❄️ <strong>ठंड का मौसम।</strong> पानी धीरे वाष्पित होगा। कम सिंचाई पर्याप्त है।';
+  else advice='✅ <strong>सामान्य मौसम।</strong> नमी जांचकर सिंचाई का निर्णय लें।';
+  document.getElementById('wxAna').innerHTML=advice+'<br><br><small style="color:var(--text2)">फसल '+fasalName+' के लिए: '+wDesc(d.code)+' मौसम में नमी का विशेष ध्यान रखें।</small>';
   // Update analytics
-  if(d.rain24>0){
-    document.getElementById('a_rain').textContent=d.rain24;
-    document.getElementById('a_rain_s').textContent=d.rain24>10?'🌧 आज वर्षा होगी!':d.rain24>2?'🌦 हल्की वर्षा':'🌂 थोड़ी वर्षा';
-  }
+  document.getElementById('a_temp').textContent=Math.round(d.temp);
+  document.getElementById('a_temps').textContent=d.city;
+  document.getElementById('a_rain').textContent=rain||'0';
+  document.getElementById('a_rains').textContent=rain>10?'🌧 आज वर्षा!':rain>2?'🌦 हल्की वर्षा':'अगले 24 घंटे';
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // AI
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 async function runAI(){
   const btn=document.getElementById('aiBtn'),ld=document.getElementById('aiLoad'),res=document.getElementById('aiRes');
-  btn.disabled=true;ld.className='aiload show';res.className='ai-res';
-  const langMap={hi:'हिंदी',en:'English',mr:'मराठी',bn:'বাংলা',te:'Telugu',ta:'Tamil',gu:'Gujarati',pa:'ਪੰਜਾਬੀ',kn:'Kannada',ml:'Malayalam',or:'Odia',ur:'Urdu'};
-  const lang=langMap[curLang]||'हिंदी';
+  btn.disabled=true;ld.className='ai-load show';res.className='ai-res';
+  const LM={hi:'हिंदी',en:'English',mr:'मराठी',bn:'বাংলা',te:'Telugu',ta:'Tamil',gu:'Gujarati',pa:'ਪੰਜਾਬੀ',kn:'Kannada',ml:'Malayalam',or:'Odia',ur:'Urdu'};
+  const lang=LM[curLang]||'हिंदी';
   const avgM=moistHist.length>0?Math.round(moistHist.reduce((a,b)=>a+b,0)/moistHist.length):'N/A';
-  const wxStr=wxData?`Temperature: ${Math.round(wxData.temp)}°C, Humidity: ${wxData.humidity}%, Weather: ${getWxDesc(wxData.code)}, Expected rain: ${wxData.rain24}mm`:'No weather data';
-  const prompt=`You are KisanBudhi — expert Indian agricultural AI based on ICAR standards.
+  const wxStr=wxData?`Temp: ${Math.round(wxData.temp)}°C, Humidity: ${wxData.humidity}%, Weather: ${wDesc(wxData.code)}, Rain24h: ${wxData.rain24}mm`:'No weather data';
+  const prompt=`You are KisanBudhi — expert Indian agricultural AI (ICAR standards).
 
-FIELD DATA:
-- Crop (फसल): ${fasalName}
-- Soil (मिट्टी): ${mittiName} (Field Capacity raw: ${mittiFC})
-- Current Moisture: ${curMoist!==null?Math.round(curMoist)+'%':'No data'}
-- Raw ADC: ${curRaw||'No data'}
-- Session readings: ${sessRead}, Average: ${avgM}%
-- Min/Max: ${moistHist.length>0?Math.round(Math.min(...moistHist))+'%/'+Math.round(Math.max(...moistHist))+'%':'--'}
+LIVE FIELD DATA:
+- Crop: ${fasalName} | Soil: ${mittiName} (FC raw: ${mittiFC})
+- Current Moisture: ${curMoist!==null?Math.round(curMoist)+'%':'No data'} | Raw ADC: ${curRaw||'N/A'}
+- Session: ${sessRead} readings, Avg: ${avgM}%, Min: ${moistHist.length>0?Math.round(Math.min(...moistHist))+'%':'--'}, Max: ${moistHist.length>0?Math.round(Math.max(...moistHist))+'%':'--'}
 - Calibration target: ${calibTarget!==null?Math.round(calibTarget)+'%':'Not set'}
-- Danger threshold: ${seemaTh} raw ADC
 - Weather: ${wxStr}
+- Pump: ${pumpOn?'ON':'OFF'}
 
-Provide a comprehensive field analysis in ${lang} with:
-1. 🌱 **मिट्टी की वर्तमान स्थिति** — Current soil assessment
-2. 🌾 **फसल की जरूरत** — What this specific crop needs now based on ICAR data
-3. 🌤 **मौसम का प्रभाव** — How current weather affects irrigation decision
-4. 💧 **सिंचाई निर्णय** — Precise recommendation with scientific reasoning
-5. 📅 **अगले 48 घंटे की योजना** — Action plan
-6. ⚡ **बिजली/पंप टिप** — Practical pump usage advice
+Give a complete field analysis in ${lang} language covering:
+1. 🌱 **मिट्टी की स्थिति** — Current soil water status per ICAR
+2. 🌾 **फसल की जरूरत** — Specific needs of ${fasalName} right now
+3. 🌤 **मौसम प्रभाव** — Weather impact on irrigation
+4. 💧 **सिंचाई निर्णय** — Precise recommendation
+5. 📅 **अगले 48 घंटे** — Action plan
+6. ⚡ **ऊर्जा टिप** — Pump efficiency advice
 
-Keep it farmer-friendly, specific, scientific, with emojis. Write entirely in ${lang}.`;
+Use emojis. Be farmer-friendly. Write entirely in ${lang}.`;
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
     const data=await r.json();
@@ -1423,31 +1162,35 @@ Keep it farmer-friendly, specific, scientific, with emojis. Write entirely in ${
     res.innerHTML=txt.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--cyan)">$1</strong>').replace(/\n/g,'<br>');
     res.className='ai-res show';
   }catch(e){res.innerHTML='<span style="color:var(--red)">❌ Error: '+e.message+'</span>';res.className='ai-res show'}
-  btn.disabled=false;ld.className='aiload';
+  btn.disabled=false;ld.className='ai-load';
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 window.onload=function(){
-  applyTrans();
-  updateSeema(2200);
-  // Draw SVG ticks
+  // Clock
+  updateClock();setInterval(updateClock,1000);
+  // SVG ticks
   const tg=document.getElementById('ticks');
   for(let i=0;i<=10;i++){
-    const ang=-90+i*36,rad=ang*Math.PI/180;
-    const r1=88,r2=92;
-    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
-    ln.setAttribute('x1',100+r1*Math.cos(rad));ln.setAttribute('y1',100+r1*Math.sin(rad));
-    ln.setAttribute('x2',100+r2*Math.cos(rad));ln.setAttribute('y2',100+r2*Math.sin(rad));
-    ln.setAttribute('stroke',i%5===0?'rgba(0,230,118,0.4)':'rgba(0,230,118,0.12)');
-    ln.setAttribute('stroke-width',i%5===0?2:1);
-    tg.appendChild(ln);
+    const a=(-90+i*36)*Math.PI/180,r1=68,r2=72;
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',80+r1*Math.cos(a));l.setAttribute('y1',80+r1*Math.sin(a));
+    l.setAttribute('x2',80+r2*Math.cos(a));l.setAttribute('y2',80+r2*Math.sin(a));
+    l.setAttribute('stroke',i%5===0?'rgba(0,230,118,0.35)':'rgba(0,230,118,0.1)');
+    l.setAttribute('stroke-width',i%5===0?1.5:1);tg.appendChild(l);
   }
-  // Load weather
-  if(navigator.geolocation)loadWeather();
+  // Load saved settings
+  loadLS();
   // Init charts
   initCharts();
+  // Weather
+  if(navigator.geolocation)loadWeather();
+  // Auto-connect if token exists
+  if(blynkToken){
+    setTimeout(()=>startMonitoring(),500);
+  }
 };
 </script>
 </body>
